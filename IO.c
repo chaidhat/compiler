@@ -5,6 +5,7 @@
 char dataBuffer[128];
 FILE* fp;
 char ch;
+// thank you to https://www.programiz.com/c-programming/c-file-input-output
 
 // reads files
 void IOread (char *filename)
@@ -14,7 +15,7 @@ void IOread (char *filename)
     if (fp == NULL)
     {
         perror("Error while opening the file.\n");
-        abort();
+        exit(1);
     }
 
     printf("The contents of %s file are:\n", filename);
@@ -29,4 +30,28 @@ void IOread (char *filename)
 
     fclose(fp);
 }
+void IOwrite (char *toFilename)
+{
+    char *ch2 = "a";
+    // use appropriate location if you are using MacOS or Linux
+    fp = fopen(toFilename,"w");
+    if(fp == NULL)
+    {
+       perror("Error while opening the file.\n");
+       exit(1);             
+    }
+    fprintf(fp,"%s",dataBuffer);
+    fclose(fp);
+}
+char* getDataBuffer(){
+    return dataBuffer;
+}
+void setDataBuffer(char *inData)
+{
+    for (int i = 0; i < 128; i++)
+    {
+        dataBuffer[i] = inData[i];
+    }
+}
+
 
