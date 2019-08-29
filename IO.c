@@ -1,11 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "bcc.h"
 
 
-char dataBuffer[128];
 FILE* fp;
 char ch;
-// thank you to https://www.programiz.com/c-programming/c-file-input-output
+
+// thank you to https://www.programiz.com/c-programming/c-file-input-output 
+// for the write/read code
 
 // reads files
 void IOread (char *filename)
@@ -18,8 +20,6 @@ void IOread (char *filename)
         exit(1);
     }
 
-    printf("The contents of %s file are:\n", filename);
-
     int i = 0;
     while((ch = fgetc(fp)) != EOF)
     {
@@ -30,28 +30,18 @@ void IOread (char *filename)
 
     fclose(fp);
 }
+
+// write files
 void IOwrite (char *toFilename)
 {
-    char *ch2 = "a";
-    // use appropriate location if you are using MacOS or Linux
     fp = fopen(toFilename,"w");
+
     if(fp == NULL)
     {
        perror("Error while opening the file.\n");
        exit(1);             
     }
+
     fprintf(fp,"%s",dataBuffer);
     fclose(fp);
 }
-char* getDataBuffer(){
-    return dataBuffer;
-}
-void setDataBuffer(char *inData)
-{
-    for (int i = 0; i < 128; i++)
-    {
-        dataBuffer[i] = inData[i];
-    }
-}
-
-
