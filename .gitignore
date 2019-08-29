@@ -1,0 +1,9 @@
+# gitignore for bcc
+
+# mac files
+.DS_Store
+
+# vim files
+.vimrc
+*.swp
+
