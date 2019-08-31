@@ -1,16 +1,26 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "bcc.h"
 
-char* dSuf = "Bit-C Compiler: ";
+char* inFilepath;
+char* outFilepath = "$";
+
 
 int main (int argc, char* argv[])
 {
-    printf("%sChaidhat Chaimongkol\n", dSuf);
-    IOread("/Users/chaidhatchaimongkol/Documents/GitHub/Bit-C-Compiler/test/test.bc");
+    if (IoInp(argc,argv,&inFilepath,&outFilepath) == 0)
+        return 0;
+    IoLog("reading from %s", inFilepath);
+    IoLog("writing to %s", outFilepath);
+    IoLog("with mode %d", mode);
+    IoLog("Chaidhat Chaimongkol on %s %s", __DATE__, __TIME__);
+    IoRead(inFilepath);
     // do code
     //dataBuffer[2] = 'B';
-    IOwrite("/Users/chaidhatchaimongkol/Documents/GitHub/Bit-C-Compiler/test/test.o");
+    IoWrite(outFilepath);
     printf("\n");
-    printf("%sTerminated\n", dSuf);
+    IoLog("Terminated");
+    return 0;
 }
+
