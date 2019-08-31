@@ -18,8 +18,7 @@ void IoRead (char *filename)
 
     if (fp == NULL)
     {
-        perror("Error while opening the file.\n");
-        exit(1);
+        IoErr("Read error while opening the file.\n");
     }
 
     int i = 0;
@@ -40,15 +39,14 @@ void IoWrite (char *toFilename)
 
     if(fp == NULL)
     {
-       perror("Error while opening the file.\n");
-       exit(1);             
+       IoErr("Write error while opening the file %s.\n", toFilename);
     }
 
     fprintf(fp,"%s",dataBuffer);
     fclose(fp);
 }
 
-int IoInp (int argc, char* argv[], char** inFilepath, char** outFilepath)
+int IoInp (int argc, char* argv[])
 {
     mode = 1;
     if (argc > 1)
@@ -99,18 +97,18 @@ int IoInp (int argc, char* argv[], char** inFilepath, char** outFilepath)
                     line++;
                     break;
                 case 2:
-                    *outFilepath = argv[line + 1];
+                    strcpy(outFilepath, argv[line + 1]);
                     line++;
                     break;
                 default:
-                    *inFilepath = argv[line];
+                    strcpy(inFilepath, argv[line]);
                     char btcName[100];
                     int i = 0;
                     int j = 0;
                     while (argv[line][i] != '.')
                         i++;
                     if (argv[line][i + 1] != 'b' || argv[line][i + 2] != 't' || argv[line][i + 3] != 'c')
-                        IoErr("Unrecognised file type (expected .btc)");
+                        IoErr("Unexpected file type (expected .btc)");
                     while (i > 0)
                     {
                         i--;
@@ -123,9 +121,9 @@ int IoInp (int argc, char* argv[], char** inFilepath, char** outFilepath)
                     }
 
                    // IoL("h%s\n", btcName);
-                    if (strncmp(*outFilepath,"$",strlen("$")) == 0)
-                        *outFilepath = btcName;
-                        strcat(*outFilepath, ".o");
+                    if (strncmp(outFilepath,"$",strlen("$")) == 0)
+                        strcpy(outFilepath, btcName);
+                        strcat(outFilepath, ".o");
                     break;
             }
         }
@@ -165,4 +163,5 @@ void IoErr (char* format, ... )
     va_start (args, format);
     IoPrint("\033[1;31mERROR:\033[m", format, args);
     va_end (args);
+    exit(1);
 }

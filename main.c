@@ -3,15 +3,12 @@
 #include <string.h>
 #include "bcc.h"
 
-char* inFilepath;
-char* outFilepath = "$";
-
-
 int main (int argc, char* argv[])
 {
-    if (IoInp(argc,argv,&inFilepath,&outFilepath) == 0)
+    strcpy(outFilepath, "$");
+    if (IoInp(argc,argv) == 0)
         return 0;
-    IoLog("reading from %s", inFilepath);
+   IoLog("reading from %s", inFilepath);
     IoLog("writing to %s", outFilepath);
     IoLog("with mode %d", mode);
     IoLog("Chaidhat Chaimongkol on %s %s", __DATE__, __TIME__);
