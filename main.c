@@ -11,10 +11,13 @@ int main (int argc, char* argv[])
     IoLog("writing to %s", outFilepath);
     IoLog("with mode %d", mode);
     IoRead(inFilepath);
+    printf("\n");
+
+    lex();
+    //preprocess();
     // do code
     //dataBuffer[2] = 'B';
     IoWrite(outFilepath);
-    printf("\n");
     IoExit(0, __LINE__);
 }
 

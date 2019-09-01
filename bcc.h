@@ -1,7 +1,9 @@
+#define DB_SIZE 2048
+
 char inFilepath[128];
 char outFilepath[128];
 int mode;
-char dataBuffer[2048];
+char dataBuffer[DB_SIZE];
 
 // io.c
 void IoRead (char *filename);
@@ -15,5 +17,10 @@ void IoErr (char* format, ... );
 
 void IoExit (int code, int debugLine);
 
-// preprocessor.c
-void Preprocess ();
+// preproc.c
+void preprocess ();
+
+// lex.c
+void lex ();
+int checkChar (char *inChar);
+int checkToken (char inToken[128]);

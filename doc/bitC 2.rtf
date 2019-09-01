@@ -1,0 +1,62 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1671
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww10800\viewh8400\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 [4] apple = 2;\
+[4] fruit = apple;\
+\
+[4]<4> fruit; // array of int length 4\
+\
+fruit<2> // access in index 2 \
+\
+class basketC\
+\{\
+	[4] fruits,\
+	[3]<4> name;\
+	[4] addFruits : [4] addBy\
+	\{\
+		fruits = fruits + addBy;\
+		return fruits;\
+	\}\
+\}\
+\
+void deleteFruits : basketC b\
+\{\
+	b.fruits = 0;\
+\}\
+\
+void main :\
+\{\
+	basketC basket;\
+	basket.addFruits(2);\
+\
+	ptr appleptr = &apple;\
+	apple = *appleptr;\
+\
+	apple = apple + 1;\
+	if : basket.fruits > apple // if value is 0\
+	\{\
+		[*1]<40> outMsg = <32> basket.fruits <8> "\\n";\
+		out(basket.fruits);\
+	\}\
+	else\
+	\{\
+		[3]<4> msg;\
+		msg<0> = "e";\
+		msg<1> = "r";\
+		msg<2> = "r";\
+		msg<3> = "\\n";\
+		out(msg);\
+	\}\
+	[3] count;\
+	while : count // while value not 0\
+	\{\
+		count = count - 1;\
+		[3]<2> outMsg = <1> count <1> "\\n";\
+		out(outMsg);\
+	\}\
+\}\
+}

@@ -28,6 +28,7 @@ void IoRead (char *filename)
         dataBuffer[i] = ch;
         i++;
     }
+    dataBuffer[i] = '\0';
 
     fclose(fp);
 }
