@@ -2,7 +2,10 @@
 
 char inFilepath[128];
 char outFilepath[128];
+
+int tokenNo;
 int mode;
+char tokens[DB_SIZE][128];
 char dataBuffer[DB_SIZE];
 
 // io.c
@@ -22,5 +25,6 @@ void preprocess ();
 
 // lex.c
 void lex ();
-int checkChar (char *inChar);
-int checkToken (char inToken[128]);
+
+int checkOperator (char *inToken);
+void logToken (char inToken[128]);

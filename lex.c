@@ -7,34 +7,31 @@ void lex ()
 {
     IoLog("lex");
 
+    tokenNo = 0;
     char token[128];
     int i = 0;
     int j = 0;
     while (dataBuffer[i] != '\0')
     {
-        if (checkChar(&dataBuffer[i]) == 1)
+        if (checkOperator(&dataBuffer[i]) == 1)
         {
             char ch = dataBuffer[i];
             token[j] = '\0';
             if (j > 0)
-                printf("lex %s\n",token);
-            printf("lex %c\n",ch);
+                logToken(token);
+            token[0] = ch;
+            token[1] = '\0';
+            if (ch != ' ')
+                logToken(token); // token = ch
             j = -1; 
         }
-        else if (dataBuffer[i] == '\n' || dataBuffer[i] == ' ')
+        else if (dataBuffer[i] == '\n')
         {
             j--;
         }
         else
         {
             token[j] = dataBuffer[i];
-            if (checkToken(token) != -1)
-            {
-                token[j + 1] = '\0';
-                j = -1;
-                printf("letx %s\n",token);
-
-            }
         }
 
         i++;
@@ -42,40 +39,52 @@ void lex ()
     }
 }
 
-int checkChar (char *inChar)
+int checkOperator (char *inToken)
 {
-    switch (*inChar)
+    char chars[] =
     {
-        case '#':
-            return 1;
-        case ';':
-            return 1;
-        case '(':
-            return 1;
-        case ')':
-            return 1;
-        case '\0':
-            return 1;
-        default:
-            return 0;
-    }
-}
+        ' ',
+        '#',
+        ';',
+        ':',
+        '(',
+        ')',
+        '<',
+        '>',
+        '[',
+        ']',
+        '{',
+        '}',
+        
+        '"',
+        '\'',
+        '.',
+        ',',
 
-int checkToken (char inToken[128])
-{
-    char* args[] =
-    {
-        "define",
-        "undef",
-        "include", 
+        '+',
+        '-',
+        '*',
+        '/',
+        '%',
+
+        '&',
+        '|',
+        '~',
+        '^',
+        '!',
     };
     int argNo = -1;
-    for (int i = 0; i < sizeof(args)/sizeof(args[0]); i++)
+    for (int i = 0; i < sizeof(chars)/sizeof(chars[0]); i++)
     {
-        if (strncmp(inToken,args[i],strlen(args[i])) == 0)
-        {
-            return i;
-        }
+        if (*inToken == chars[i])
+            return 1;
     }
-    return -1;
+    return 0;
+}
+
+void logToken (char inToken[128])
+{
+    strcpy(tokens[tokenNo], inToken);
+    printf("lex %d %s\n", tokenNo, inToken);
+    tokenNo++;
 }
