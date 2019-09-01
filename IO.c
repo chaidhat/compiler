@@ -4,7 +4,6 @@
 #include <string.h>
 #include "bcc.h"
 
-
 FILE* fp;
 char ch;
 
@@ -18,7 +17,8 @@ void IoRead (char *filename)
 
     if (fp == NULL)
     {
-        IoErr("Read error while opening the file.\n");
+        IoErr("Read error while opening the file %s", filename);
+        IoExit(1, __LINE__);
     }
 
     int i = 0;
@@ -35,20 +35,23 @@ void IoRead (char *filename)
 // write files
 void IoWrite (char *toFilename)
 {
-    fp = fopen(toFilename,"w");
+    fp = fopen(toFilename, "w"); // write mode
 
     if(fp == NULL)
     {
-       IoErr("Write error while opening the file %s.\n", toFilename);
+        IoErr("Write error while opening the file %s", toFilename);
+        IoExit(1, __LINE__);
     }
 
     fprintf(fp,"%s",dataBuffer);
     fclose(fp);
 }
 
-int IoInp (int argc, char* argv[])
+void IoInp (int argc, char* argv[])
 {
-    mode = 1;
+    strcpy(inFilepath, "main.btc");
+    strcpy(outFilepath, "$");
+    mode = 0; // default mode (compiler debug)
     if (argc > 1)
     {
         for (int line = 1; line < argc; line++)
@@ -72,9 +75,8 @@ int IoInp (int argc, char* argv[])
             switch (argNo)
             {
                 case 0:
-                    printf("v0.1 by Chaidhat Chaimongkol\n");
-                    return 0;
-
+                    printf("\033[1;30mv0.1 by Chaidhat Chaimongkol on %s %s\n\033[m", __DATE__, __TIME__);
+                    break;
                 case 1:
                     mode = -1;
                     if (line != argc - 1)
@@ -92,7 +94,7 @@ int IoInp (int argc, char* argv[])
                     if (mode == -1)
                     {
                         printf("no mode exists.\n-m x   compiler debugger\n-m d   debug mode\n-m r   release mode\n");
-                        return 0;
+                        IoExit(1, __LINE__);
                     }
                     line++;
                     break;
@@ -108,7 +110,10 @@ int IoInp (int argc, char* argv[])
                     while (argv[line][i] != '.')
                         i++;
                     if (argv[line][i + 1] != 'b' || argv[line][i + 2] != 't' || argv[line][i + 3] != 'c')
+                    {
                         IoErr("Unexpected file type (expected .btc)");
+                        IoExit(1, __LINE__);
+                    }
                     while (i > 0)
                     {
                         i--;
@@ -120,7 +125,6 @@ int IoInp (int argc, char* argv[])
                         btcName[j] = argv[line][i + j];
                     }
 
-                   // IoL("h%s\n", btcName);
                     if (strncmp(outFilepath,"$",strlen("$")) == 0)
                         strcpy(outFilepath, btcName);
                         strcat(outFilepath, ".o");
@@ -131,9 +135,8 @@ int IoInp (int argc, char* argv[])
     else
     {
         printf("usage: bcc [--version] [-m<mode>] [-o<outpath>] <inputpath>\n");
-        return 0;
+        IoExit(1, __LINE__);
     }
-    return 1;
 }
 
 void IoPrint (char* suffix, char* format, va_list args )
@@ -163,5 +166,20 @@ void IoErr (char* format, ... )
     va_start (args, format);
     IoPrint("\033[1;31mERROR:\033[m", format, args);
     va_end (args);
-    exit(1);
+}
+
+void IoExit (int code, int debugLine)
+{
+    switch (code)
+    {
+        case 0:
+            IoLog("Terminated sucessfully.");
+            break;
+        case 1:
+            IoLog("Terminated UNsucessfully.");
+            if (mode == 0)
+                IoLog("Called from line %d", debugLine);
+            break;
+    }
+    exit(0);
 }
