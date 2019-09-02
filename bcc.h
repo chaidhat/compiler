@@ -3,9 +3,7 @@
 char inFilepath[128];
 char outFilepath[128];
 
-int tokenNo;
 int mode;
-char tokens[DB_SIZE][128];
 char dataBuffer[DB_SIZE];
 
 // io.c
@@ -26,5 +24,14 @@ void preprocess ();
 // lex.c
 void lex ();
 
-int checkOperator (char *inToken);
-void logToken (char inToken[128]);
+typedef struct
+{
+    int type;
+    const char *id;
+} Token;
+
+Token getToken (char *inLexeme[128]);
+void logToken (Token inToken);
+
+int tokenNo;
+Token tokens[DB_SIZE];
