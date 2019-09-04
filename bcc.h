@@ -26,12 +26,16 @@ void lex ();
 
 typedef struct
 {
-    int type;
-    const char *id;
+    unsigned char type;
+    char id[128]; // both of these are indexes
+    int pos; // for later stages
 } Token;
 
-Token getToken (char *inLexeme[128]);
+Token getToken (char inLexeme[128]);
 void logToken (Token inToken);
+Token crtToken (unsigned char type, char id[128], int pos);
+Token cmpToken (char inLexeme[128], int cmpTable);
+Token cmpChar (char inChar);
 
 int tokenNo;
 Token tokens[DB_SIZE];
