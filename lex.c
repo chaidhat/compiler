@@ -78,9 +78,28 @@ void lex ()
     while (dataBuffer[i] != '\0')
     {
         Token charToken = cmpChar(dataBuffer[i]);
+        if (dataBuffer[i] == '/')
+        {
+            if (dataBuffer[i + 1] == '/')
+            {
+                i++;
+                while (!(dataBuffer[i] == '\0' || dataBuffer[i] == '\n'))
+                    i++;
+            }
+            else if (dataBuffer[i + 1] == '*')
+            {
+                i++;
+                while (!(dataBuffer[i] == '\0' || (dataBuffer[i] == '*' && dataBuffer[i + 1] == '/')))
+                    i++;
+               
+               i += 2;
+            }
+            i--;
+            j--;
+        }
+
         if (dataBuffer[i] == '\n')
             j--;
-
         else if (charToken.type != 0)
         {
             if (j > 0)
