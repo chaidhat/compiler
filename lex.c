@@ -4,13 +4,20 @@
 #include "btcc.h"
 
 // thank you to http://www.cse.chalmers.se/edu/year/2015/course/DAT150/lectures/proglang-04.html
-Token NULL_TOKEN = {0,"NULL",0};
+Token TOKEN_NULL = {0,"NULL",0};
+
+#define T_NULL 0
+#define T_LIT 1
+#define T_ID 2
+#define T_KEY 3
+#define T_SEP 4
+#define T_OP 5
 
 /* TOKEN TYPES
 *  0 - NULL
-*  1 - KEYWORDS
+*  1 - LITERALS
 *  2 - IDENTIFIERS
-*  3 - LITERALS
+*  3 - KEYWORDS
 *  4 - SEPARATORS
 *  5 - OPERATORS
 */
@@ -38,11 +45,13 @@ const char ReSep[] =
     '{',
     '}',
     
-    '"',
-    '\'',
     '.',
     ',',
 
+};
+
+const char ReOp[] =
+{
     '+',
     '-',
     '*',
@@ -86,14 +95,13 @@ void lex ()
                 }
                 else
                 {
-                    logToken(crtToken(3,lexeme,i));
+                    logToken(crtToken(T_LIT,lexeme,i));
                 }
             }
             if (charToken.id[0] != ' ')
                 logToken(charToken);
 
-            for (int k = 0; k < 128; k++)
-                lexeme[k] = '\0';
+            for (int k = 0; k < 128; k++) lexeme[k] = '\0';
             j = -1; 
         }
         else
@@ -109,10 +117,10 @@ void lex ()
 
 Token getToken(char inLexeme[128])
 {
-    Token t = cmpToken(inLexeme, 1);
+    Token t = cmpToken(inLexeme, T_KEY);
     if (t.type != 0)
         return t;
-    return NULL_TOKEN;
+    return TOKEN_NULL;
 }
 
 void logToken (Token inToken)
@@ -124,7 +132,7 @@ void logToken (Token inToken)
 
 Token crtToken (unsigned char type, char id[128], int pos)
 {
-    Token t = NULL_TOKEN;
+    Token t = TOKEN_NULL;
     t.type = type;
     strcpy(t.id, id);
     t.pos = pos;
@@ -138,12 +146,10 @@ Token cmpToken (char inLexeme[128], int cmpTable)
     {
         switch (cmpTable)
         {
-            case 0:
-                return NULL_TOKEN;
-            case 1:
+            case T_NULL:
+                return TOKEN_NULL;
+            case T_KEY:
                 strcpy (cmpLexeme, ReKeywords[i]);
-                break;
-            case 2:
                 break;
             default:
                 break;
@@ -151,12 +157,10 @@ Token cmpToken (char inLexeme[128], int cmpTable)
 
         if (strncmp(inLexeme,cmpLexeme,strlen(inLexeme)) == 0)
         {
-            if (i == 0)
-                return NULL_TOKEN; // idk why this happens
             return crtToken(cmpTable, cmpLexeme,0);
         }
     }
-    return NULL_TOKEN;
+    return TOKEN_NULL;
 }
 
 Token cmpChar (char inChar)
@@ -169,8 +173,8 @@ Token cmpChar (char inChar)
             char inStr[2];
             inStr[0] = inChar;
             inStr[1] = '\0';
-            return crtToken(1,inStr,0);
+            return crtToken(T_SEP,inStr,0);
         }
     }
-    return NULL_TOKEN;
+    return TOKEN_NULL;
 }

@@ -135,7 +135,7 @@ void IoInp (int argc, char* argv[])
     }
     else
     {
-        printf("usage: bcc [--version] [-m<mode>] [-o<outpath>] <inputpath>\n");
+        printf("usage: btcc [--version] [-m<mode>] [-o<outpath>] <inputpath>\n");
         IoExit(1, __LINE__);
     }
 }
