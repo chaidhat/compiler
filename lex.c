@@ -78,6 +78,7 @@ void lex ()
     while (dataBuffer[i] != '\0')
     {
         Token charToken = cmpChar(dataBuffer[i]);
+        // comment support
         if (dataBuffer[i] == '/')
         {
             if (dataBuffer[i + 1] == '/')
@@ -98,32 +99,45 @@ void lex ()
             j--;
         }
 
+        if (charToken.type == T_LIT) // for string literals
+        {
+            do
+            {
+                lexeme[j] = dataBuffer[i];
+                i++;
+                j++;
+                charToken = cmpChar(dataBuffer[i]);
+            } while (charToken.type != T_LIT);
+
+        }
+
+        // general lexing
         if (dataBuffer[i] == '\n')
             j--;
-        else if (charToken.type != 0)
+        else if (charToken.type != T_NULL)
         {
             if (j > 0)
             {
                 lexeme[j] = '\0';
 
                 Token token = getToken(lexeme);
-                if (token.type != 0)
+                if (token.type != T_NULL)
                 { 
                     token.pos = i;
                     logToken(token);
                 }
                 else
                 {
-                    logToken(crtToken(T_LIT,lexeme,i));
+                    logToken(crtToken(T_ID,lexeme,i));
                 }
             }
-            if (charToken.id[0] != ' ')
+            if (charToken.id[0] != ' ' && charToken.id[0] != '"')
                 logToken(charToken);
 
             for (int k = 0; k < 128; k++) lexeme[k] = '\0';
             j = -1; 
         }
-        else
+        else    
         {
             lexeme[j] = dataBuffer[i];
         }
@@ -136,6 +150,20 @@ void lex ()
 
 Token getToken(char inLexeme[128])
 {
+    if (inLexeme[0] == '"') // is string literal?
+    {
+        // get rid of first char
+        int i = 0;
+        char outLexeme[128];
+        while (inLexeme[i + 1] != '\0')
+        {
+            outLexeme[i] = inLexeme[i + 1];
+            i++;
+        }
+        outLexeme[i] = '\0';
+
+        return crtToken(T_LIT, outLexeme, 0);
+    }
     Token t = cmpToken(inLexeme, T_KEY);
     if (t.type != 0)
         return t;
@@ -184,6 +212,8 @@ Token cmpToken (char inLexeme[128], int cmpTable)
 
 Token cmpChar (char inChar)
 {
+    if (inChar == '"')
+        return crtToken(T_LIT,"\"",0);
     char cmpLexeme[128];
     for (int i = 0; i < sizeof(ReSep)/sizeof(ReSep[0]); i++)
     {
