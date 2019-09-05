@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "bcc.h"
+#include "btcc.h"
 
 // thank you to http://www.cse.chalmers.se/edu/year/2015/course/DAT150/lectures/proglang-04.html
 Token NULL_TOKEN = {0,"NULL",0};
@@ -22,7 +22,6 @@ const char* ReKeywords[] =
     "a",
     "+",
 };
-
 
 const char ReSep[] =
 {
@@ -71,9 +70,8 @@ void lex ()
     {
         Token charToken = cmpChar(dataBuffer[i]);
         if (dataBuffer[i] == '\n')
-        {
             j--;
-        }
+
         else if (charToken.type != 0)
         {
             if (j > 0)
@@ -111,7 +109,7 @@ void lex ()
 
 Token getToken(char inLexeme[128])
 {
-    Token t = cmpToken(inLexeme, 0);
+    Token t = cmpToken(inLexeme, 1);
     if (t.type != 0)
         return t;
     return NULL_TOKEN;
@@ -141,9 +139,11 @@ Token cmpToken (char inLexeme[128], int cmpTable)
         switch (cmpTable)
         {
             case 0:
+                return NULL_TOKEN;
+            case 1:
                 strcpy (cmpLexeme, ReKeywords[i]);
                 break;
-            case 1:
+            case 2:
                 break;
             default:
                 break;
@@ -153,7 +153,7 @@ Token cmpToken (char inLexeme[128], int cmpTable)
         {
             if (i == 0)
                 return NULL_TOKEN; // idk why this happens
-            return crtToken(1,cmpLexeme,0);
+            return crtToken(cmpTable, cmpLexeme,0);
         }
     }
     return NULL_TOKEN;

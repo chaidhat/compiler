@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "bcc.h"
+#include "btcc.h"
 
 void preprocess ()
 {

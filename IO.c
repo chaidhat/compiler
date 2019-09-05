@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <string.h>
-#include "bcc.h"
+#include "btcc.h"
 
 FILE* fp;
 char ch;
@@ -143,7 +143,7 @@ void IoInp (int argc, char* argv[])
 void IoPrint (char* suffix, char* format, va_list args )
 {
     char buf[256];
-    snprintf(buf, sizeof buf, "bcc: %s %s\n", suffix, format);
+    snprintf(buf, sizeof buf, "btcc: %s %s\n", suffix, format);
   vprintf (buf, args);
 }
 
