@@ -5,13 +5,12 @@
 #include "btcc.h"
 
 FILE* fp;
-char ch;
 
 // thank you to https://www.programiz.com/c-programming/c-file-input-output 
 // for the write/read code
 
 // reads files
-void IoRead (char *filename)
+void IoOpen (char *filename)
 {
     fp = fopen(filename, "r"); // read mode
 
@@ -21,20 +20,37 @@ void IoRead (char *filename)
         IoExit(1, __LINE__);
     }
 
-    int i = 0;
-    while((ch = fgetc(fp)) != EOF)
-    {
-        printf("%c", ch);
-        dataBuffer[i] = ch;
-        i++;
-    }
-    dataBuffer[i] = '\0';
+    inp();
+    pos.h = -1;
+    pos.line = 0;
 
+}
+void IoClose ()
+{
     fclose(fp);
 }
 
+char inp ()
+{
+    inpT = inpN; 
+    pos.h++;
+    if ((inpN = fgetc(fp)) == EOF)
+        inpN = '\0';
+    if (inpT == '\n')
+        pos.line++;
+    return inpT;
+}
+
+char inpTC (char expect)
+{
+    if (inpT == expect)
+        return 1;
+    return 0;
+}
+
+
 // write files
-void IoWrite (char *toFilename)
+void IoOutput (char *toFilename)
 {
     fp = fopen(toFilename, "w"); // write mode
 
@@ -44,11 +60,10 @@ void IoWrite (char *toFilename)
         IoExit(1, __LINE__);
     }
 
-    fprintf(fp,"%s",dataBuffer);
     fclose(fp);
 }
 
-void IoInp (int argc, char* argv[])
+void IoUI (int argc, char* argv[])
 {
     strcpy(inFilepath, "main.btc");
     strcpy(outFilepath, "$");

@@ -3,7 +3,7 @@
 #include <string.h>
 #include "btcc.h"
 
-void preprocess ()
+/*void preprocess ()
 {
     IoLog("preprocess");
 
@@ -24,4 +24,4 @@ void preprocess ()
         }
         i++;
     }
-}
+}*/

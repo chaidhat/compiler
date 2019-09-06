@@ -5,6 +5,8 @@
 
 // thank you to http://www.cse.chalmers.se/edu/year/2015/course/DAT150/lectures/proglang-04.html
 Token TOKEN_NULL = {0,"NULL",0};
+char lexeme[128];
+int i = 0, j = 0;
 
 #define T_NULL 0
 #define T_LIT 1
@@ -12,6 +14,7 @@ Token TOKEN_NULL = {0,"NULL",0};
 #define T_KEY 3
 #define T_SEP 4
 #define T_OP 5
+#define T_COM 6
 
 /* TOKEN TYPES
 *  0 - NULL
@@ -27,7 +30,6 @@ const char* ReKeywords[] =
 {
     "define",
     "a",
-    "+",
 };
 
 const char ReSep[] =
@@ -52,6 +54,7 @@ const char ReSep[] =
 
 const char ReOp[] =
 {
+    '=',
     '+',
     '-',
     '*',
@@ -65,41 +68,97 @@ const char ReOp[] =
     '!',
 };
 
+static Token next ()
+{
+    i++;
+    return crtToken(1,"a",3);
+    //TODO: a token memory
+}
+
+static void lRec (char in)
+{
+    lexeme[j] = in;
+    j++;
+}
+
+static void lClr ()
+{
+    // a more quicker way of clearing lexeme buffer than lInit()
+    while (j > 0)
+    {
+        lexeme[j] = '\0';
+        j--;
+    }
+}
+
+static void lInit ()
+{
+    for (int k = 0; k < 128; k++)
+        lexeme[k] = '\0';
+}
+
+void LexInit ()
+{
+    lex();
+}
+
 void lex ()
 {
     IoLog("lex");
-
     tokenNo = 0;
-    char lexeme[128];
-    for (int k = 0; k < 128; k++)
-        lexeme[k] = '\0';
-    int i = 0;
-    int j = 0;
-    while (dataBuffer[i] != '\0')
+    lInit();
+    while (1)
+    {
+        char c = inp();
+        if (c == '\0')
+            return;
+        
+        Type t = cmpChar(c); 
+        printf("%c%d ", c, t);
+        switch(t)
+        {
+            case T_NULL:
+                break;
+            case T_LIT:
+                break;
+            case T_ID:
+                break;
+            case T_KEY:
+                break;
+            case T_SEP:
+                break;
+            case T_OP:
+                break;
+            case T_COM:
+                break;
+        }
+
+        lRec(c);
+    }
+    /* while (peek(0) != '\0')
     {
         Token charToken = cmpChar(dataBuffer[i]);
         // comment support
-        if (dataBuffer[i] == '/')
+        if (charToken.type == T_COM) 
         {
             if (dataBuffer[i + 1] == '/')
             {
-                i++;
-                while (!(dataBuffer[i] == '\0' || dataBuffer[i] == '\n'))
-                    i++;
+                do
+                {i++;}
+                while (!(dataBuffer[i] == '\0' || dataBuffer[i] == '\n'));
             }
             else if (dataBuffer[i + 1] == '*')
             {
-                i++;
-                while (!(dataBuffer[i] == '\0' || (dataBuffer[i] == '*' && dataBuffer[i + 1] == '/')))
-                    i++;
+                do
+                {i++;}
+                while (!(dataBuffer[i] == '\0' || (dataBuffer[i] == '*' && dataBuffer[i + 1] == '/')));
                
                i += 2;
             }
-            i--;
-            j--;
         }
 
-        if (charToken.type == T_LIT) // for string literals
+        // string literal support
+        if (charToken.type == T_LIT)
         {
             do
             {
@@ -144,25 +203,24 @@ void lex ()
 
         i++;
         j++;
-    }
+    }*/
 }
 
 
-Token getToken(char inLexeme[128])
+static Token getToken(char inLexeme[128])
 {
     if (inLexeme[0] == '"') // is string literal?
     {
         // get rid of first char
         int i = 0;
-        char outLexeme[128];
         while (inLexeme[i + 1] != '\0')
         {
-            outLexeme[i] = inLexeme[i + 1];
+            inLexeme[i] = inLexeme[i + 1];
             i++;
         }
-        outLexeme[i] = '\0';
+        inLexeme[i] = '\0';
 
-        return crtToken(T_LIT, outLexeme, 0);
+        return crtToken(T_LIT, inLexeme, 0);
     }
     Token t = cmpToken(inLexeme, T_KEY);
     if (t.type != 0)
@@ -170,14 +228,14 @@ Token getToken(char inLexeme[128])
     return TOKEN_NULL;
 }
 
-void logToken (Token inToken)
+static void logToken (Token inToken)
 {
     tokens[tokenNo] = inToken; 
     printf("lex %d %d %s\n", tokenNo, inToken.type, inToken.id);
     tokenNo++;
 }
 
-Token crtToken (unsigned char type, char id[128], int pos)
+static Token crtToken (unsigned char type, char id[128], int pos)
 {
     Token t = TOKEN_NULL;
     t.type = type;
@@ -186,7 +244,7 @@ Token crtToken (unsigned char type, char id[128], int pos)
     return t;
 } 
 
-Token cmpToken (char inLexeme[128], int cmpTable)
+static Token cmpToken (char inLexeme[128], int cmpTable)
 {
     char cmpLexeme[128];
     for (int i = 0; i < sizeof(ReKeywords)/sizeof(ReKeywords[0]); i++)
@@ -210,10 +268,12 @@ Token cmpToken (char inLexeme[128], int cmpTable)
     return TOKEN_NULL;
 }
 
-Token cmpChar (char inChar)
+static unsigned char cmpChar (char inChar)
 {
+    if (inChar == '/')
+        return T_COM;
     if (inChar == '"')
-        return crtToken(T_LIT,"\"",0);
+        return T_LIT;
     char cmpLexeme[128];
     for (int i = 0; i < sizeof(ReSep)/sizeof(ReSep[0]); i++)
     {
@@ -222,8 +282,8 @@ Token cmpChar (char inChar)
             char inStr[2];
             inStr[0] = inChar;
             inStr[1] = '\0';
-            return crtToken(T_SEP,inStr,0);
+            return T_SEP;
         }
     }
-    return TOKEN_NULL;
+    return T_NULL;
 }
