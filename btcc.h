@@ -60,7 +60,7 @@ typedef struct
     Pos pos; // for later stages
 } Token;
 
-static Token next ();
+Token next ();
 
 int tokenNo;
 Token tokens[DB_SIZE];

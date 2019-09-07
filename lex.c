@@ -81,7 +81,7 @@ const char ReOp[] =
     '!',
 };
 
-static Token next ()
+Token next ()
 {
     i++;
     return crtToken(1);
@@ -167,37 +167,6 @@ void lex ()
 }
 
 
-static void logToken (Token inToken)
-{
-    if (strlen(inToken.id) < 1)
-        return;
-    tokens[tokenNo] = inToken; 
-    printf("lex %d %d %s\n", tokenNo, inToken.type, inToken.id);
-    tokenNo++;
-}
-
-static void logChar (char inChar)
-{
-    if (inChar == ' ' || inChar == '"')
-        return;
-    Token inToken = crtToken(getTChar(inChar));
-    strcpy(inToken.id, " ");
-    inToken.id[0] = inChar;
-    tokens[tokenNo] = inToken; 
-    printf("lexc %d %d %s\n", tokenNo, inToken.type, inToken.id);
-    tokenNo++;
-}
-
-
-static Token crtToken (Type type)
-{
-    Token t = TOKEN_NULL;
-    t.type = type;
-    strcpy(t.id, lexeme);
-    t.pos = inpPos;
-    return t;
-} 
-
 static Type getTLexeme (char inLexeme[128])
 {
     // check if it is a keyword or lit
@@ -206,9 +175,12 @@ static Type getTLexeme (char inLexeme[128])
         if (strncmp(inLexeme,ReKeywords[i],strlen(ReKeywords[i])) == 0)
             return T_KEY;
     }
-    if (0/*TODO: check lit*/)
-        return T_LIT;
-    return T_NULL;
+    for (int i = 0; i < 128; i++)
+    {
+        if (!isdigit(inLexeme[i]) && inLexeme[i] != '\0')
+            return T_ID;
+    }
+    return T_LIT;
 }
 
 static Type getTChar (char inChar)
@@ -239,6 +211,37 @@ static Type getTChar (char inChar)
     }
     return T_NULL;
 }
+
+static void logToken (Token inToken)
+{
+    if (strlen(inToken.id) < 1)
+        return;
+    tokens[tokenNo] = inToken; 
+    printf("lex %d %d %s\n", tokenNo, inToken.type, inToken.id);
+    tokenNo++;
+}
+
+static void logChar (char inChar)
+{
+    if (inChar == ' ' || inChar == '"')
+        return;
+    Token inToken = crtToken(getTChar(inChar));
+    strcpy(inToken.id, " ");
+    inToken.id[0] = inChar;
+    tokens[tokenNo] = inToken; 
+    printf("lex %d %d %s\n", tokenNo, inToken.type, inToken.id);
+    tokenNo++;
+}
+
+
+static Token crtToken (Type type)
+{
+    Token t = TOKEN_NULL;
+    t.type = type;
+    strcpy(t.id, lexeme);
+    t.pos = inpPos;
+    return t;
+} 
 
 static void readLit ()
 {
