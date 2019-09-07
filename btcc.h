@@ -1,3 +1,8 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdarg.h>
+#include <string.h>
+#include <stdbool.h>
 #define DB_SIZE 2048
 
 char inFilepath[128];
@@ -5,7 +10,6 @@ char outFilepath[128];
 
 int mode;
 
-typedef char bool;
 // io.c
 //   file input handling
 typedef struct
@@ -14,9 +18,10 @@ typedef struct
     int line;
 } Pos;
 
-Pos pos;
+Pos inpPos;
 char inp (); // read next char
-bool incTC (char expect); // confirm this char
+bool inpCT (char expect); // confirm this char
+bool inpCN (char expect); // confirm next char
 
 char inpT; // this char
 char inpN; // next char
@@ -40,29 +45,22 @@ void preprocess ();
 void LexInit ();
 void lex ();
 
-typedef unsigned char Type;
 typedef struct
 {
-    Type type;
+    unsigned char type;
+    /* TOKEN TYPES
+    *  0 - NULL
+    *  1 - LITERALS
+    *  2 - IDENTIFIERS
+    *  3 - KEYWORDS
+    *  4 - SEPARATORS
+    *  5 - OPERATORS
+    */
     char id[128]; // both of these are indexes
-    int pos; // for later stages
+    Pos pos; // for later stages
 } Token;
 
 static Token next ();
-
-//   lexemes
-static void lRec (char in);
-static void lClr ();
-static void lInit ();
-
-static Token getToken (char inLexeme[128]);
-static void logToken (Token inToken);
-static Token crtToken (unsigned char type, char id[128], int pos);
-static Token cmpToken (char inLexeme[128], int cmpTable);
-static Type cmpChar (char inChar);
-
-static void readCom (int *i);
-static void readLit (int *i);
 
 int tokenNo;
 Token tokens[DB_SIZE];

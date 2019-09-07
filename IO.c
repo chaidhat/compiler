@@ -1,7 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include <string.h>
 #include "btcc.h"
 
 FILE* fp;
@@ -21,8 +17,8 @@ void IoOpen (char *filename)
     }
 
     inp();
-    pos.h = -1;
-    pos.line = 0;
+    inpPos.h = -1;
+    inpPos.line = 0;
 
 }
 void IoClose ()
@@ -33,19 +29,26 @@ void IoClose ()
 char inp ()
 {
     inpT = inpN; 
-    pos.h++;
+    inpPos.h++;
     if ((inpN = fgetc(fp)) == EOF)
         inpN = '\0';
     if (inpT == '\n')
-        pos.line++;
+        inpPos.line++;
     return inpT;
 }
 
-char inpTC (char expect)
+bool inpCT (char expect)
 {
     if (inpT == expect)
-        return 1;
-    return 0;
+        return true;
+    return false;
+}
+
+bool inpCN (char expect)
+{
+    if (inpN == expect)
+        return true;
+    return false;
 }
 
 
