@@ -1,6 +1,6 @@
+#include <ctype.h>
 #include "btcc.h"
 
-// thank you to http://www.cse.chalmers.se/edu/year/2015/course/DAT150/lectures/proglang-04.html
 Token TOKEN_NULL = {0,"NULL",0};
 char lexeme[128];
 int i = 0, j = 0;
@@ -138,24 +138,16 @@ void lex ()
                 break;
             case T_LIT:
                 logToken(crtToken(getTLexeme(lexeme)));
-                lClr();
                 logChar(c);
                 readLit();
                 break;
             case T_SEP:
                 logToken(crtToken(getTLexeme(lexeme)));
-                lClr();
                 logChar(c);
-                // getTLexeme
-                // lIsKey
-                // lIsLit
                 break;
             case T_OP:
                 logToken(crtToken(getTLexeme(lexeme)));
-                lClr();
                 logChar(c);
-                // lIsKey
-                // lIsLit
                 break;
             case T_COM:
                 readCom();
@@ -210,6 +202,7 @@ static Type getTChar (char inChar)
         }
     }
     return T_NULL;
+    //TODO: no error catch
 }
 
 static void logToken (Token inToken)
@@ -223,6 +216,7 @@ static void logToken (Token inToken)
 
 static void logChar (char inChar)
 {
+    lClr();
     if (inChar == ' ' || inChar == '"')
         return;
     Token inToken = crtToken(getTChar(inChar));
@@ -267,5 +261,10 @@ static void readCom ()
     {
         while (!(inpCT('*') && inpCN('/')) && !inpCT('\0'))
             inp();
+            if (inpCT('\0'))
+            {
+                IoErr("lex: unterminated comment block");
+                IoExit(1, __LINE__);
+            }
     }
 }

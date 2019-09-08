@@ -1,14 +1,26 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdarg.h>
 #include <string.h>
 #include <stdbool.h>
 #define DB_SIZE 2048
 
+// thank you to
+// lexing -   http://www.cse.chalmers.se/edu/year/2015/course/DAT150/lectures/proglang-04.html
+// compiler - http://www.cs.man.ac.uk/~pjj/farrell/compmain.html 
+
 char inFilepath[128];
 char outFilepath[128];
 
-int mode;
+char predefPP[2048];
+
+bool mode;
+bool doBenchmarking;
+bool doRun;
+char doRunArgs[128];
+bool doParsing;
+bool doAssemble;
+bool doLinker;
+bool doWarnings;
 
 // io.c
 //   file input handling
@@ -38,11 +50,7 @@ void IoErr (char* format, ... );
 
 void IoExit (int code, int debugLine);
 
-// preproc.c
-void preprocess ();
-
 // lex.c
-void LexInit ();
 void lex ();
 
 typedef struct
@@ -64,3 +72,7 @@ Token next ();
 
 int tokenNo;
 Token tokens[DB_SIZE];
+
+// pp.c
+void preprocess ();
+

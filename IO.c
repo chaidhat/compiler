@@ -1,3 +1,4 @@
+#include <stdarg.h>
 #include "btcc.h"
 
 FILE* fp;
@@ -77,9 +78,19 @@ void IoUI (int argc, char* argv[])
         {
             char* args[] =
             {
-                "--version",
-                "-m",
-                "-o", 
+                "-v",
+                "-b",
+                "-o",
+                "-r",
+                "-g",
+                "-w",
+                "-I",
+                "-D",
+                "-U",
+                "-E",
+                "-S",
+                "-c",
+                "-h",
             };
             int argNo = -1;
             for (int i = 0; i < sizeof(args)/sizeof(args[0]); i++)
@@ -94,32 +105,86 @@ void IoUI (int argc, char* argv[])
             switch (argNo)
             {
                 case 0:
-                    printf("\033[1;30mv0.1 by Chaidhat Chaimongkol on %s %s\n\033[m", __DATE__, __TIME__);
+                    printf("\033[1;30mBit-C Compiler created by Chaidhat Chaimongkol\n%s %s\n\033[m", __DATE__, __TIME__);
                     break;
                 case 1:
-                    mode = -1;
-                    if (line != argc - 1)
-                    {
-                        if (strncmp(argv[line + 1],"x",strlen("x")) == 0)
-                            mode = 0;
-
-                        if (strncmp(argv[line + 1],"d",strlen("d")) == 0)
-                            mode = 1;
-
-                        if (strncmp(argv[line + 1],"r",strlen("r")) == 0)
-                            mode = 2;
-                    }
-
-                    if (mode == -1)
-                    {
-                        printf("no mode exists.\n-m x   compiler debugger\n-m d   debug mode\n-m r   release mode\n");
-                        IoExit(1, __LINE__);
-                    }
-                    line++;
-                    break;
+                    doBenchmarking = true; 
+                    break; 
                 case 2:
                     strcpy(outFilepath, argv[line + 1]);
                     line++;
+                    break;
+                case 3:
+                    doRun = true;
+                    strcpy(doRunArgs, argv[line + 1]);
+                    line++;
+                    break;
+                case 4:
+                    mode = 0;
+                    break;
+                case 5:
+                    doWarnings = false;
+                    break;
+
+                case 6:
+                    strcat(predefPP, "#include ");
+                    strcat(predefPP, argv[line + 1]);
+                    strcat(predefPP, ";");
+                    line++;
+                    break;
+                case 7:
+                    strcat(predefPP, "#define ");
+                    int c = 0;
+                    while (argv[line + 1][c] != '\0')
+                    {
+                        c++;
+                        if (argv[line + 1][c] == '=')
+                            argv[line + 1][c] = ' '; 
+                    }
+                    strcat(predefPP, argv[line + 1]);
+                    strcat(predefPP, ";");
+                    printf("%s\n", predefPP);
+                    line++;
+                    break;
+                case 8:
+                    strcat(predefPP, "#undef ");
+                    strcat(predefPP, argv[line + 1]);
+                    strcat(predefPP, ";");
+                    line++;
+                    break;
+                case 9:
+                    doParsing = false;
+                    break;
+                case 10:
+                    doAssemble = false;
+                    break;
+                case 11:
+                    doLinker = false;
+                    break;
+                case 12:
+                    printf("\033[1;30mBit-C Compiler created by Chaidhat Chaimongkol\n%s %s\n\n\033[m", __DATE__, __TIME__);
+                    printf("usage: btcc [arg1 arg2 ...] [-h] [-g] <inpath1 inpath2 ...>\n\n" 
+                    "args:\n"
+                    "   -v                   display version info\n"
+                    "   -b                   display benchmarking stats\n"
+                    "   -o <path>            write output to <path>\n"
+                    "   -r <args ...>        run output\n"
+                    "   -g                   verbose compiler debugger\n"
+                    "   -w                   supress all warnings\n"
+                    "\n"
+                    "   -I <dir>             add include path <dir>\n"
+                    "   -D <macro>           predefine <macro>\n"
+                    "   -D <macro>[=val]     set <macro> to [val]\n"
+                    "   -U <macro>           undefine <macro>\n"
+                    "   -E                   stop after preproccessing\n"
+                    "\n"
+                    "   -S                   stop after parsing\n"
+                    "   -c                   do not link. Generate .o\n"
+                    "\n"
+                    "   -h                   display this help\n"
+                    "\n"
+                    );
+                    IoExit(2, __LINE__);
                     break;
                 default:
                     strcpy(inFilepath, argv[line]);
@@ -153,8 +218,8 @@ void IoUI (int argc, char* argv[])
     }
     else
     {
-        printf("usage: btcc [--version] [-m<mode>] [-o<outpath>] <inputpath>\n");
-        IoExit(1, __LINE__);
+        IoErr("no arguments given.\n ./btcc -h for help");
+        IoExit(2, __LINE__);
     }
 }
 
@@ -198,6 +263,10 @@ void IoExit (int code, int debugLine)
             IoLog("Terminated UNsucessfully.");
             if (mode == 0)
                 IoLog("Called from line %d", debugLine);
+            break;
+        case 2:
+            if (mode == 0)
+                IoLog("Terminated calm. Called from line %d", debugLine);
             break;
     }
     exit(0);
