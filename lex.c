@@ -119,7 +119,7 @@ void LexInit ()
 
 void lex ()
 {
-    IoLog("lex");
+    btccLog("lex");
     tokenNo = 0;
     lInit();
     while (1)
@@ -243,8 +243,8 @@ static void readLit ()
         lRec(inpT);
     if (inpCT('\0'))
     {
-        IoErr("lex: unterminated string");
-        IoExit(1, __LINE__);
+        btccErr("lex: unterminated string");
+        btccExit(1, __LINE__);
     }
     logToken(crtToken(T_LIT));
     lClr();
@@ -263,8 +263,8 @@ static void readCom ()
             inp();
             if (inpCT('\0'))
             {
-                IoErr("lex: unterminated comment block");
-                IoExit(1, __LINE__);
+                btccErr("lex: unterminated comment block");
+                btccExit(1, __LINE__);
             }
     }
 }

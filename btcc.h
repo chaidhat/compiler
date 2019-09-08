@@ -38,17 +38,16 @@ bool inpCN (char expect); // confirm next char
 char inpT; // this char
 char inpN; // next char
 
-void IoOpen (char *filename); // opens file
-void IoClose ();
-void IoOutput (char *toFilename); // closes and writes file
-void IoUI (int argc, char* argv[]);
+void inpOpen (char *filename); // opens file
+void inpClose ();
+void inpOutput (char *toFilename); // closes and writes file
 
-void IoPrint (char* suffix, char* format, va_list args );
-void IoLog (char* format, ... );
-void IoWarn (char* format, ... );
-void IoErr (char* format, ... );
+void btccPrint (char* suffix, char* format, va_list args );
+void btccLog (char* format, ... );
+void btccWarn (char* format, ... );
+void btccErr (char* format, ... );
 
-void IoExit (int code, int debugLine);
+void btccExit (int code, int debugLine);
 
 // lex.c
 void lex ();
