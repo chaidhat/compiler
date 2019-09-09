@@ -5,25 +5,6 @@ Token TOKEN_NULL = {0,"NULL",0};
 char lexeme[128];
 int i = 0, j = 0;
 
-#define T_NULL 0
-#define T_LIT 1
-#define T_ID 2
-#define T_KEY 3
-#define T_SEP 4
-#define T_OP 5
-#define T_COM 6
-
-/* TOKEN TYPES
-*  0 - NULL
-*  1 - LITERALS
-*  2 - IDENTIFIERS
-*  3 - KEYWORDS
-*  4 - SEPARATORS
-*  5 - OPERATORS
-*/
-
-typedef unsigned char Type;
-
 //   lexemes
 static void lRec (char in);
 static void lClr ();
@@ -31,8 +12,10 @@ static void lInit ();
 
 static Type getTLexeme (char inLexeme[128]);
 static Type getTChar (char inChar);
+
 static void logToken (Token inToken);
 static void logChar (char inChar);
+
 static Token crtToken (Type type);
 
 static void readLit ();
@@ -81,17 +64,9 @@ const char ReOp[] =
     '!',
 };
 
-Token next ()
-{
-    i++;
-    return crtToken(1);
-    //TODO: a token memory
-}
-
 static void lRec (char in)
 {
     lexeme[j] = in;
-    //printf("%c", in);
     j++;
 }
 
@@ -112,51 +87,6 @@ static void lInit ()
         lexeme[k] = '\0';
 }
 
-void LexInit ()
-{
-    lex();
-}
-
-void lex ()
-{
-    btccLog("lex");
-    tokenNo = 0;
-    lInit();
-    while (1)
-    {
-        char c = inp();
-        if (c == '\0')
-            return;
-        if (c == '\n')
-            c = ' ';
-        
-        Type t = getTChar(c); 
-        switch(t)
-        {
-            case T_NULL:
-                lRec(c);
-                break;
-            case T_LIT:
-                logToken(crtToken(getTLexeme(lexeme)));
-                logChar(c);
-                readLit();
-                break;
-            case T_SEP:
-                logToken(crtToken(getTLexeme(lexeme)));
-                logChar(c);
-                break;
-            case T_OP:
-                logToken(crtToken(getTLexeme(lexeme)));
-                logChar(c);
-                break;
-            case T_COM:
-                readCom();
-                break;
-        }
-
-        //printf("%d ", t);
-    }
-}
 
 
 static Type getTLexeme (char inLexeme[128])
@@ -268,3 +198,66 @@ static void readCom ()
             }
     }
 }
+
+Token next ()
+{
+    tokenNo++;
+    return tokens[tokenNo - 1];
+}
+
+bool peek (const char* expect)
+{
+    if (strncmp(tokens[tokenNo - 1].id,expect,strlen(expect)) == 0)
+        return true;
+    return false;
+}
+
+bool peekType (Type expect)
+{
+    if (tokens[tokenNo - 1].type == expect)
+        return true;
+    return false;
+}
+
+void lex ()
+{
+    btccLog("lex");
+    tokenNo = 0;
+    lInit();
+    while (1)
+    {
+        char c = inp();
+        if (c == '\0')
+            break;
+        if (c == '\n')
+            c = ' ';
+        
+        Type t = getTChar(c); 
+        switch(t)
+        {
+            case T_NULL:
+                lRec(c);
+                break;
+            case T_LIT:
+                logToken(crtToken(getTLexeme(lexeme)));
+                logChar(c);
+                readLit();
+                break;
+            case T_SEP:
+                logToken(crtToken(getTLexeme(lexeme)));
+                logChar(c);
+                break;
+            case T_OP:
+                logToken(crtToken(getTLexeme(lexeme)));
+                logChar(c);
+                break;
+            case T_COM:
+                readCom();
+                break;
+        }
+    }
+    strcpy(lexeme, "EOF\0");
+    logToken(crtToken(T_EOF)); // end of file 
+    tokenNo = 0;
+}
+

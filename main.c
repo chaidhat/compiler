@@ -135,7 +135,7 @@ static void doargs (int argc, char* argv[])
                         i++;
                     if (argv[line][i + 1] != 'b' || argv[line][i + 2] != 't' || argv[line][i + 3] != 'c')
                     {
-                        btccErr("Unexpected file type (expected .btc)");
+                        btccErr("Unexpected file type (expected .btc)\n ./btcc -h for help");
                         btccExit(1, __LINE__);
                     }
                     while (i > 0)
@@ -158,7 +158,7 @@ static void doargs (int argc, char* argv[])
     }
     else
     {
-        btccErr("no arguments given.\n ./btcc -h for help");
+        btccErr("no input arguments.\n ./btcc -h for help");
         btccExit(2, __LINE__);
     }
 }
@@ -174,6 +174,7 @@ int main (int argc, char* argv[])
     printf("\n");
 
     lex();
+    preprocess();
     //preprocess();
     // do code
     //dataBuffer[2] = 'B';
