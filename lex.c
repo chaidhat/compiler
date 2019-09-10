@@ -169,12 +169,13 @@ static Token crtToken (Type type)
 
 static void readLit ()
 {
-    while (!(getTChar(inp()) == T_LIT) && !inpCT('\0'))
+    Pos p = inpPos;
+    while (!(getTChar(inp()) == T_LIT) && !inpCT('\0') && !inpCT('\n'))
         lRec(inpT);
-    if (inpCT('\0'))
+    if (inpCT('\0') || inpCT('\n'))
     {
-        btccErr("lex: unterminated string");
-        btccExit(1, __LINE__);
+        inpPos = p;
+        btccErrC(200, "unterminated string literal");
     }
     logToken(crtToken(T_LIT));
     lClr();
@@ -182,6 +183,7 @@ static void readLit ()
 
 static void readCom ()
 {
+    Pos p = inpPos;
     if (inpN == '/')
     {
         while (!inpCT('\n') && !inpCT('\0'))
@@ -190,12 +192,19 @@ static void readCom ()
     if (inpN == '*')
     {
         while (!(inpCT('*') && inpCN('/')) && !inpCT('\0'))
+        {
             inp();
-            if (inpCT('\0'))
-            {
-                btccErr("lex: unterminated comment block");
-                btccExit(1, __LINE__);
+            if (inpCT('/') && inpCN('*'))
+            {     
+                inpPos = p;
+                btccErrC(201, "overlapping comment blocks");
             }
+        }
+        if (inpCT('\0'))
+        {
+            inpPos = p;
+            btccErrC(202, "unterminated comment block");
+        }
     }
 }
 
@@ -224,11 +233,16 @@ void lex ()
     btccLog("lex");
     tokenNo = 0;
     lInit();
-    while (1)
+    for (;;)
     {
         char c = inp();
         if (c == '\0')
+        {
+            strcpy(lexeme, "EOF\0");
+            logToken(crtToken(T_EOF)); // end of file 
+            tokenNo = 0;
             break;
+        }
         if (c == '\n')
             c = ' ';
         
@@ -256,8 +270,5 @@ void lex ()
                 break;
         }
     }
-    strcpy(lexeme, "EOF\0");
-    logToken(crtToken(T_EOF)); // end of file 
-    tokenNo = 0;
 }
 

@@ -3,9 +3,8 @@
 char macros[128][128];
 int macroNo = 0;
 
-void preprocess ()
+static void readDirective ()
 {
-    btccLog("preprocess");
     next();
     while (!peekType(T_EOF))
     {
@@ -49,3 +48,8 @@ void preprocess ()
 
     }
 }
+
+void readNext()
+{
+}
+

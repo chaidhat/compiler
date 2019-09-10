@@ -1,6 +1,6 @@
 #include "btcc.h"
 
-static void doargs (int argc, char* argv[])
+static void setDefaults ()
 {
     strcpy(inFilepath, "main.btc");
     strcpy(outFilepath, "$");
@@ -11,6 +11,10 @@ static void doargs (int argc, char* argv[])
     doAssemble = true;
     doLinker = true;
     doWarnings = true;
+}
+static void doargs (int argc, char* argv[])
+{
+    setDefaults ();
 
     if (argc > 1)
     {
@@ -18,11 +22,11 @@ static void doargs (int argc, char* argv[])
         {
             char* args[] =
             {
-                "-v",
+                "-V",
                 "-b",
                 "-o",
                 "-r",
-                "-g",
+                "-v",
                 "-w",
                 "-I",
                 "-D",
@@ -45,7 +49,11 @@ static void doargs (int argc, char* argv[])
             switch (argNo)
             {
                 case 0:
-                    printf("\033[1;30mBit-C Compiler created by Chaidhat Chaimongkol\n%s %s\n\033[m", __DATE__, __TIME__);
+                    printf("\033[1;30mBit-C Compiler created by Chaidhat Chaimongkol\033[m\n"
+                    "compiled on: %s %s\n"
+                    "\n"
+                    , __DATE__, __TIME__);
+                    btccExit(2, __LINE__);
                     break;
                 case 1:
                     doBenchmarking = true; 
@@ -69,7 +77,6 @@ static void doargs (int argc, char* argv[])
                 case 6:
                     strcat(predefPP, "#include ");
                     strcat(predefPP, argv[line + 1]);
-                    strcat(predefPP, ";");
                     line++;
                     break;
                 case 7:
@@ -82,14 +89,11 @@ static void doargs (int argc, char* argv[])
                             argv[line + 1][c] = ' '; 
                     }
                     strcat(predefPP, argv[line + 1]);
-                    strcat(predefPP, ";");
-                    printf("%s\n", predefPP);
                     line++;
                     break;
                 case 8:
                     strcat(predefPP, "#undef ");
                     strcat(predefPP, argv[line + 1]);
-                    strcat(predefPP, ";");
                     line++;
                     break;
                 case 9:
@@ -103,25 +107,25 @@ static void doargs (int argc, char* argv[])
                     break;
                 case 12:
                     printf("\033[1;30mBit-C Compiler created by Chaidhat Chaimongkol\n%s %s\n\n\033[m", __DATE__, __TIME__);
-                    printf("usage: btcc [arg1 arg2 ...] [-h] <inpath1 inpath2 ...>\n\n" 
+                    printf("usage: btcc [-h] [-V] [arg1 arg2 ...] <inpath1 inpath2 ...>\n\n" 
                     "args:\n"
-                    "   -v                   display version info\n"
-                    "   -b                   display benchmarking stats\n"
-                    "   -o <path>            write output to <path>\n"
-                    "   -r <args ...>        run output\n"
-                    "   -g                   verbose compiler debugger\n"
-                    "   -w                   supress all warnings\n"
+                    "   -V                  display version info\n"
+                    "   -b                  display compilation stats once end\n"
+                    "   -o <path>           write output to <path>\n"
+                    "   -r <args ...>       run output\n"
+                    "   -v                  verbose compiler debugger\n"
+                    "   -w                  supress all warnings\n"
                     "\n"
-                    "   -I <dir>             add include path <dir>\n"
-                    "   -D <macro>           predefine <macro>\n"
-                    "   -D <macro>[=val]     set <macro> to [val]\n"
-                    "   -U <macro>           undefine <macro>\n"
-                    "   -E                   stop after preproccessing\n"
+                    "   -I <dir>            add include path <dir>\n"
+                    "   -D <macro>          predefine <macro>\n"
+                    "   -D <macro>[=val]    set <macro> to [val]\n"
+                    "   -U <macro>          undefine <macro>\n"
+                    "   -E                  stop after preproccessing\n"
                     "\n"
-                    "   -S                   stop after parsing\n"
-                    "   -c                   do not link. Generate .o\n"
+                    "   -S                  stop after parsing. do not asm\n"
+                    "   -c                  do not link\n"
                     "\n"
-                    "   -h                   display this help\n"
+                    "   -h                  display this help\n"
                     "\n"
                     );
                     btccExit(2, __LINE__);
@@ -155,6 +159,7 @@ static void doargs (int argc, char* argv[])
                     break;
             }
         }
+        btccLog("%s\n", predefPP); //log predefined preprocessor buffer
     }
     else
     {
@@ -169,12 +174,11 @@ int main (int argc, char* argv[])
     btccLog("Chaidhat Chaimongkol on %s %s", __DATE__, __TIME__);
     btccLog("reading from %s", inFilepath);
     btccLog("writing to %s", outFilepath);
-    btccWarn("verbose debugger enabled");
+    btccLog("verbose debugger enabled");
     inpOpen(inFilepath);
     printf("\n");
 
     lex();
-    preprocess();
     //preprocess();
     // do code
     //dataBuffer[2] = 'B';

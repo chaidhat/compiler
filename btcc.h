@@ -5,8 +5,8 @@
 #define DB_SIZE 2048
 
 // thank you to
-// lexing -   http://www.cse.chalmers.se/edu/year/2015/course/DAT150/lectures/proglang-04.html
 // compiler - http://www.cs.man.ac.uk/~pjj/farrell/compmain.html 
+// lexing -   http://www.cse.chalmers.se/edu/year/2015/course/DAT150/lectures/proglang-04.html
 
 char inFilepath[128];
 char outFilepath[128];
@@ -43,16 +43,14 @@ void inpClose ();
 void inpOutput (char *toFilename); // closes and writes file
 
 // io.c
-void btccPrint (char* suffix, char* format, va_list args );
 void btccLog (char* format, ... );
 void btccWarn (char* format, ... );
+void btccErrC (int eCode, char* format, ... );
 void btccErr (char* format, ... );
 
 void btccExit (int code, int debugLine);
 
 // lex.c
-void lex ();
-
 #define T_NULL 0
 #define T_LIT 1
 #define T_ID 2
@@ -66,7 +64,7 @@ typedef unsigned char Type;
 
 typedef struct
 {
-    unsigned char type;
+    Type type;
     /* TOKEN TYPES
     *  0 - NULL
     *  1 - LITERALS
@@ -85,9 +83,11 @@ Token next ();
 bool peek (const char* expect);
 bool peekType (Type expect);
 
+void lex ();
+
 int tokenNo;
 Token tokens[DB_SIZE];
 
-// pp.c
-void preprocess ();
-
+// cpp.c
+// read
+void readNext();

@@ -47,7 +47,10 @@ char inp ()
     if ((inpN = fgetc(fp)) == EOF)
         inpN = '\0';
     if (inpT == '\n')
+    {
         inpPos.line++;
+        inpPos.h = 0;
+    }
     return inpT;
 }
 
