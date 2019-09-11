@@ -90,7 +90,8 @@ Token next ();
 bool peek (const char* expect);
 bool peekType (Type expect);
 
-void lex ();
+void lexAll ();
+void lex (bool *stop);
 
 int tokenNo;
 Token tokens[DB_SIZE];

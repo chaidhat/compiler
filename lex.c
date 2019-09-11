@@ -175,7 +175,7 @@ static void readLit ()
     if (inpCT('\0') || inpCT('\n'))
     {
         inpPos = p;
-        btccErrC(LEX, "unterminated string literal");
+        btccErrC(LEX, "unterminated '\"'");
     }
     logToken(crtToken(T_LIT));
     lClr();
@@ -197,13 +197,13 @@ static void readCom ()
             if (inpCT('/') && inpCN('*'))
             {     
                 inpPos = p;
-                btccErrC(LEX, "overlapping comment blocks");
+                btccErrC(LEX, "overlapping '/*'. Did not expect '/*'");
             }
         }
         if (inpCT('\0'))
         {
             inpPos = p;
-            btccErrC(LEX, "unterminated comment block");
+            btccErrC(LEX, "unterminated '/*'. Expecting '*/' to close '/*'");
         }
     }
 }
@@ -227,20 +227,28 @@ bool peekType (Type expect)
         return true;
     return false;
 }
-
-void lex ()
+void lexAll ()
 {
-    btccLog("lex");
     tokenNo = 0;
     lInit();
-    for (;;)
+    bool lstop = false;
+    while (!lstop)
+        lex(&lstop);
+}
+
+void lex (bool *stop)
+{
+    bool cont = true;
+    while (cont)
     {
+        cont = false;
         char c = inp();
         if (c == '\0')
         {
             strcpy(lexeme, "EOF\0");
             logToken(crtToken(T_EOF)); // end of file 
             tokenNo = 0;
+            *stop = true;
             break;
         }
         if (c == '\n')
@@ -251,6 +259,7 @@ void lex ()
         {
             case T_NULL:
                 lRec(c);
+                cont = true;
                 break;
             case T_LIT:
                 logToken(crtToken(getTLexeme(lexeme)));

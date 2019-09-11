@@ -8,10 +8,10 @@ static void btccPrint (char* suffix, char* format, va_list args )
   vprintf (buf, args);
 }
 
-static void btccPrintE (int eCode, char* suffix, char* format, va_list args)
+static void btccPrintE (char* suffix, char* format, va_list args)
 {
     char buf[256];
-    snprintf(buf, sizeof buf, "%s:E%d: at %d,%d:  %s %s\033[m\n", inFilepath, eCode, inpPos.line, inpPos.h, suffix, format);
+    snprintf(buf, sizeof buf, "%s: %s on %d,%d: %s\033[m\n", inFilepath, suffix, inpPos.line, inpPos.h,  format);
   vprintf (buf, args);
 }
 
@@ -46,12 +46,12 @@ void btccErrC (enum eCodes eCode, char* format, ... )
     for (int i = 0; i < 128; i++)
         eMsg[i] = '\0';
     strcat(eMsg, "\033[1;31m");
-    if (eCode == FATAL)               { strcat (eMsg, "FATAL COMPILER");  }
-    if (eCode == LEX) { strcat (eMsg, "preprocessor error");  }
-    if (eCode == PP) { strcat (eMsg, "lexical error");  }
-    if (eCode == PARSE) { strcat (eMsg, "parse error");  }
+    if (eCode == FATAL)               { strcat (eMsg, "FATAL ERROR");  }
+    if (eCode == LEX) { strcat (eMsg, "lexical error");  }
+    if (eCode == PP) { strcat (eMsg, "preprocessor error");  }
+    if (eCode == PARSE) { strcat (eMsg, "parsing error");  }
     strcat(eMsg, ":\033[m\033[1;38m");
-    btccPrintE (eCode, eMsg, format, args);
+    btccPrintE (eMsg, format, args);
     va_end (args);
     if (eCode == FATAL) { btccExit(1, 0); }
 }
