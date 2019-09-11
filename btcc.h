@@ -43,9 +43,16 @@ void inpClose ();
 void inpOutput (char *toFilename); // closes and writes file
 
 // io.c
+enum eCodes
+{
+    FATAL,
+    LEX,
+    PP,
+    PARSE,
+};
 void btccLog (char* format, ... );
 void btccWarn (char* format, ... );
-void btccErrC (int eCode, char* format, ... );
+void btccErrC (enum eCodes eCode, char* format, ... );
 void btccErr (char* format, ... );
 
 void btccExit (int code, int debugLine);

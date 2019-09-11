@@ -175,7 +175,7 @@ static void readLit ()
     if (inpCT('\0') || inpCT('\n'))
     {
         inpPos = p;
-        btccErrC(200, "unterminated string literal");
+        btccErrC(LEX, "unterminated string literal");
     }
     logToken(crtToken(T_LIT));
     lClr();
@@ -197,13 +197,13 @@ static void readCom ()
             if (inpCT('/') && inpCN('*'))
             {     
                 inpPos = p;
-                btccErrC(201, "overlapping comment blocks");
+                btccErrC(LEX, "overlapping comment blocks");
             }
         }
         if (inpCT('\0'))
         {
             inpPos = p;
-            btccErrC(202, "unterminated comment block");
+            btccErrC(LEX, "unterminated comment block");
         }
     }
 }

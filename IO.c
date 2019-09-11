@@ -38,7 +38,7 @@ void btccErr (char* format, ... )
     btccPrint("\033[1;31merror:\033[m", format, args);
     va_end (args);
 }
-void btccErrC (int eCode, char* format, ... )
+void btccErrC (enum eCodes eCode, char* format, ... )
 {
     va_list args;
     va_start (args, format);
@@ -46,14 +46,14 @@ void btccErrC (int eCode, char* format, ... )
     for (int i = 0; i < 128; i++)
         eMsg[i] = '\0';
     strcat(eMsg, "\033[1;31m");
-    if (eCode == 0)               { strcat (eMsg, "FATAL UNDEFINED");  }
-    if (eCode > 0 && eCode < 100) { strcat (eMsg, "FATAL COMPILER");  }
-    if (eCode >= 100 && eCode < 200) { strcat (eMsg, "preprocessor error");  }
-    if (eCode >= 200 && eCode < 300) { strcat (eMsg, "lexical error");  }
+    if (eCode == FATAL)               { strcat (eMsg, "FATAL COMPILER");  }
+    if (eCode == LEX) { strcat (eMsg, "preprocessor error");  }
+    if (eCode == PP) { strcat (eMsg, "lexical error");  }
+    if (eCode == PARSE) { strcat (eMsg, "parse error");  }
     strcat(eMsg, ":\033[m\033[1;38m");
     btccPrintE (eCode, eMsg, format, args);
     va_end (args);
-    if (eCode < 100) { btccExit(1, 0); }
+    if (eCode == FATAL) { btccExit(1, 0); }
 }
 
 void btccExit (int code, int debugLine)
