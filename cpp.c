@@ -51,5 +51,11 @@ static void readDirective ()
 
 void readNext()
 {
+    bool lstop = false;
+    while (!lstop)
+    {
+        Token inToken = lex(&lstop);
+        printf("out lex %d %d %s\n", tokenNo, inToken.type, inToken.id);
+    }
 }
 

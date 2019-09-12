@@ -178,7 +178,7 @@ int main (int argc, char* argv[])
     inpOpen(inFilepath);
     printf("\n");
 
-    lexAll();
+    readNext();
     //preprocess();
     // do code
     //dataBuffer[2] = 'B';

@@ -236,48 +236,56 @@ void lexAll ()
         lex(&lstop);
 }
 
-void lex (bool *stop)
+Token lex (bool *stop)
 {
     bool cont = true;
     while (cont)
     {
         cont = false;
-        char c = inp();
-        if (c == '\0')
+        if (getTChar(inpT) != T_NULL)
         {
-            strcpy(lexeme, "EOF\0");
-            logToken(crtToken(T_EOF)); // end of file 
-            tokenNo = 0;
-            *stop = true;
-            break;
+            logChar(inpT);
+
+            // sets inpT to T_NULL so this does not infinite loop
+            inpT = 'a'; 
         }
-        if (c == '\n')
-            c = ' ';
-        
-        Type t = getTChar(c); 
-        switch(t)
+        else
         {
-            case T_NULL:
-                lRec(c);
-                cont = true;
+            char c = inp();
+            if (c == '\0')
+            {
+                strcpy(lexeme, "EOF\0");
+                logToken(crtToken(T_EOF)); // end of file 
+                tokenNo = 0;
+                *stop = true;
                 break;
-            case T_LIT:
-                logToken(crtToken(getTLexeme(lexeme)));
-                logChar(c);
-                readLit();
-                break;
-            case T_SEP:
-                logToken(crtToken(getTLexeme(lexeme)));
-                logChar(c);
-                break;
-            case T_OP:
-                logToken(crtToken(getTLexeme(lexeme)));
-                logChar(c);
-                break;
-            case T_COM:
-                readCom();
-                break;
+            }
+            if (c == '\n')
+                c = ' ';
+            
+            Type t = getTChar(c); 
+            switch(t)
+            {
+                case T_NULL:
+                    lRec(c);
+                    cont = true;
+                    break;
+                case T_LIT:
+                    logToken(crtToken(getTLexeme(lexeme)));
+                    readLit();
+                    break;
+                case T_SEP:
+                    logToken(crtToken(getTLexeme(lexeme)));
+                    break;
+                case T_OP:
+                    logToken(crtToken(getTLexeme(lexeme)));
+                    break;
+                case T_COM:
+                    readCom();
+                    break;
+            }
         }
     }
+    return tokens[tokenNo - 1];
 }
 
