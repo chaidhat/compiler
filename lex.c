@@ -13,8 +13,8 @@ static void lInit ();
 static Type getTLexeme (char inLexeme[128]);
 static Type getTChar (char inChar);
 
-static void logToken (Token inToken);
-static void logChar (char inChar);
+static bool logToken (Token inToken);
+static bool logChar (char inChar);
 
 static Token crtToken (Type type);
 
@@ -135,26 +135,32 @@ static Type getTChar (char inChar)
     //TODO: no error catch
 }
 
-static void logToken (Token inToken)
+static bool logToken (Token inToken)
 {
-    if (strlen(inToken.id) < 1)
-        return;
+    lClr();
+    if (strlen(inToken.id) < 1 || strcmp(inToken.id, " ") == 0)
+    {
+        printf("FAIL TO L %d %d\n", inToken.type, strcmp("#", " "));
+        return false;
+    }
     tokens[tokenNo] = inToken; 
     printf("lex %d %d %s\n", tokenNo, inToken.type, inToken.id);
     tokenNo++;
+    return true;
 }
 
-static void logChar (char inChar)
+static bool logChar (char inChar)
 {
     lClr();
     if (inChar == ' ' || inChar == '"')
-        return;
+        return false;
     Token inToken = crtToken(getTChar(inChar));
     strcpy(inToken.id, " ");
     inToken.id[0] = inChar;
     tokens[tokenNo] = inToken; 
-    printf("lex %d %d %s\n", tokenNo, inToken.type, inToken.id);
+    printf("cex %d %d %s\n", tokenNo, inToken.type, inToken.id);
     tokenNo++;
+    return true;
 }
 
 
@@ -241,49 +247,63 @@ Token lex (bool *stop)
     bool cont = true;
     while (cont)
     {
-        cont = false;
-        if (getTChar(inpT) != T_NULL)
+        if (inpT == '\n')
+            inpT = ' ';
+        printf("a %c %d %d\n", inpT, inpPos.h, getTChar(inpT));
+        if (getTChar(inpT) != T_NULL && inpT != '\0')
         {
-            logChar(inpT);
-
-            // sets inpT to T_NULL so this does not infinite loop
-            inpT = 'a'; 
-        }
-        else
-        {
-            char c = inp();
-            if (c == '\0')
+            if(logChar(inpT))
             {
-                strcpy(lexeme, "EOF\0");
-                logToken(crtToken(T_EOF)); // end of file 
-                tokenNo = 0;
-                *stop = true;
+                inpT = '\0'; 
                 break;
             }
-            if (c == '\n')
-                c = ' ';
-            
-            Type t = getTChar(c); 
-            switch(t)
-            {
-                case T_NULL:
+        }
+        cont = false;
+        char c = inp();
+        if (c == '\0')
+        {
+            strcpy(lexeme, "EOF\0");
+            logToken(crtToken(T_EOF)); // end of file 
+            tokenNo = 0;
+            *stop = true;
+            break;
+        }
+        if (c == '\n')
+            c = ' ';
+        
+        Type t = getTChar(c); 
+        printf("c %c %d %d %s\n", c, inpPos.h, t, lexeme);
+        switch(t)
+        {
+            case T_NULL:
+                lRec(c);
+                cont = true;
+                break;
+            case T_LIT:
+                if (!logToken(crtToken(getTLexeme(lexeme))))
+                {
                     lRec(c);
                     cont = true;
-                    break;
-                case T_LIT:
-                    logToken(crtToken(getTLexeme(lexeme)));
-                    readLit();
-                    break;
-                case T_SEP:
-                    logToken(crtToken(getTLexeme(lexeme)));
-                    break;
-                case T_OP:
-                    logToken(crtToken(getTLexeme(lexeme)));
-                    break;
-                case T_COM:
-                    readCom();
-                    break;
-            }
+                }
+                readLit();
+                break;
+            case T_SEP:
+                if (!logToken(crtToken(getTLexeme(lexeme))))
+                {
+                    lRec(c);
+                    cont = true;
+                }
+                break;
+            case T_OP:
+                if (!logToken(crtToken(getTLexeme(lexeme))))
+                {
+                    lRec(c);
+                    cont = true;
+                }
+                break;
+            case T_COM:
+                readCom();
+                break;
         }
     }
     return tokens[tokenNo - 1];

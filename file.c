@@ -19,6 +19,7 @@ void inpOpen (char *filename)
     inp();
     inpPos.h = -1;
     inpPos.line = 0;
+    inp();
 
 }
 void inpClose ()
