@@ -138,13 +138,13 @@ static Type getTChar (char inChar)
 static bool logToken (Token inToken)
 {
     lClr();
+    // check for no tokens or spaces, do not record
     if (strlen(inToken.id) < 1 || strcmp(inToken.id, " ") == 0)
     {
-        printf("FAIL TO L %d %d\n", inToken.type, strcmp("#", " "));
         return false;
     }
     tokens[tokenNo] = inToken; 
-    printf("lex %d %d %s\n", tokenNo, inToken.type, inToken.id);
+    //printf("lex %d %d %s\n", tokenNo, inToken.type, inToken.id);
     tokenNo++;
     return true;
 }
@@ -158,7 +158,7 @@ static bool logChar (char inChar)
     strcpy(inToken.id, " ");
     inToken.id[0] = inChar;
     tokens[tokenNo] = inToken; 
-    printf("cex %d %d %s\n", tokenNo, inToken.type, inToken.id);
+    //printf("lex %d %d %s\n", tokenNo, inToken.type, inToken.id);
     tokenNo++;
     return true;
 }
@@ -212,6 +212,7 @@ static void readCom ()
             btccErrC(LEX, "unterminated '/*'. Expecting '*/' to close '/*'");
         }
     }
+    inpT = ' ';
 }
 
 Token next ()
@@ -249,7 +250,6 @@ Token lex (bool *stop)
     {
         if (inpT == '\n')
             inpT = ' ';
-        printf("a %c %d %d\n", inpT, inpPos.h, getTChar(inpT));
         if (getTChar(inpT) != T_NULL && inpT != '\0')
         {
             if(logChar(inpT))
@@ -272,7 +272,6 @@ Token lex (bool *stop)
             c = ' ';
         
         Type t = getTChar(c); 
-        printf("c %c %d %d %s\n", c, inpPos.h, t, lexeme);
         switch(t)
         {
             case T_NULL:
@@ -285,6 +284,7 @@ Token lex (bool *stop)
                     lRec(c);
                     cont = true;
                 }
+                cont = false;
                 readLit();
                 break;
             case T_SEP:
@@ -302,6 +302,7 @@ Token lex (bool *stop)
                 }
                 break;
             case T_COM:
+                cont = true;
                 readCom();
                 break;
         }

@@ -55,7 +55,7 @@ void readNext()
     while (!lstop)
     {
         Token inToken = lex(&lstop);
-        printf("OUT         lex %d %d %s\n", tokenNo, inToken.type, inToken.id);
+        printf("cpp lex %d %d %s\n", tokenNo, inToken.type, inToken.id);
     }
 }
 
