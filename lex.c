@@ -2,8 +2,9 @@
 #include "mcc.h"
 
 Token TOKEN_NULL = {0,"NULL",0};
-char lexeme[128];
-int i = 0, j = 0;
+static char lexeme[128];
+static int i = 0, j = 0;
+static int tokenNo = 0;
 
 //   lexemes
 static void lRec (char in);
@@ -181,7 +182,7 @@ static void readLit ()
     if (inpCT('\0') || inpCT('\n'))
     {
         inpPos = p;
-        mccErrC(LEX, "unterminated '\"'");
+        mccErrC(EC_LEX, "unterminated '\"'");
     }
     logToken(crtToken(T_LIT));
     lClr();
@@ -195,7 +196,7 @@ static void readCom ()
         while (!inpCT('\n') && !inpCT('\0'))
             inp();
     }
-    if (inpN == '*')
+    else if (inpN == '*')
     {
         while (!(inpCT('*') && inpCN('/')) && !inpCT('\0'))
         {
@@ -203,34 +204,39 @@ static void readCom ()
             if (inpCT('/') && inpCN('*'))
             {     
                 inpPos = p;
-                mccErrC(LEX, "overlapping '/*'. Did not expect '/*'");
+                mccErrC(EC_LEX, "overlapping '/*'. Did not expect '/*'");
             }
         }
         if (inpCT('\0'))
         {
             inpPos = p;
-            mccErrC(LEX, "unterminated '/*'. Expecting '*/' to close '/*'");
+            mccErrC(EC_LEX, "unterminated '/*'. Expecting '*/' to close '/*'");
         }
         inp();
+    }
+    else
+    {
+        mccErrC(EC_LEX, "unexpected '%c'. Expecting '/' or '*' for comment", inpN);
     }
     inpT = ' ';
 }
 
-bool tokcmpType (Token t, Type type)
+bool tokcmpType (Type type)
 {
-    if (t.type == type)
+    Token t = tokens[tokenNo - 1];
+    if (tokens[tokenNo - 1].type == type)
         return true;
     return false;
 }
 
-bool tokcmpId (Token t, char *id)
+bool tokcmpId (char *id)
 {
-    if (strcmp(t.id, id) == 0)
+    if (strcmp(tokens[tokenNo - 1].id, id) == 0)
         return true;
     return false;
 }
 
-Token lex (bool *stop)
+Token lex ()
 {
     bool cont = true;
     while (cont)
@@ -252,7 +258,7 @@ Token lex (bool *stop)
             strcpy(lexeme, "EOF\0");
             logToken(crtToken(T_EOF)); // end of file 
             tokenNo = 0;
-            *stop = true;
+            isEOF = true;
             break;
         }
         if (c == '\n')
@@ -271,7 +277,6 @@ Token lex (bool *stop)
             case T_SEP:
                 if (!logToken(crtToken(getTLexeme(lexeme))))
                 {
-                    lRec(c);
                     cont = true;
                 }
                 break;

@@ -45,10 +45,10 @@ void inpOutput (char *toFilename); // closes and writes file
 // io.c
 enum eCodes
 {
-    FATAL,
-    LEX,
-    PP,
-    PARSE,
+    EC_FATAL,
+    EC_LEX,
+    EC_PP,
+    EC_PARSE,
 };
 void mccLog (char* format, ... );
 void mccWarn (char* format, ... );
@@ -86,11 +86,12 @@ typedef struct
     Pos pos; // for later stages
 } Token;
 
-Token lex (bool *stop);
-bool tokcmpType (Token t, Type type);
-bool tokcmpId (Token t, char *id);
+Token lex ();
 
-int tokenNo;
+bool isEOF;
+bool tokcmpType (Type type);
+bool tokcmpId (char *id);
+
 Token tokens[DB_SIZE];
 
 // pp.c

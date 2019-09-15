@@ -46,14 +46,14 @@ void mccErrC (enum eCodes eCode, char* format, ... )
     for (int i = 0; i < 128; i++)
         eMsg[i] = '\0';
     strcat(eMsg, "\033[1;31m");
-    if (eCode == FATAL)               { strcat (eMsg, "FATAL ERROR");  }
-    if (eCode == LEX) { strcat (eMsg, "lexical error");  }
-    if (eCode == PP) { strcat (eMsg, "preprocessor error");  }
-    if (eCode == PARSE) { strcat (eMsg, "parsing error");  }
+    if (eCode == EC_FATAL)               { strcat (eMsg, "FATAL ERROR");  }
+    if (eCode == EC_LEX) { strcat (eMsg, "lexical error");  }
+    if (eCode == EC_PP) { strcat (eMsg, "preprocessor error");  }
+    if (eCode == EC_PARSE) { strcat (eMsg, "parsing error");  }
     strcat(eMsg, ":\033[m\033[1;38m");
     mccPrintE (eMsg, format, args);
     va_end (args);
-    if (eCode == FATAL) { mccExit(1, 0); }
+    if (eCode == EC_FATAL) { mccExit(1, 0); }
 }
 
 void mccExit (int code, int debugLine)
