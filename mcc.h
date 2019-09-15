@@ -50,12 +50,12 @@ enum eCodes
     PP,
     PARSE,
 };
-void btccLog (char* format, ... );
-void btccWarn (char* format, ... );
-void btccErrC (enum eCodes eCode, char* format, ... );
-void btccErr (char* format, ... );
+void mccLog (char* format, ... );
+void mccWarn (char* format, ... );
+void mccErrC (enum eCodes eCode, char* format, ... );
+void mccErr (char* format, ... );
 
-void btccExit (int code, int debugLine);
+void mccExit (int code, int debugLine);
 
 // lex.c
 #define T_NULL 0

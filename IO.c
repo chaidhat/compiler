@@ -1,44 +1,44 @@
 #include <stdarg.h>
-#include "btcc.h"
+#include "mcc.h"
 
-static void btccPrint (char* suffix, char* format, va_list args )
+static void mccPrint (char* suffix, char* format, va_list args )
 {
     char buf[256];
-    snprintf(buf, sizeof buf, "btcc: %s %s\n", suffix, format);
+    snprintf(buf, sizeof buf, "mcc: %s %s\n", suffix, format);
   vprintf (buf, args);
 }
 
-static void btccPrintE (char* suffix, char* format, va_list args)
+static void mccPrintE (char* suffix, char* format, va_list args)
 {
     char buf[256];
     snprintf(buf, sizeof buf, "%s: %s on %d,%d: %s\033[m\n", inFilepath, suffix, inpPos.line, inpPos.h,  format);
   vprintf (buf, args);
 }
 
-void btccLog (char* format, ... )
+void mccLog (char* format, ... )
 {
     va_list args;
     va_start (args, format);
     if (mode == 0)
-        btccPrint("", format, args);
+        mccPrint("", format, args);
     va_end (args);
 }
-void btccWarn (char* format, ... )
+void mccWarn (char* format, ... )
 {
     va_list args;
     va_start (args, format);
     if (doWarnings)
-        btccPrint("\033[1;33mwarning:\033[m", format, args);
+        mccPrint("\033[1;33mwarning:\033[m", format, args);
     va_end (args);
 }
-void btccErr (char* format, ... )
+void mccErr (char* format, ... )
 {
     va_list args;
     va_start (args, format);
-    btccPrint("\033[1;31merror:\033[m", format, args);
+    mccPrint("\033[1;31merror:\033[m", format, args);
     va_end (args);
 }
-void btccErrC (enum eCodes eCode, char* format, ... )
+void mccErrC (enum eCodes eCode, char* format, ... )
 {
     va_list args;
     va_start (args, format);
@@ -51,26 +51,26 @@ void btccErrC (enum eCodes eCode, char* format, ... )
     if (eCode == PP) { strcat (eMsg, "preprocessor error");  }
     if (eCode == PARSE) { strcat (eMsg, "parsing error");  }
     strcat(eMsg, ":\033[m\033[1;38m");
-    btccPrintE (eMsg, format, args);
+    mccPrintE (eMsg, format, args);
     va_end (args);
-    if (eCode == FATAL) { btccExit(1, 0); }
+    if (eCode == FATAL) { mccExit(1, 0); }
 }
 
-void btccExit (int code, int debugLine)
+void mccExit (int code, int debugLine)
 {
     switch (code)
     {
         case 0:
-            btccLog("Terminated sucessfully.");
+            mccLog("Terminated sucessfully.");
             break;
         case 1:
-            btccLog("Terminated UNsucessfully.");
+            mccLog("Terminated UNsucessfully.");
             if (mode == 0)
-                btccLog("Called from line %d", debugLine);
+                mccLog("Called from line %d", debugLine);
             break;
         case 2:
             if (mode == 0)
-                btccLog("Terminated calm. Called from line %d", debugLine);
+                mccLog("Terminated calm. Called from line %d", debugLine);
             break;
     }
     exit(0);

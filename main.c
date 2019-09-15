@@ -1,8 +1,8 @@
-#include "btcc.h"
+#include "mcc.h"
 
 static void setDefaults ()
 {
-    strcpy(inFilepath, "main.btc");
+    strcpy(inFilepath, "main.mc");
     strcpy(outFilepath, "$");
     mode = 1; // default mode (compiler debug)s
     doBenchmarking = false;
@@ -49,11 +49,11 @@ static void doargs (int argc, char* argv[])
             switch (argNo)
             {
                 case 0:
-                    printf("\033[1;30mBit-C Compiler created by Chaidhat Chaimongkol\033[m\n"
+                    printf("\033[1;30mMinimal-C Compiler created by Chaidhat Chaimongkol\033[m\n"
                     "compiled on: %s %s\n"
                     "\n"
                     , __DATE__, __TIME__);
-                    btccExit(2, __LINE__);
+                    mccExit(2, __LINE__);
                     break;
                 case 1:
                     doBenchmarking = true; 
@@ -106,8 +106,8 @@ static void doargs (int argc, char* argv[])
                     doLinker = false;
                     break;
                 case 12:
-                    printf("\033[1;30mBit-C Compiler created by Chaidhat Chaimongkol\n%s %s\n\n\033[m", __DATE__, __TIME__);
-                    printf("usage: btcc [-h] [-V] [arg1 arg2 ...] <inpath1 inpath2 ...>\n\n" 
+                    printf("\033[1;30mMinimal-C Compiler created by Chaidhat Chaimongkol\n%s %s\n\n\033[m", __DATE__, __TIME__);
+                    printf("usage: mcc [-h] [-V] [arg1 arg2 ...] <inpath1 inpath2 ...>\n\n" 
                     "args:\n"
                     "   -V                  display version info\n"
                     "   -b                  display compilation stats once end\n"
@@ -128,19 +128,19 @@ static void doargs (int argc, char* argv[])
                     "   -h                  display this help\n"
                     "\n"
                     );
-                    btccExit(2, __LINE__);
+                    mccExit(2, __LINE__);
                     break;
                 default:
                     strcpy(inFilepath, argv[line]);
-                    char btcName[100];
+                    char mcName[100];
                     int i = 0;
                     int j = 0;
                     while (argv[line][i] != '.')
                         i++;
-                    if (argv[line][i + 1] != 'b' || argv[line][i + 2] != 't' || argv[line][i + 3] != 'c')
+                    if (argv[line][i + 1] != 'm' || argv[line][i + 2] != 'c')
                     {
-                        btccErr("Unexpected file type (expected .btc)\n ./btcc -h for help");
-                        btccExit(1, __LINE__);
+                        mccErr("Unexpected file type (expected .mc)\n ./mcc -h for help");
+                        mccExit(1, __LINE__);
                     }
                     while (i > 0)
                     {
@@ -150,31 +150,31 @@ static void doargs (int argc, char* argv[])
                     while (j > 0)
                     {
                         j--;
-                        btcName[j] = argv[line][i + j];
+                        mcName[j] = argv[line][i + j];
                     }
 
                     if (strncmp(outFilepath,"$",strlen("$")) == 0)
-                        strcpy(outFilepath, btcName);
+                        strcpy(outFilepath, mcName);
                         strcat(outFilepath, ".o");
                     break;
             }
         }
-        btccLog("%s\n", predefPP); //log predefined preprocessor buffer
+        mccLog("%s\n", predefPP); //log predefined preprocessor buffer
     }
     else
     {
-        btccErr("no input arguments.\n ./btcc -h for help");
-        btccExit(2, __LINE__);
+        mccErr("no input arguments.\n ./mcc -h for help");
+        mccExit(2, __LINE__);
     }
 }
 
 int main (int argc, char* argv[])
 {
     doargs(argc,argv);
-    btccLog("Chaidhat Chaimongkol on %s %s", __DATE__, __TIME__);
-    btccLog("reading from %s", inFilepath);
-    btccLog("writing to %s", outFilepath);
-    btccLog("verbose debugger enabled");
+    mccLog("Chaidhat Chaimongkol on %s %s", __DATE__, __TIME__);
+    mccLog("reading from %s", inFilepath);
+    mccLog("writing to %s", outFilepath);
+    mccLog("verbose debugger enabled");
     inpOpen(inFilepath);
     printf("\n");
 
@@ -184,7 +184,7 @@ int main (int argc, char* argv[])
     //dataBuffer[2] = 'B';
     inpClose();
     inpOutput(outFilepath);
-    btccExit(0, __LINE__);
+    mccExit(0, __LINE__);
 }
 
 

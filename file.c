@@ -1,4 +1,4 @@
-#include "btcc.h"
+#include "mcc.h"
 
 FILE* fp;
 
@@ -12,8 +12,8 @@ void inpOpen (char *filename)
 
     if (fp == NULL)
     {
-        btccErr("Read error while opening the file %s", filename);
-        btccExit(1, __LINE__);
+        mccErr("Read error while opening the file %s", filename);
+        mccExit(1, __LINE__);
     }
 
     inp();
@@ -34,8 +34,8 @@ void inpOutput (char *toFilename)
 
     if(fp == NULL)
     {
-        btccErr("Write error while opening the file %s", toFilename);
-        btccExit(1, __LINE__);
+        mccErr("Write error while opening the file %s", toFilename);
+        mccExit(1, __LINE__);
     }
 
     fclose(fp);

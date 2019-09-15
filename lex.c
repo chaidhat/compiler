@@ -1,5 +1,5 @@
 #include <ctype.h>
-#include "btcc.h"
+#include "mcc.h"
 
 Token TOKEN_NULL = {0,"NULL",0};
 char lexeme[128];
@@ -181,7 +181,7 @@ static void readLit ()
     if (inpCT('\0') || inpCT('\n'))
     {
         inpPos = p;
-        btccErrC(LEX, "unterminated '\"'");
+        mccErrC(LEX, "unterminated '\"'");
     }
     logToken(crtToken(T_LIT));
     lClr();
@@ -203,13 +203,13 @@ static void readCom ()
             if (inpCT('/') && inpCN('*'))
             {     
                 inpPos = p;
-                btccErrC(LEX, "overlapping '/*'. Did not expect '/*'");
+                mccErrC(LEX, "overlapping '/*'. Did not expect '/*'");
             }
         }
         if (inpCT('\0'))
         {
             inpPos = p;
-            btccErrC(LEX, "unterminated '/*'. Expecting '*/' to close '/*'");
+            mccErrC(LEX, "unterminated '/*'. Expecting '*/' to close '/*'");
         }
         inp();
     }
