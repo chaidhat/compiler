@@ -23,13 +23,14 @@ static void readLit ();
 static void readCom ();
 
 // regular expressions
-const char* ReKeywords[] =
+static const char* ReKeywords[] =
 {
     "define",
+    "if",
     "a",
 };
 
-const char ReSep[] =
+static const char ReSep[] =
 {
     ' ',
     '#',
@@ -49,7 +50,7 @@ const char ReSep[] =
 
 };
 
-const char ReOp[] =
+static const char ReOp[] =
 {
     '=',
     '+',
@@ -276,16 +277,11 @@ Token lex ()
                 break;
             case T_SEP:
                 if (!logToken(crtToken(getTLexeme(lexeme))))
-                {
                     cont = true;
-                }
                 break;
             case T_OP:
                 if (!logToken(crtToken(getTLexeme(lexeme))))
-                {
-                    lRec(c);
                     cont = true;
-                }
                 break;
             case T_COM:
                 readCom();
@@ -293,6 +289,7 @@ Token lex ()
                 break;
         }
     }
-    return tokens[tokenNo - 1];
+    tokT = tokens[tokenNo - 1];
+    return tokT; 
 }
 

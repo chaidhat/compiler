@@ -54,6 +54,7 @@ void mccLog (char* format, ... );
 void mccWarn (char* format, ... );
 void mccErrC (enum eCodes eCode, char* format, ... );
 void mccErr (char* format, ... );
+void mccDoArgs (int argc, char *argv[]);
 
 void mccExit (int code, int debugLine);
 
@@ -89,6 +90,9 @@ typedef struct
 Token lex ();
 
 bool isEOF;
+
+Token tokT;
+
 bool tokcmpType (Type type);
 bool tokcmpId (char *id);
 
@@ -96,5 +100,8 @@ Token tokens[DB_SIZE];
 
 // pp.c
 // read
-//Token readToken(Token t);
-void next();
+void readDefine ();
+void readIf ();
+
+// parse.c
+void next ();

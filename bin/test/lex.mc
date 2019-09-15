@@ -4,14 +4,14 @@ hey;
 sup
 test;
 definea;
-#hey;
+#if hey;
 
 //wow
 a;
 /*wow*/
 b;
 das = "asdf";
-a = 1245;
+a = 1245 * 2;
 //asdf
 
 0984472242;
