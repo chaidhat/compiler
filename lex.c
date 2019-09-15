@@ -211,36 +211,23 @@ static void readCom ()
             inpPos = p;
             btccErrC(LEX, "unterminated '/*'. Expecting '*/' to close '/*'");
         }
+        inp();
     }
     inpT = ' ';
 }
 
-Token next ()
+bool tokcmpType (Token t, Type type)
 {
-    tokenNo++;
-    return tokens[tokenNo - 1];
-}
-
-bool peek (const char* expect)
-{
-    if (strncmp(tokens[tokenNo - 1].id,expect,strlen(expect)) == 0)
+    if (t.type == type)
         return true;
     return false;
 }
 
-bool peekType (Type expect)
+bool tokcmpId (Token t, char *id)
 {
-    if (tokens[tokenNo - 1].type == expect)
+    if (strcmp(t.id, id) == 0)
         return true;
     return false;
-}
-void lexAll ()
-{
-    tokenNo = 0;
-    lInit();
-    bool lstop = false;
-    while (!lstop)
-        lex(&lstop);
 }
 
 Token lex (bool *stop)
@@ -248,8 +235,6 @@ Token lex (bool *stop)
     bool cont = true;
     while (cont)
     {
-        if (inpT == '\n')
-            inpT = ' ';
         if (getTChar(inpT) != T_NULL && inpT != '\0')
         {
             if(logChar(inpT))
@@ -260,6 +245,8 @@ Token lex (bool *stop)
         }
         cont = false;
         char c = inp();
+
+        // preprocessing
         if (c == '\0')
         {
             strcpy(lexeme, "EOF\0");
@@ -279,12 +266,6 @@ Token lex (bool *stop)
                 cont = true;
                 break;
             case T_LIT:
-                if (!logToken(crtToken(getTLexeme(lexeme))))
-                {
-                    lRec(c);
-                    cont = true;
-                }
-                cont = false;
                 readLit();
                 break;
             case T_SEP:
@@ -302,8 +283,8 @@ Token lex (bool *stop)
                 }
                 break;
             case T_COM:
-                cont = true;
                 readCom();
+                cont = true;
                 break;
         }
     }

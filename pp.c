@@ -3,7 +3,7 @@
 char macros[128][128];
 int macroNo = 0;
 
-static void readDirective ()
+/*static void readDirective ()
 {
     next();
     while (!peekType(T_EOF))
@@ -47,15 +47,17 @@ static void readDirective ()
         next();
 
     }
-}
+}*/
 
-void readNext()
+void next()
 {
     bool lstop = false;
     while (!lstop)
     {
         Token inToken = lex(&lstop);
         printf("cpp lex %d %d %s\n", tokenNo, inToken.type, inToken.id);
+        if (tokcmpId(inToken, "#"))
+            printf("directive\n");
     }
 }
 

@@ -86,16 +86,14 @@ typedef struct
     Pos pos; // for later stages
 } Token;
 
-Token next ();
-bool peek (const char* expect);
-bool peekType (Type expect);
-
-void lexAll ();
 Token lex (bool *stop);
+bool tokcmpType (Token t, Type type);
+bool tokcmpId (Token t, char *id);
 
 int tokenNo;
 Token tokens[DB_SIZE];
 
-// cpp.c
+// pp.c
 // read
-void readNext();
+//Token readToken(Token t);
+void next();
