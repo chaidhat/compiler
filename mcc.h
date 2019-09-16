@@ -99,7 +99,6 @@ bool tokcmpId (char *id);
 Token tokens[DB_SIZE];
 
 // pp.c
-// read
 void readDefine ();
 void readIf ();
 
