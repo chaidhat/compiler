@@ -1,40 +1,40 @@
 # Minimal-C Programming Language & Compiler
-### Made by Chaidhat Chaimongkol on 27 August 2019
+### Made by Chaidhat Chaimongkol, starting on 27 August 2019
+
 ## About
-This is a personal project of mine of trying to teach myself...\
-a. how compilers work\
-b. how to write assembly (for an x86_64 Intel architecture)\
-c. modifying the C programming language\
-a fun challenge.\
+This is a personal project of mine of trying to teach myself...
+1. how compilers work
+2. how to write assembly (for an x86_64 Intel architecture)
+3. modifying the C programming language
+
+it's a fun challenge.\
 \
 I aim to develop a very simple, easy to read, inefficient compiler which compiles my variant of C (called Minimal-C or Min-C)
-into x86_64 assembly as a .o. No optimisations, as little confusion as possible (I hope) so that other people can look
+into x86_64 assembly as a *.o* file. No optimisations, as little confusion as possible (I hope) so that other people can look
 at the source code and understand what on earth is going on. 
 ## Minimal-C
 "*C is too powerful*" - no one ever.\
 Minimal-C (Min-C) is my take on a simplified, derated version of the C Programming language.\
 Mainly made because I neither got the skill or patience to fully follow the C ISOs to call it a 'C Compiler'. 
 \
-**What it introduces**
-* nothing
 
-**What it keeps from C**
+**Capabilities**
 * preprocessor statements and macros (#include, #define, #ifdef, etc.)
-* standard Min-C library
-* comments
+* standard Min-C library (<stdmclib>)
+* comments (/, /*, */)
 * data types (char, short, int, double)
 * pointers (*, &)
 * *very* limited use of arrays
 * *very* limited use of strings (char arrays)
-* structs
-* scope
+* basic data structures (structs)
+* code structures & scope ({, })
 * functions
 * if statements
 * control flow (for, while loops)
 * running system commands
 * user I/O
-
-And some operators you might expect
+  
+and some operators you might expect
 
 * arthimetic (+, -, \*, /, %) with parentheses
 * boolean logic (!, &&, ||)
@@ -43,11 +43,14 @@ And some operators you might expect
 * assignment (=)
 * equality testing (!=, ==)
 
+That's it.
 
-## Min-C Compiler 
-Compiles Min-C into x86_64 assembly .o. Then asks linker to link it into a binary
+
+## Min-C Compiler (MCC)
+Compiles Min-C into x86_64 assembly *.o* files then asks linker to link into binaries\
 **What it does**
-* reads input char by char, being lexed and parsed one by one into an AST
-* generates IR based on that AST
-* assemble code from the IR, as an .o file
-* ask the system's linker (ld) to link the file. I ain't writing that.
+1. reads input char by char, being lexed into tokens
+2. preprocesses and parses one by one into an Abstract Syntax Tree in one pass
+3. generate an Intermediate Representation based on that AST
+4. assemble code from the IR, as an *.o* file
+5. ask the system's linker (ld) to link the file. I ain't writing that.
