@@ -12,6 +12,19 @@ it's a fun challenge.\
 I aim to develop a very simple, easy to read, inefficient compiler which compiles my variant of C (called Minimal-C or Min-C)
 into x86_64 assembly as a *.o* file. No optimisations, as little confusion as possible (I hope) so that other people can look
 at the source code and understand what on earth is going on. 
+
+## Install
+Mac & Windows are OK, tested on Mac\
+Please download the repository and cd into it via console prompt or terminal.\
+Make sure [GNU Make is installed](http://gnuwin32.sourceforge.net/packages/make.htm), do
+```
+make
+```
+Source code will be compiled by GNU Make into an executable, mcc.\
+Run the executable with -h flag for instructions.
+```
+./mcc -h
+```
 ## Minimal-C
 "*C is too powerful*" - no one ever.\
 Minimal-C (Min-C) is my take on a simplified, derated version of the C Programming language.\
