@@ -32,29 +32,22 @@ Mainly made because I neither got the skill or patience to fully follow the C IS
 \
 
 **Capabilities**
-* preprocessor statements and macros (#include, #define, #ifdef, etc.)
-* standard Min-C library (<stdmclib>)
-* comments (/, /*, */)
-* data types (char, short, int, double)
-* pointers (*, &)
+* preprocessor statements and macros (`#include`, `#define`, `#ifdef`, etc.)
+* standard Min-C library (`<minclib>`)
+* comments (`/`, `/*`, `*/`)
+* data types (`char`, `short`, `int`, `double`)
+* arthimetic (`+,` `-`, `\*`, `/`, `%`) with parentheses
+* equality testing (`!=`, `==`)
+* pointers (`*`, `&`)
 * *very* limited use of arrays
 * *very* limited use of strings (char arrays)
 * basic data structures (structs)
-* code structures & scope ({, })
+* code structures & scope (`{`, `}`)
 * functions
 * if statements
-* control flow (for, while loops)
+* control flow (`for`, `while` loops)
 * running system commands
 * user I/O
-  
-and some operators you might expect
-
-* arthimetic (+, -, \*, /, %) with parentheses
-* boolean logic (!, &&, ||)
-* bitwise logic (~, &, |, ^)
-* bitwise shift (<<, >>)
-* assignment (=)
-* equality testing (!=, ==)
 
 That's it.
 
