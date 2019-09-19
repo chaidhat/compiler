@@ -24,7 +24,14 @@ int main (int argc, char* argv[])
     inpOpen(inFilepath);
     printf("\n");
 
+    Tree t;
+    Tree child;
+    child = *crtTree("asdjhdsg");
+    t.children[0] = &child;
+    t.children[1] = crtTree("ma");
+
     next();
+    printf("n %s %s\n", t.children[0]->id, t.children[1]->id);
     //preprocess();
     // do code
     //dataBuffer[2] = 'B';

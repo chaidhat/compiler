@@ -59,30 +59,21 @@ void mccDoArgs (int argc, char *argv[]);
 void mccExit (int code, int debugLine);
 
 // lex.c
-#define T_NULL 0
-#define T_LIT 1
-#define T_ID 2
-#define T_KEY 3
-#define T_SEP 4
-#define T_OP 5
-#define T_COM 6
-#define T_EOF 7
-
-typedef unsigned char Type;
+enum TokType
+{
+    T_NULL, // NULL
+    T_LIT,  // LITERALS
+    T_ID,   // IDENTIFIERS
+    T_KEY,  // KEYWORDS
+    T_SEP,  // SEPARATORS
+    T_OP,   // OPERATORS
+    T_COM,  // COMMENTS
+    T_EOF,  // END
+};
 
 typedef struct
 {
-    Type type;
-    /* TOKEN TYPES
-    *  0 - NULL
-    *  1 - LITERALS
-    *  2 - IDENTIFIERS
-    *  3 - KEYWORDS
-    *  4 - SEPARATORS
-    *  5 - OPERATORS
-    *  6 - COMMENTS
-    *  7 - EOF
-    */
+    enum TokType type;
     char id[128]; // both of these are indexes
     Pos pos; // for later stages
 } Token;
@@ -90,10 +81,9 @@ typedef struct
 Token lex ();
 
 bool isEOF;
-
 Token tokT;
 
-bool tokcmpType (Type type);
+bool tokcmpType (enum TokType type);
 bool tokcmpId (char *id);
 
 Token tokens[DB_SIZE];
@@ -104,3 +94,14 @@ void readIf ();
 
 // parse.c
 void next ();
+
+// vec.c
+typedef struct Tree
+{
+    char id[128];
+    struct Tree* children[16]; // neat self-referential struct
+    int noChild;
+} Tree;
+Tree *crtTree (char *id);
+void appendTree (Tree *child, Tree *parent);
+Tree *getTree (Tree *parent, int index);

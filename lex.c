@@ -11,13 +11,13 @@ static void lRec (char in);
 static void lClr ();
 static void lInit ();
 
-static Type getTLexeme (char inLexeme[128]);
-static Type getTChar (char inChar);
+static enum TokType getTLexeme (char inLexeme[128]);
+static enum TokType getTChar (char inChar);
 
 static bool logToken (Token inToken);
 static bool logChar (char inChar);
 
-static Token crtToken (Type type);
+static Token crtToken (enum TokType type);
 
 static void readLit ();
 static void readCom ();
@@ -91,7 +91,7 @@ static void lInit ()
 
 
 
-static Type getTLexeme (char inLexeme[128])
+static enum TokType getTLexeme (char inLexeme[128])
 {
     // check if it is a keyword or lit
     for (int i = 0; i < sizeof(ReKeywords)/sizeof(ReKeywords[0]); i++)
@@ -107,7 +107,7 @@ static Type getTLexeme (char inLexeme[128])
     return T_LIT;
 }
 
-static Type getTChar (char inChar)
+static enum TokType getTChar (char inChar)
 {
     if (inChar == '/')
         return T_COM;
@@ -166,7 +166,7 @@ static bool logChar (char inChar)
 }
 
 
-static Token crtToken (Type type)
+static Token crtToken (enum TokType type)
 {
     Token t = TOKEN_NULL;
     t.type = type;
@@ -222,7 +222,7 @@ static void readCom ()
     inpT = ' ';
 }
 
-bool tokcmpType (Type type)
+bool tokcmpType (enum TokType type)
 {
     Token t = tokens[tokenNo - 1];
     if (tokens[tokenNo - 1].type == type)
@@ -265,7 +265,7 @@ Token lex ()
         if (c == '\n')
             c = ' ';
         
-        Type t = getTChar(c); 
+        enum TokType t = getTChar(c); 
         switch(t)
         {
             case T_NULL:
@@ -286,6 +286,8 @@ Token lex ()
             case T_COM:
                 readCom();
                 cont = true;
+                break;
+            default: // to silence warnings
                 break;
         }
     }
