@@ -1,5 +1,8 @@
 # gitignore for bcc
 
+# binaries
+bin/
+
 # mac files
 *.DS_Store
 

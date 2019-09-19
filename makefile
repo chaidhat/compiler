@@ -3,14 +3,15 @@
 # for the initial makefile template - this is my first time!
 
 CC=cc
-ECC=./mcc
+ECC=$(BDIR)/./mcc
 
 _SRC := $(wildcard *.c)
 _OBJ := $(_SRC:.c=.o) 
 
-TDIR = tests
+BDIR = bin
+TDIR = test
 
-mcc: $(_OBJ)
+$(BDIR)/mcc: $(_OBJ)
 	$(CC) -o $@ $^
 
 # automatically makes, self-test and clean
