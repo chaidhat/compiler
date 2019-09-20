@@ -9,7 +9,7 @@ This is a personal project of mine of trying to teach myself...
 
 it's a fun challenge.\
 \
-I aim to develop a very simple, easy to read, inefficient compiler which compiles my variant of C (called Minimal-C or Min-C)
+I aim to develop a ultra-simple, easy to read, inefficient compiler which compiles my variant of C (called Minimal-C or Min-C)
 into x86_64 assembly as a *.o* file. No optimisations, as little confusion as possible (I hope) so that other people can look
 at the source code and understand what on earth is going on. 
 
@@ -27,36 +27,39 @@ Run the executable with -h flag for instructions.
 ```
 ## Minimal-C
 "*C is too powerful*" - no one ever.\
-Minimal-C (Min-C) is my take on a simplified, derated version of the C Programming language.\
+Minimal-C (Min-C) is my take on a ultra-simplified, derated version of the C Programming language.\
 Mainly made because I neither got the skill or patience to fully follow the C ISOs to call it a 'C Compiler'. 
 \
 
 **Capabilities**
-* preprocessor statements and macros (`#include`, `#define`, `#ifdef`, etc.)
-* standard Min-C library (`<minclib>`)
-* comments (`/`, `/*`, `*/`)
-* data types (`char`, `short`, `int`, `double`)
-* arthimetic (`+,` `-`, `\*`, `/`, `%`) with parentheses
-* equality testing (`!=`, `==`)
+* preprocessor macros (`#include`, `#define`, `#ifdef`, `#endif`)
+* comments (`//`, `/*`, `*/`)
+* data types (`char`, `int`, `double`)
+* char literals (`'`)
+* arithmetic (`+,` `-`, `*`, `/`, `%`) with (`(`, `)`)
+* equality testing (`==`)
 * pointers (`*`, `&`)
-* *very* limited use of arrays
-* *very* limited use of strings (char arrays)
-* basic data structures (structs)
+* *very* limited use of arrays (`[`, `]`)
+* basic data structures (`struct`, `.`)
 * code structures & scope (`{`, `}`)
 * functions
-* if statements
-* control flow (`for`, `while` loops)
-* running system commands
+* if statements (`if`)
+* control flow (`while` loops)
+* running system commands (`system`)
 * user I/O
 
-That's it.
+That's it. 8 keywords, 4 preprocessor tokens,\
+and a charset of `a..z`, `0..9` with 32 symbols `. + - * / % = # & ' ( ) [ ] { }`
 
 
 ## Min-C Compiler (MCC)
 Compiles Min-C into x86_64 assembly *.o* files then asks linker to link into binaries\
 **What it does**
 1. reads input char by char, being lexed into tokens
-2. preprocesses and parses one by one into an Abstract Syntax Tree in one pass
+   * `file.c` and `io.c` take in the source code as a stream
+   * `parse.c` asks for `lex.c` to tokenise into one of `NULL`, `LITERAL`, `PREPROCESSOR`, `IDENTIFIER`, `KEYWORD`, `SEPARATOR`, `OPERATOR`, or `END OF FILE`.
+   * `parse.c` sends any preprocessor tokens to `pp.c`
+2. preprocesses and parses in `parse.c` one by one into an Abstract Syntax Tree in one pass
 3. generate an Intermediate Representation based on that AST
 4. assemble code from the IR, as an *.o* file
 5. ask the system's linker (ld) to link the file. I ain't writing that.
