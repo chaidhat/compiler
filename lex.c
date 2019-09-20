@@ -1,8 +1,11 @@
 #include <ctype.h>
 #include "mcc.h"
 
-Token TOKEN_NULL = {0,"NULL",0};
+const Token TOKEN_NULL = {0,"NULL",0};
+
 static char lexeme[128];
+Token tokens[DB_SIZE];
+
 static int i = 0, j = 0;
 static int tokenNo = 0;
 
@@ -26,7 +29,9 @@ static void readCom ();
 static const char* ReKeywords[] =
 {
     "define",
-    "if",
+    "include",
+    "ifdef",
+    "endif",
     "a",
 };
 

@@ -20,11 +20,12 @@ Make sure [GNU Make is installed](http://gnuwin32.sourceforge.net/packages/make.
 ```
 make
 ```
-Source code will be compiled by GNU Make into an executable, mcc.\
+The source code will be compiled by GNU Make into an executable, mcc in the bin file.\
 Run the executable with -h flag for instructions.
 ```
 ./mcc -h
 ```
+doing `make all` will auto build, self-run an test program and clean the directory.
 ## Minimal-C
 "*C is too powerful*" - no one ever.\
 Minimal-C (Min-C) is my take on a ultra-simplified, derated version of the C Programming language.\
@@ -35,12 +36,12 @@ Mainly made because I neither got the skill or patience to fully follow the C IS
 * preprocessor macros (`#include`, `#define`, `#ifdef`, `#endif`)
 * comments (`//`, `/*`, `*/`)
 * data types (`char`, `int`, `double`)
-* char literals (`'`)
-* arithmetic (`+,` `-`, `*`, `/`, `%`) with (`(`, `)`)
-* equality testing (`==`)
+* arithmetic (`+,` `-`, `*`, `/`) with (`(`, `)`)
+* equality testing (`==`, `>`)
 * pointers (`*`, `&`)
 * *very* limited use of arrays (`[`, `]`)
-* basic data structures (`struct`, `.`)
+* string literals (`"`) to char arrays
+* basic data structures (`struct`, `.`, `,`, `;`)
 * code structures & scope (`{`, `}`)
 * functions
 * if statements (`if`)
@@ -49,7 +50,7 @@ Mainly made because I neither got the skill or patience to fully follow the C IS
 * user I/O
 
 That's it. 8 keywords, 4 preprocessor tokens,\
-and a charset of `a..z`, `0..9` with 32 symbols `. + - * / % = # & ' ( ) [ ] { }`
+and a charset of `a..z`, `0..9` with 18 symbols `. , ; + - * / = # & " > ( ) [ ] { }`
 
 
 ## Min-C Compiler (MCC)

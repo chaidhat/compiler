@@ -137,12 +137,12 @@ void mccDoArgs (int argc, char* argv[])
                     break;
 
                 case 6:
-                    strcat(predefPP, "#include ");
-                    strcat(predefPP, argv[line + 1]);
+                    strcat(include, "#include ");
+                    strcat(include, argv[line + 1]);
                     line++;
                     break;
                 case 7:
-                    strcat(predefPP, "#define ");
+                    strcat(include, "#define ");
                     int c = 0;
                     while (argv[line + 1][c] != '\0')
                     {
@@ -150,12 +150,13 @@ void mccDoArgs (int argc, char* argv[])
                         if (argv[line + 1][c] == '=')
                             argv[line + 1][c] = ' '; 
                     }
-                    strcat(predefPP, argv[line + 1]);
+                    strcat(include, argv[line + 1]);
                     line++;
                     break;
                 case 8:
-                    strcat(predefPP, "#undef ");
-                    strcat(predefPP, argv[line + 1]);
+                    strcat(include, "#define ");
+                    strcat(include, argv[line + 1]);
+                    strcat(include, "0");
                     line++;
                     break;
                 case 9:
@@ -209,6 +210,7 @@ void mccDoArgs (int argc, char* argv[])
                         i--;
                         j++;
                     }
+                    mcName[j] = '\0';
                     while (j > 0)
                     {
                         j--;
@@ -217,11 +219,11 @@ void mccDoArgs (int argc, char* argv[])
 
                     if (strncmp(outFilepath,"$",strlen("$")) == 0)
                         strcpy(outFilepath, mcName);
-                        strcat(outFilepath, ".o");
+                    strcat(outFilepath, ".o");
                     break;
             }
         }
-        mccLog("%s\n", predefPP); //log predefined preprocessor buffer
+        mccLog("%s\n", include); //log predefined preprocessor buffer
     }
     else
     {

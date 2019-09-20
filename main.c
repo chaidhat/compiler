@@ -1,6 +1,6 @@
 #include "mcc.h"
 
-static void setDef ()
+static void init ()
 {
     strcpy(inFilepath, "main.mc");
     strcpy(outFilepath, "$");
@@ -15,7 +15,7 @@ static void setDef ()
 
 int main (int argc, char* argv[])
 {
-    setDef();
+    init();
     mccDoArgs(argc,argv);
     mccLog("Chaidhat Chaimongkol on %s %s", __DATE__, __TIME__);
     mccLog("reading from %s", inFilepath);
@@ -25,25 +25,30 @@ int main (int argc, char* argv[])
     printf("\n");
 
     Tree t;
-    t = *crtTree("a");
-    Tree child = *crtTree("zucker");
-    Tree child2 = *crtTree("gummy");
-    Tree child3 = *crtTree("bon bon");
-    appendTree(&t, &child);
+    t = crtTree("a");
+    Tree child = crtTree("zucker");
+    Tree child2 = crtTree("gummy");
+    Tree child3 = crtTree("bon bon");
+    appendChild(&t, child);
     logTree(&t);
     mccLog("1");
-    appendTree(&t, &child2);
+    appendChild(&t, child2);
     logTree(&t);
     mccLog("2");
-    appendTree(&t, &child3);
+    appendChild(&t, child3);
     logTree(&t);
     mccLog("3");
 
-    deleteTree(&t, "zucker");
+    appendChild(&child2, child3);
+    logTree(&child2);
+    mccLog("4");
+
+    deleteChild(&t, "zucker");
 
 
     next();
     logTree(&t);
+    logTree(&child2);
     //preprocess();
     // do code
     //dataBuffer[2] = 'B';

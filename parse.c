@@ -7,15 +7,19 @@ static void parseDirective ()
     lex();
     if (!tokcmpType(T_KEY))
     {
-        mccErrC(EC_PARSE, "unexpected token \"%s\" after \"#\". Expected preprocessor directive", tokT.id);
+        mccErrC(EC_PARSE, "unexpected token \"%s\" after \"#\". Expected keyword", tokT.id);
         return;
     }
+    else if (tokcmpId("include"))
+        readInclude();
     else if (tokcmpId("define"))
         readDefine();
-    else if (tokcmpId("if"))
+    else if (tokcmpId("ifdef"))
         readIf();
+    else if (tokcmpId("endif"))
+        readEndif();
     else
-        mccErrC(EC_PARSE, "unexpected keyword \"%s\" after \"#\"", tokT.id);
+        mccErrC(EC_PARSE, "unexpected keyword \"%s\" after \"#\". Expected preprocessor directive", tokT.id);
 
         
 }
@@ -23,11 +27,18 @@ static void parseDirective ()
 void next()
 {
     Token inToken = lex();
-    printf("parse lex %d %s\n", inToken.type, inToken.id);
     if (tokcmpId("#"))
         parseDirective();
 
+    if (isIgnore)
+        next();
+    else
+    {
+        printf("parse lex %d %s\n", inToken.type, inToken.id);
+    }
+
     if (!isEOF)
         next();
+
 }
 

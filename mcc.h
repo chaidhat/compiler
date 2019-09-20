@@ -8,11 +8,51 @@
 // compiler - http://www.cs.man.ac.uk/~pjj/farrell/compmain.html 
 // lexing -   http://www.cse.chalmers.se/edu/year/2015/course/DAT150/lectures/proglang-04.html
 
+enum TokType
+{
+    T_NULL, // NULL
+    T_LIT,  // LITERALS
+    T_ID,   // IDENTIFIERS
+    T_KEY,  // KEYWORDS
+    T_SEP,  // SEPARATORS
+    T_OP,   // OPERATORS
+    T_COM,  // COMMENTS
+    T_EOF,  // END
+};
+
+enum eCodes
+{
+    EC_FATAL,
+    EC_LEX,
+    EC_PP,
+    EC_PARSE,
+};
+
+typedef struct
+{
+    int h;
+    int line;
+} Pos;
+
+
+typedef struct
+{
+    enum TokType type;
+    char id[128]; // both of these are indexes
+    Pos pos; // for later stages
+} Token;
+
+typedef struct Tree
+{
+    char id[128];
+    struct Tree *children; // neat self-referential struct
+    int noChild;
+} Tree;
+
+
 char inFilepath[128];
 char outFilepath[128];
 
-// in args
-char predefPP[DB_SIZE];
 
 bool mode;
 bool doBenchmarking;
@@ -24,12 +64,6 @@ bool doLinker;
 bool doWarnings;
 
 // file.c
-typedef struct
-{
-    int h;
-    int line;
-} Pos;
-
 Pos inpPos;
 char inp (); // read next char
 bool inpCT (char expect); // confirm this char
@@ -43,13 +77,6 @@ void inpClose ();
 void inpOutput (char *toFilename); // closes and writes file
 
 // io.c
-enum eCodes
-{
-    EC_FATAL,
-    EC_LEX,
-    EC_PP,
-    EC_PARSE,
-};
 void mccLog (char* format, ... );
 void mccWarn (char* format, ... );
 void mccErrC (enum eCodes eCode, char* format, ... );
@@ -59,24 +86,6 @@ void mccDoArgs (int argc, char *argv[]);
 void mccExit (int code, int debugLine);
 
 // lex.c
-enum TokType
-{
-    T_NULL, // NULL
-    T_LIT,  // LITERALS
-    T_ID,   // IDENTIFIERS
-    T_KEY,  // KEYWORDS
-    T_SEP,  // SEPARATORS
-    T_OP,   // OPERATORS
-    T_COM,  // COMMENTS
-    T_EOF,  // END
-};
-
-typedef struct
-{
-    enum TokType type;
-    char id[128]; // both of these are indexes
-    Pos pos; // for later stages
-} Token;
 
 Token lex ();
 
@@ -86,24 +95,23 @@ Token tokT;
 bool tokcmpType (enum TokType type);
 bool tokcmpId (char *id);
 
-Token tokens[DB_SIZE];
 
 // pp.c
+char include[DB_SIZE];
+
+void readInclude ();
 void readDefine ();
 void readIf ();
+void readEndif ();
 
 // parse.c
+bool isIgnore;
+
 void next ();
 
 // vec.c
-typedef struct Tree
-{
-    char id[128];
-    struct Tree **children; // neat self-referential struct
-    int noChild;
-} Tree;
-Tree *crtTree (char *id);
-void appendTree (Tree *parent, Tree *child);
-bool deleteTree (Tree *parent, char id[128]);
+Tree crtTree (char *id);
+void appendChild (Tree *parent, Tree child);
+bool deleteChild (Tree *parent, char id[128]);
 Tree *getTree (Tree *parent, int index);
 void logTree (Tree *t);

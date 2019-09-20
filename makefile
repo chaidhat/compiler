@@ -12,6 +12,7 @@ BDIR = bin
 TDIR = test
 
 $(BDIR)/mcc: $(_OBJ)
+	$ mkdir -p bin 
 	$(CC) -o $@ $^
 
 # automatically makes, self-test and clean
