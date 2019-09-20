@@ -25,13 +25,25 @@ int main (int argc, char* argv[])
     printf("\n");
 
     Tree t;
-    Tree child;
-    child = *crtTree("asdjhdsg");
-    t.children[0] = &child;
-    t.children[1] = crtTree("ma");
+    t = *crtTree("a");
+    Tree child = *crtTree("zucker");
+    Tree child2 = *crtTree("gummy");
+    Tree child3 = *crtTree("bon bon");
+    appendTree(&t, &child);
+    logTree(&t);
+    mccLog("1");
+    appendTree(&t, &child2);
+    logTree(&t);
+    mccLog("2");
+    appendTree(&t, &child3);
+    logTree(&t);
+    mccLog("3");
+
+    deleteTree(&t, "zucker");
+
 
     next();
-    printf("n %s %s\n", t.children[0]->id, t.children[1]->id);
+    logTree(&t);
     //preprocess();
     // do code
     //dataBuffer[2] = 'B';

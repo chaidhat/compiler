@@ -99,9 +99,11 @@ void next ();
 typedef struct Tree
 {
     char id[128];
-    struct Tree* children[16]; // neat self-referential struct
+    struct Tree **children; // neat self-referential struct
     int noChild;
 } Tree;
 Tree *crtTree (char *id);
-void appendTree (Tree *child, Tree *parent);
+void appendTree (Tree *parent, Tree *child);
+bool deleteTree (Tree *parent, char id[128]);
 Tree *getTree (Tree *parent, int index);
+void logTree (Tree *t);
