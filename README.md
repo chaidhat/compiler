@@ -9,9 +9,7 @@ This is a personal project of mine of trying to teach myself...
 
 it's a fun challenge.\
 \
-I aim to develop a ultra-simple, easy to read, inefficient compiler which compiles my variant of C (called Minimal-C or Min-C)
-into x86_64 assembly as a *.o* file. No optimisations, as little confusion as possible (I hope) so that other people can look
-at the source code and understand what on earth is going on. 
+I aim to develop a ultra-simple, easy to read, inefficient compiler which compiles my variant of C (called Minimalistic-C or Min-C) into x86_64 assembly as a *.o* file. No optimisations, as little confusion as possible (I hope) so that other people can look at the source code and understand what on earth is going on. 
 
 ## Install
 Mac & Windows are OK, tested on Mac\
@@ -26,9 +24,9 @@ Run the executable with -h flag for instructions.
 ./mcc -h
 ```
 doing `make all` will auto build, self-run an test program and clean the directory.
-## Minimal-C
+## Minimalistic-C
 "*C is too powerful*" - no one ever.\
-Minimal-C (Min-C) is my take on a ultra-simplified, derated version of the C Programming language.\
+Minimalisitic-C (Min-C) is my take on a ultra-simplified, derated version of the C Programming language.\
 Mainly made because I neither got the skill or patience to fully follow the C ISOs to call it a 'C Compiler'. 
 \
 
