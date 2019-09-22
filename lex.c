@@ -259,7 +259,8 @@ Token lex ()
         // preprocessing
         if (c == '\0')
         {
-            strcpy(lexeme, "\0");
+            lInit();
+            j = -1;
             tokenNo = 0;
             isEOF = true;
             return crtToken(T_EOF);

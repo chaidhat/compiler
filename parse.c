@@ -21,7 +21,7 @@ static void parseDirective ()
     else if (tokcmpId("endif"))
         readEndif();
     else
-        mccErrC(EC_PARSE, "unexpected keyword \"%s\" after \"#\". Expected preprocessor directive", tokT.id);
+        mccErrC(EC_PARSE, "unexpected keyword \"%s\" after \"#\". Expected preprocessor token", tokT.id);
 
         
 }
@@ -34,7 +34,6 @@ void next()
         if (prevInclude()) 
         {
             isEOF = false;
-            lex();
         }
         return;
     }

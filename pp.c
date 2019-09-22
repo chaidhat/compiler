@@ -1,41 +1,60 @@
 #include "mcc.h"
 
 Tree macros;
-Tree includeDir;
-int ifScope = 0;
+typedef struct
+{
+    char dir[128][128];
+    Pos pos[128];
+    int noFile;
+} Files;
 
-void doInclude (char *inFilepath)
+static Files incFiles;
+static int ifScope = 0;
+static void doInclude (char *inFilepath);
+
+static void doInclude (char *inFilepath)
 {
     inpClose();
     inpOpen(inFilepath);
     mccLog("pp reading from %s", inFilepath);
 }
 
+void ppInit ()
+{
+    incFiles.noFile = 0;
+}
+
 bool prevInclude ()
 {
-    int noChild = includeDir.noChild;
-    if (noChild == 0)
+    int *nf = &incFiles.noFile;
+    if (*nf == 0)
         return false; // end of parsing
     char idir[128];
-    if (noChild == 1)
+    if (*nf == 1)
     {
         strcpy(idir, inFilepath);
     }
     else
     {
-        strcpy(idir, includeDir.children[noChild - 2].id);
+        strcpy(idir, incFiles.dir[*nf - 2]);
     }
-    deleteChild (&includeDir, includeDir.children[noChild - 1].id);
+    *nf = *nf - 1;
+
     doInclude(idir);
+    inpGoto(incFiles.pos[incFiles.noFile]);
     return true;
 }
 
 void readInclude ()
 {
-    mccLog("pp include");
     char inFilepath[128];
     strcpy(inFilepath, lex().id);
-    appendChild(&includeDir, crtTree(inFilepath));
+
+    incFiles.noFile++;
+
+    strcpy(incFiles.dir[incFiles.noFile - 1], inFilepath);
+    incFiles.pos[incFiles.noFile - 1] = inpPos;
+
     doInclude (inFilepath);
 }
 

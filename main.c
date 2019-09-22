@@ -2,6 +2,8 @@
 
 static void init ()
 {
+    ppInit();
+
     strcpy(inFilepath, "main.mc");
     strcpy(outFilepath, "$");
     mode = 1; // default mode (compiler debug)s

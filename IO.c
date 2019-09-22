@@ -11,7 +11,7 @@ static void mccPrint (char* suffix, char* format, va_list args )
 static void mccPrintE (char* suffix, char* format, va_list args)
 {
     char buf[256];
-    snprintf(buf, sizeof buf, "%s: %s on %d,%d: %s\033[m\n", inFilepath, suffix, inpPos.line, inpPos.h,  format);
+    snprintf(buf, sizeof buf, "%s: %s on %d;%d,%d: %s\033[m\n", inFilepath, suffix, inpPos.total, inpPos.line, inpPos.h,  format);
   vprintf (buf, args);
 }
 

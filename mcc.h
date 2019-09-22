@@ -32,6 +32,7 @@ typedef struct
 {
     int h;
     int line;
+    int total;
 } Pos;
 
 
@@ -75,6 +76,7 @@ char inpN; // next char
 void inpOpen (char *filename); // opens file
 void inpClose ();
 void inpOutput (char *toFilename); // closes and writes file
+void inpGoto (Pos pos);
 
 // io.c
 void mccLog (char* format, ... );
@@ -99,6 +101,7 @@ bool tokcmpId (char *id);
 // pp.c
 char include[DB_SIZE];
 
+void ppInit ();
 void readInclude ();
 void readDefine ();
 void readIf ();
@@ -108,7 +111,6 @@ void readEndif ();
 bool isIgnore;
 
 void next ();
-void doInclude (char *inFilepath);
 bool prevInclude ();
 
 // vec.c

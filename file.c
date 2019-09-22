@@ -18,6 +18,7 @@ void inpOpen (char *filename)
 
     inp();
     inpPos.h = -1;
+    inpPos.total = 1;
     inpPos.line = 0;
     isEOF = false;
 
@@ -41,10 +42,17 @@ void inpOutput (char *toFilename)
     fclose(fp);
 }
 
+void inpGoto(Pos pos)
+{
+    for (int i = 0; i < pos.total - 1; i++)
+        inp();
+}
+
 char inp ()
 {
     inpT = inpN; 
     inpPos.h++;
+    inpPos.total++;
     if ((inpN = fgetc(fp)) == EOF)
         inpN = '\0';
     if (inpT == '\n')
