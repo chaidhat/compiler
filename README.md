@@ -6,10 +6,13 @@ This is a personal project of mine of trying to teach myself...
 1. how compilers work
 2. how to write assembly (for an x86_64 Intel architecture)
 3. modifying the C programming language
+4. (teach myself how to use Vim)
 
 it's a fun challenge.\
 \
-I aim to develop a ultra-simple, easy to read, inefficient compiler which compiles my variant of C (called Minimalistic-C or Min-C) into x86_64 assembly as a *.o* file. No optimisations, as little confusion as possible (I hope) so that other people can look at the source code and understand what on earth is going on. 
+I aim to develop a ultra-simple, easy to read, inefficient compiler which compiles my variant of C (called Minimalistic-C or Min-C)
+into x86_64 assembly as a *.o* file. No optimisations, as little confusion as possible (I hope) so that other people can look
+at the source code and understand what on earth is going on. 
 
 ## Install
 Mac & Windows are OK, tested on Mac\
@@ -26,14 +29,14 @@ Run the executable with -h flag for instructions.
 doing `make all` will auto build, self-run an test program and clean the directory.
 ## Minimalistic-C
 "*C is too powerful*" - no one ever.\
-Minimalisitic-C (Min-C) is my take on a ultra-simplified, derated version of the C Programming language.\
-Mainly made because I neither got the skill or patience to fully follow the C ISOs to call it a 'C Compiler'. 
-\
+Minimalistic-C (Min-C) is my take on a ultra-simplified, derated version of the C Programming language.\
+Mainly made because I neither got the skill or patience to fully follow the C ISOs to call it a 'C Compiler'. Note that there are no additional changes to C, only removals.
 
 **Capabilities**
-* preprocessor macros (`#include`, `#define`, `#ifdef`, `#endif`)
+* preprocessor directives (`#include`, `#define`, `#ifdef`, `#endif`)
+* preprocessor macros (`__FILE__`, `__LINE___`, `__TIME__`, `__ASM`, etc.)
 * comments (`//`, `/*`, `*/`)
-* data types (`char`, `int`, `double`)
+* data types (`char`, `int`)
 * arithmetic (`+`, `-`, `*`, `/`) with (`(`, `)`)
 * equality testing (`==`, `>`)
 * pointers (`*`, `&`)
@@ -41,13 +44,12 @@ Mainly made because I neither got the skill or patience to fully follow the C IS
 * string literals (`"`) to char arrays
 * basic data structures (`struct`, `.`, `,`, `;`)
 * code structures & scope (`{`, `}`)
-* functions
-* if statements (`if`)
+* functions (`void`, `return`)
+* if statements (`if`, `else`)
 * control flow (`while` loops)
-* running system commands (`system`)
 * user I/O
 
-That's it. 8 keywords, 4 preprocessor tokens,\
+That's it. 8 keywords, 4 preprocessor directives,\
 and a charset of `a..z`, `0..9` with 18 symbols `. , ; + - * / = # & " > ( ) [ ] { }`
 
 
@@ -56,9 +58,10 @@ Compiles Min-C into x86_64 assembly *.o* files then asks linker to link into bin
 **What it does**
 1. reads input char by char, being lexed into tokens
    * `file.c` and `io.c` take in the source code as a stream
-   * `parse.c` asks for `lex.c` to tokenise into one of `NULL`, `LITERAL`, `PREPROCESSOR`, `IDENTIFIER`, `KEYWORD`, `SEPARATOR`, `OPERATOR`, or `END OF FILE`.
-   * `parse.c` sends any preprocessor tokens to `pp.c`
-2. preprocesses and parses in `parse.c` one by one into an Abstract Syntax Tree in one pass
+   * `parse.c` sends preprocessor directives `#` to `pp.c`
+   * `parse.c` asks for `lex.c` to tokenise into one of `NULL`, `LITERAL`, `PREPROCESSOR`, `IDENTIFIER`, `KEYWORD`, `SEPARATOR`, `OPERATOR`, or `END OF FILE`
+   *  `lex.c` tokenises after sending lexeme to `pp.c` for preprocessing.
+2. preprocesses in `pp.c` and parses in `parse.c` one by one into an Abstract Syntax Tree in one pass
 3. generate an Intermediate Representation based on that AST
 4. assemble code from the IR, as an *.o* file
 5. ask the system's linker (ld) to link the file. I ain't writing that.
