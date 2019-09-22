@@ -18,8 +18,8 @@ $(BDIR)/mcc: $(_OBJ)
 # automatically makes, self-test and clean
 all:
 	$(MAKE) 
-	$(MAKE) test1
 	$(MAKE) clean
+	$(MAKE) test1
 
 test1:
 	$(info ***test1***)

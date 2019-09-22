@@ -1,4 +1,4 @@
-# Minimal-C Programming Language & Compiler
+# Minimalistic-C Programming Language & Compiler
 ### Made by Chaidhat Chaimongkol, starting on 27 August 2019
 
 ## About
@@ -36,7 +36,7 @@ Mainly made because I neither got the skill or patience to fully follow the C IS
 * preprocessor macros (`#include`, `#define`, `#ifdef`, `#endif`)
 * comments (`//`, `/*`, `*/`)
 * data types (`char`, `int`, `double`)
-* arithmetic (`+,` `-`, `*`, `/`) with (`(`, `)`)
+* arithmetic (`+`, `-`, `*`, `/`) with (`(`, `)`)
 * equality testing (`==`, `>`)
 * pointers (`*`, `&`)
 * *very* limited use of arrays (`[`, `]`)

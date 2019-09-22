@@ -24,7 +24,7 @@ int main (int argc, char* argv[])
     inpOpen(inFilepath);
     printf("\n");
 
-    Tree t;
+    /*Tree t;
     t = crtTree("a");
     Tree child = crtTree("zucker");
     Tree child2 = crtTree("gummy");
@@ -44,11 +44,14 @@ int main (int argc, char* argv[])
     mccLog("4");
 
     deleteChild(&t, "zucker");
+    */
 
 
-    next();
-    logTree(&t);
+    while(!isEOF)
+        next();
+    /*logTree(&t);
     logTree(&child2);
+    */
     //preprocess();
     // do code
     //dataBuffer[2] = 'B';

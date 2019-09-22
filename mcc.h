@@ -108,6 +108,8 @@ void readEndif ();
 bool isIgnore;
 
 void next ();
+void doInclude (char *inFilepath);
+bool prevInclude ();
 
 // vec.c
 Tree crtTree (char *id);

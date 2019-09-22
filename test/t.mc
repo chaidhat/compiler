@@ -1,3 +1,7 @@
+ca;
+c;
+#include "test/t.mh"
+//#include "test/u.mh"
 #define a
 hey;
 #define hey

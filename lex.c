@@ -151,7 +151,6 @@ static bool logToken (Token inToken)
         return false;
     }
     tokens[tokenNo] = inToken; 
-    //printf("lex %d %d %s\n", tokenNo, inToken.type, inToken.id);
     tokenNo++;
     return true;
 }
@@ -165,7 +164,6 @@ static bool logChar (char inChar)
     strcpy(inToken.id, " ");
     inToken.id[0] = inChar;
     tokens[tokenNo] = inToken; 
-    //printf("lex %d %d %s\n", tokenNo, inToken.type, inToken.id);
     tokenNo++;
     return true;
 }
@@ -261,11 +259,10 @@ Token lex ()
         // preprocessing
         if (c == '\0')
         {
-            strcpy(lexeme, "EOF\0");
-            logToken(crtToken(T_EOF)); // end of file 
+            strcpy(lexeme, "\0");
             tokenNo = 0;
             isEOF = true;
-            break;
+            return crtToken(T_EOF);
         }
         if (c == '\n')
             c = ' ';
