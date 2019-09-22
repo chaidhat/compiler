@@ -102,6 +102,8 @@ bool tokcmpId (char *id);
 char include[DB_SIZE];
 
 void ppInit ();
+char *ppLexeme (char *lexeme);
+
 void readInclude ();
 void readDefine ();
 void readIf ();

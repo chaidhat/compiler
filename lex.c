@@ -30,7 +30,7 @@ static const char* ReKeywords[] =
 {
     "define",
     "include",
-    "ifdef",
+    "if",
     "endif",
     "a",
 };
@@ -114,7 +114,7 @@ static enum TokType getTLexeme (char inLexeme[128])
 
 static enum TokType getTChar (char inChar)
 {
-    if (inChar == '/')
+    if (inChar == '/' && (inpCN('/') || inpCN('*')))
         return T_COM;
     if (inChar == '"')
         return T_LIT;
@@ -200,7 +200,7 @@ static void readCom ()
         while (!inpCT('\n') && !inpCT('\0'))
             inp();
     }
-    else if (inpN == '*')
+    if (inpN == '*')
     {
         while (!(inpCT('*') && inpCN('/')) && !inpCT('\0'))
         {
@@ -217,10 +217,6 @@ static void readCom ()
             mccErrC(EC_LEX, "unterminated '/*'. Expecting '*/' to close '/*'");
         }
         inp();
-    }
-    else
-    {
-        mccErrC(EC_LEX, "unexpected '%c'. Expecting '/' or '*' for comment", inpN);
     }
     inpT = ' ';
 }
@@ -279,11 +275,11 @@ Token lex ()
                 readLit();
                 break;
             case T_SEP:
-                if (!logToken(crtToken(getTLexeme(lexeme))))
+                if (!logToken(crtToken(getTLexeme(ppLexeme(lexeme)))))
                     cont = true;
                 break;
             case T_OP:
-                if (!logToken(crtToken(getTLexeme(lexeme))))
+                if (!logToken(crtToken(getTLexeme(ppLexeme(lexeme)))))
                     cont = true;
                 break;
             case T_COM:

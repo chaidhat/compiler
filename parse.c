@@ -16,7 +16,7 @@ static void parseDirective ()
         readInclude();
     else if (tokcmpId("define"))
         readDefine();
-    else if (tokcmpId("ifdef"))
+    else if (tokcmpId("if"))
         readIf();
     else if (tokcmpId("endif"))
         readEndif();

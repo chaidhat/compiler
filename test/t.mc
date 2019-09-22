@@ -2,13 +2,13 @@ ca;
 c d;
 #include "test/t.mh"
 cc;
-#define a
+#define a 1
 hey;
-#define hey
+#define hey c
 sup
 test;
 definea;
-#ifdef a
+#if a 1
 
 //wow
 a;
