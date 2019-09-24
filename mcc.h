@@ -18,8 +18,7 @@ enum TokType
     T_OP,   // OPERATORS
     T_COM,  // COMMENTS
     T_EOF,  // END
-};
-
+}; 
 enum eCodes
 {
     EC_FATAL,
@@ -88,11 +87,10 @@ void mccDoArgs (int argc, char *argv[]);
 void mccExit (int code, int debugLine);
 
 // lex.c
-
-Token lex ();
-
 bool isEOF;
 Token tokT;
+
+Token lex ();
 
 bool tokcmpType (enum TokType type);
 bool tokcmpId (char *id);
@@ -111,6 +109,7 @@ void readEndif ();
 
 // parse.c
 bool isIgnore;
+bool isIgnorePP;
 
 void next ();
 bool prevInclude ();

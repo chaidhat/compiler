@@ -265,6 +265,9 @@ Token lex ()
             c = ' ';
         
         enum TokType t = getTChar(c); 
+
+        char l[128];
+        strcpy(l, lexeme);
         switch(t)
         {
             case T_NULL:
@@ -275,11 +278,12 @@ Token lex ()
                 readLit();
                 break;
             case T_SEP:
-                if (!logToken(crtToken(getTLexeme(ppLexeme(lexeme)))))
+                strcpy(lexeme, ppLexeme(l));
+                if (!logToken(crtToken(getTLexeme(lexeme))))
                     cont = true;
                 break;
             case T_OP:
-                if (!logToken(crtToken(getTLexeme(ppLexeme(lexeme)))))
+                if (!logToken(crtToken(getTLexeme(lexeme))))
                     cont = true;
                 break;
             case T_COM:

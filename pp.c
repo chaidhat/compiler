@@ -17,7 +17,7 @@ static FileDir incFiles;
 static Macro macros[128];
 static int ifScope = 0;
 
-static Macro NULL_MACRO = {"\0", "0"};
+static Macro NULL_MACRO = {"\0", "0"}; // \0 is null name and macro with value 0 is undefined
 
 static void doInclude (char *inFilepath);
 
@@ -59,11 +59,21 @@ static void doInclude (char *inFilepath)
 
 char *ppLexeme (char *lexeme)
 {
+    if (isIgnorePP)
+        return lexeme;
+    int i = 0;
+    if (strcmp(lexeme,"\0") == 0)
+        return lexeme;
+    while (strcmp(macros[i].name, lexeme) != 0 && macros[i].name[0] != '\0')
+        i++;
+    if (strcmp(macros[i].name, lexeme) == 0)
+        return macros[i].val;
     return lexeme;
 }
 
 void ppInit ()
 {
+    isIgnorePP = false;
     for (int i = 0; i < 128; i++)
     {
         macros[i].name[0] = '\0';

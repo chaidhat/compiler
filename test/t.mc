@@ -5,7 +5,7 @@ cc;
 #define a 1
 hey;
 #define hey c
-sup
+sup a
 test;
 definea;
 #if a 1

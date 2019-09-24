@@ -6,6 +6,7 @@ static void parseDirective ();
 
 static void parseDirective ()
 {
+    isIgnorePP = true;
     Token inToken = lex();
     if (!tokcmpType(T_KEY))
     {
@@ -22,6 +23,7 @@ static void parseDirective ()
         readEndif();
     else
         mccErrC(EC_PARSE, "unexpected keyword \"%s\" after \"#\". Expected preprocessor token", tokT.id);
+    isIgnorePP = false;
 
         
 }
