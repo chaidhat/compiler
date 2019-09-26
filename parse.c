@@ -1,5 +1,4 @@
 #include "mcc.h"
-
 static void parseDirective ();
 
 static Tree AST;
@@ -51,6 +50,12 @@ void next()
 
     if (PPisIgnore)
         return;
+
+    if (!doParsing)
+    {
+        //TODO: dump
+        return;
+    }
 
     parse(inToken);
 

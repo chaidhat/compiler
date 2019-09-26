@@ -177,6 +177,7 @@ void mccDoArgs (int argc, char* argv[])
                     "\n"
                     "   -h                  display this help\n"
                     "\n"
+                    "inpath only accepts .mc"
                     );
                     mccExit(2, __LINE__);
                     break;
