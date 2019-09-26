@@ -10,14 +10,14 @@
 
 enum TokType
 {
-    T_NULL, // NULL
-    T_LIT,  // LITERALS
-    T_ID,   // IDENTIFIERS
-    T_KEY,  // KEYWORDS
-    T_SEP,  // SEPARATORS
-    T_OP,   // OPERATORS
-    T_COM,  // COMMENTS
-    T_EOF,  // END
+    T_NULL = 0, // NULL
+    T_LIT = 1,  // LITERALS
+    T_ID = 2,   // IDENTIFIERS
+    T_KEY = 3,  // KEYWORDS
+    T_SEP = 4,  // SEPARATORS
+    T_OP = 5,   // OPERATORS
+    T_COM = 6,  // COMMENTS
+    T_EOF = 7,  // END
 }; 
 enum eCodes
 {
@@ -87,10 +87,11 @@ void mccDoArgs (int argc, char *argv[]);
 void mccExit (int code, int debugLine);
 
 // lex.c
-bool isEOF;
-Token tokT;
+void resetEOF();
 
 Token lex ();
+Token peek ();
+Token unlex (int steps);
 
 bool tokcmpType (enum TokType type);
 bool tokcmpId (char *id);
@@ -102,14 +103,17 @@ char include[DB_SIZE];
 void ppInit ();
 char *ppLexeme (char *lexeme);
 
+void predefineMacro (char *name, char *val);
+void predefineInclude (char *dir);
+
 void readInclude ();
 void readDefine ();
 void readIf ();
 void readEndif ();
 
 // parse.c
-bool isIgnore;
-bool isIgnorePP;
+bool PPisIgnore;
+bool PPisIgnoreLex;
 
 void next ();
 bool prevInclude ();

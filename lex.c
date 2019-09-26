@@ -8,6 +8,8 @@ Token tokens[DB_SIZE];
 
 static int i = 0, j = 0;
 static int tokenNo = 0;
+static bool isEOF = false;
+static Token tokT;
 
 //   lexemes
 static void lRec (char in);
@@ -28,31 +30,30 @@ static void readCom ();
 // regular expressions
 static const char* ReKeywords[] =
 {
-    "define",
-    "include",
+    "char",
+    "int",
+    "struct",
+    "void",
+    "return",
     "if",
-    "endif",
-    "a",
+    "else",
+    "while",
 };
 
 static const char ReSep[] =
 {
     ' ',
     '#',
+    '.',
+    ',',
     ';',
-    ':',
     '(',
     ')',
-    '<',
-    '>',
     '[',
     ']',
     '{',
     '}',
-    
-    '.',
-    ',',
-
+    '"',
 };
 
 static const char ReOp[] =
@@ -62,13 +63,8 @@ static const char ReOp[] =
     '-',
     '*',
     '/',
-    '%',
-
     '&',
-    '|',
-    '~',
-    '^',
-    '!',
+    '>',
 };
 
 static void lRec (char in)
@@ -146,7 +142,7 @@ static bool logToken (Token inToken)
 {
     lClr();
     // check for no tokens or spaces, do not record
-    if (strlen(inToken.id) < 1 || strcmp(inToken.id, " ") == 0)
+    if ((strlen(inToken.id) < 1 || strcmp(inToken.id, " ") == 0) && !(inToken.type == T_EOF))
     {
         return false;
     }
@@ -223,7 +219,6 @@ static void readCom ()
 
 bool tokcmpType (enum TokType type)
 {
-    Token t = tokens[tokenNo - 1];
     if (tokens[tokenNo - 1].type == type)
         return true;
     return false;
@@ -236,6 +231,11 @@ bool tokcmpId (char *id)
     return false;
 }
 
+void resetEOF()
+{
+    tokens[tokenNo - 1].type = T_NULL;
+    isEOF = false;
+}
 Token lex ()
 {
     bool cont = true;
@@ -259,7 +259,8 @@ Token lex ()
             j = -1;
             tokenNo = 0;
             isEOF = true;
-            return crtToken(T_EOF);
+            logToken(crtToken(T_EOF));
+            break;
         }
         if (c == '\n')
             c = ' ';
@@ -298,3 +299,13 @@ Token lex ()
     return tokT; 
 }
 
+Token peek ()
+{
+    return tokT;
+}
+
+Token unlex (int steps)
+{
+    tokenNo -= steps;
+    return tokens[tokenNo - 1];
+}

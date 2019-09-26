@@ -23,7 +23,7 @@ all:
 
 test1:
 	$(info ***test1***)
-	$(ECC) -v $(wildcard $(TDIR)/*.mc)
+	$(ECC) -v $(wildcard $(TDIR)/*.mc) -D a 1 -I test/u.mh
     
 clean:
 	rm -f *.o *~ core $(INCDIR)/*~ 

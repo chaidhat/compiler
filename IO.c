@@ -135,28 +135,16 @@ void mccDoArgs (int argc, char* argv[])
                 case 5:
                     doWarnings = false;
                     break;
-
                 case 6:
-                    strcat(include, "#include ");
-                    strcat(include, argv[line + 1]);
+                    predefineInclude(argv[line + 1]);
                     line++;
                     break;
                 case 7:
-                    strcat(include, "#define ");
-                    int c = 0;
-                    while (argv[line + 1][c] != '\0')
-                    {
-                        c++;
-                        if (argv[line + 1][c] == '=')
-                            argv[line + 1][c] = ' '; 
-                    }
-                    strcat(include, argv[line + 1]);
-                    line++;
+                    predefineMacro(argv[line + 1], argv[line + 2]);
+                    line += 2;
                     break;
                 case 8:
-                    strcat(include, "#define ");
-                    strcat(include, argv[line + 1]);
-                    strcat(include, "0");
+                    predefineMacro(argv[line + 1], 0);
                     line++;
                     break;
                 case 9:
@@ -180,8 +168,7 @@ void mccDoArgs (int argc, char* argv[])
                     "   -w                  supress all warnings\n"
                     "\n"
                     "   -I <dir>            add include path <dir>\n"
-                    "   -D <macro>          predefine <macro>\n"
-                    "   -D <macro>[=val]    set <macro> to [val]\n"
+                    "   -D <macro> <val>    set <macro> to <val>\n"
                     "   -U <macro>          undefine <macro>\n"
                     "   -E                  stop after preproccessing\n"
                     "\n"

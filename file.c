@@ -20,7 +20,7 @@ void inpOpen (char *filename)
     inpPos.h = -1;
     inpPos.total = 1;
     inpPos.line = 0;
-    isEOF = false;
+    resetEOF();
 
 }
 void inpClose ()

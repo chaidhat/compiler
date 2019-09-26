@@ -2,18 +2,16 @@
 
 static void parseDirective ();
 
+static Tree AST;
+static void parse (Token t);
 
 
 static void parseDirective ()
 {
-    isIgnorePP = true;
+    PPisIgnoreLex = true;
     Token inToken = lex();
-    if (!tokcmpType(T_KEY))
-    {
-        mccErrC(EC_PARSE, "unexpected token \"%s\" after \"#\". Expected keyword", tokT.id);
-        return;
-    }
-    else if (tokcmpId("include"))
+
+    if (tokcmpId("include"))
         readInclude();
     else if (tokcmpId("define"))
         readDefine();
@@ -22,20 +20,25 @@ static void parseDirective ()
     else if (tokcmpId("endif"))
         readEndif();
     else
-        mccErrC(EC_PARSE, "unexpected keyword \"%s\" after \"#\". Expected preprocessor token", tokT.id);
-    isIgnorePP = false;
+        mccErrC(EC_PARSE, "unexpected keyword \"%s\" after \"#\". Expected preprocessor token", peek().id);
+    PPisIgnoreLex = false;
 
         
+}
+
+static void parse (Token t)
+{
+    printf("parse lex %d %s\n", t.type, t.id);
 }
 
 void next()
 {
     Token inToken = lex();
-    if (isEOF)
+    if (tokcmpType(T_EOF))
     {
         if (prevInclude()) 
         {
-            isEOF = false;
+            resetEOF();
         }
         return;
     }
@@ -46,10 +49,10 @@ void next()
         return;
     }
 
-    if (isIgnore)
+    if (PPisIgnore)
         return;
 
-    printf("parse lex %d %s\n", inToken.type, inToken.id);
+    parse(inToken);
 
 }
 

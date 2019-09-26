@@ -2,8 +2,6 @@
 
 static void init ()
 {
-    ppInit();
-
     strcpy(inFilepath, "main.mc");
     strcpy(outFilepath, "$");
     mode = 1; // default mode (compiler debug)s
@@ -26,8 +24,10 @@ int main (int argc, char* argv[])
     inpOpen(inFilepath);
     printf("\n");
 
-    while(!isEOF)
+    ppInit();
+    do
         next();
+    while (!tokcmpType(T_EOF));
     inpClose();
     inpOutput(outFilepath);
     mccExit(0, __LINE__);

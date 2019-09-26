@@ -21,6 +21,9 @@ static Macro NULL_MACRO = {"\0", "0"}; // \0 is null name and macro with value 0
 
 static void doInclude (char *inFilepath);
 
+static void init ();
+static bool isInit = false;
+
 static void addMacro (char *name, char *val);
 static void delMarco (char *name);
 static Macro *getMacro (char *name);
@@ -52,14 +55,49 @@ static Macro *getMacro (char *name)
 
 static void doInclude (char *inFilepath)
 {
+    mccLog("pp reading from %s", inFilepath);
     inpClose();
     inpOpen(inFilepath);
-    mccLog("pp reading from %s", inFilepath);
+}
+
+static void init ()
+{
+    if (!isInit)
+    {
+        mccLog("initPP");
+        PPisIgnoreLex = false;
+        for (int i = 0; i < 128; i++)
+        {
+            macros[i].name[0] = '\0';
+            macros[i].val[0] = '0';
+        }
+        incFiles.noFile = 0;
+        isInit = true;
+    }
+}
+
+
+void predefineMacro (char *name, char *val)
+{
+    addMacro (name, val);
+}
+
+void predefineInclude (char *dir)
+{
+    init();
+    mccLog(dir);
+
+    incFiles.noFile++;
+
+
+    strcpy(incFiles.dir[incFiles.noFile - 1], dir);
+    incFiles.pos[incFiles.noFile - 1] = inpPos;
+
 }
 
 char *ppLexeme (char *lexeme)
 {
-    if (isIgnorePP)
+    if (PPisIgnoreLex) // PPisIgnoreLex is on when parsing preprocessing directives
         return lexeme;
     int i = 0;
     if (strcmp(lexeme,"\0") == 0)
@@ -73,13 +111,11 @@ char *ppLexeme (char *lexeme)
 
 void ppInit ()
 {
-    isIgnorePP = false;
-    for (int i = 0; i < 128; i++)
+    init();
+    if (incFiles.noFile > 0)
     {
-        macros[i].name[0] = '\0';
-        macros[i].val[0] = '0';
+        doInclude (incFiles.dir[incFiles.noFile - 1]);
     }
-    incFiles.noFile = 0;
 }
 
 bool prevInclude ()
@@ -132,7 +168,7 @@ void readIf ()
     ifScope++;
     if (strcmp(getMacro(macro.id)->val,lex().id) != 0) // does macro not exist
     { 
-        isIgnore = true; // macro does not exists
+        PPisIgnore = true; // macro does not exists
     }
     mccLog("pp if %s = %s", macro.id, getMacro(macro.id)->val);
 }
@@ -142,6 +178,6 @@ void readEndif ()
     ifScope--;
     if (ifScope < 0)
         mccErrC(EC_PP, "unexpected keyword \"endif\". \"endif\" does not close any \"if\"");
-    isIgnore = false;
+    PPisIgnore = false;
     mccLog("pp endif");
 }
