@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
@@ -74,7 +75,8 @@ char inpN; // next char
 
 void inpOpen (char *filename); // opens file
 void inpClose ();
-void inpOutput (char *toFilename); // closes and writes file
+void inpWrite (char *toFilename); // closes and writes file
+void inpAppend (char *inDataBuffer);
 void inpGoto (Pos pos);
 
 // io.c
@@ -91,14 +93,13 @@ void resetEOF();
 
 Token lex ();
 Token peek ();
-Token unlex (int steps);
+Token unlex ();
 
 bool tokcmpType (enum TokType type);
 bool tokcmpId (char *id);
 
 
 // pp.c
-char include[DB_SIZE];
 
 void ppInit ();
 char *ppLexeme (char *lexeme);
@@ -106,17 +107,10 @@ char *ppLexeme (char *lexeme);
 void predefineMacro (char *name, char *val);
 void predefineInclude (char *dir);
 
-void readInclude ();
-void readDefine ();
-void readIf ();
-void readEndif ();
+void next ();
 
 // parse.c
-bool PPisIgnore;
-bool PPisIgnoreLex;
-
-void next ();
-bool prevInclude ();
+void parse (Token t);
 
 // vec.c
 Tree crtTree (char *id);

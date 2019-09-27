@@ -1,0 +1,3 @@
+#define SHORT 1
+a;
+void b () {};

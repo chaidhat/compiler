@@ -177,7 +177,7 @@ void mccDoArgs (int argc, char* argv[])
                     "\n"
                     "   -h                  display this help\n"
                     "\n"
-                    "inpath only accepts .mc"
+                    "inpath only accepts .mc\n"
                     );
                     mccExit(2, __LINE__);
                     break;
@@ -211,7 +211,6 @@ void mccDoArgs (int argc, char* argv[])
                     break;
             }
         }
-        mccLog("%s\n", include); //log predefined preprocessor buffer
     }
     else
     {

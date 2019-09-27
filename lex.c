@@ -7,7 +7,7 @@ static char lexeme[128];
 Token tokens[DB_SIZE];
 
 static int i = 0, j = 0;
-static int tokenNo = 0;
+static int tokenNo = 0, tokenNoActual = 0;
 static bool isEOF = false;
 static Token tokT;
 
@@ -147,6 +147,7 @@ static bool logToken (Token inToken)
         return false;
     }
     tokens[tokenNo] = inToken; 
+    tokenNoActual++;
     tokenNo++;
     return true;
 }
@@ -160,6 +161,7 @@ static bool logChar (char inChar)
     strcpy(inToken.id, " ");
     inToken.id[0] = inChar;
     tokens[tokenNo] = inToken; 
+    tokenNoActual++;
     tokenNo++;
     return true;
 }
@@ -238,9 +240,16 @@ void resetEOF()
 }
 Token lex ()
 {
+    if (tokenNo < tokenNoActual)
+    {
+        tokenNo++;
+        tokT = tokens[tokenNo - 1];
+        return tokT;
+    }
     bool cont = true;
     while (cont)
     {
+        // log char
         if (getTChar(inpT) != T_NULL && inpT != '\0')
         {
             if(logChar(inpT))
@@ -258,6 +267,7 @@ Token lex ()
             lInit();
             j = -1;
             tokenNo = 0;
+            tokenNoActual = 0;
             isEOF = true;
             logToken(crtToken(T_EOF));
             break;
@@ -304,8 +314,9 @@ Token peek ()
     return tokT;
 }
 
-Token unlex (int steps)
+Token unlex ()
 {
-    tokenNo -= steps;
-    return tokens[tokenNo - 1];
+    tokenNo--;
+    tokT = tokens[tokenNo - 1];
+    return tokT;
 }

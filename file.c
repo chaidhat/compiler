@@ -1,4 +1,5 @@
 #include "mcc.h"
+static char datBuf[DB_SIZE];
 
 FILE* fp;
 
@@ -29,7 +30,7 @@ void inpClose ()
 }
 
 // write files
-void inpOutput (char *toFilename)
+void inpWrite (char *toFilename)
 {
     fp = fopen(toFilename, "w"); // write mode
 
@@ -39,9 +40,14 @@ void inpOutput (char *toFilename)
         mccExit(1, __LINE__);
     }
 
+    fprintf(fp,"%s",datBuf);
     fclose(fp);
 }
-
+ 
+void inpAppend (char *inDataBuffer)
+{
+    strcat(datBuf, inDataBuffer);
+}
 void inpGoto(Pos pos)
 {
     for (int i = 0; i < pos.total - 1; i++)

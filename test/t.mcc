@@ -2,6 +2,7 @@ ca;
 c d;
 #include "test/t.mh"
 cc;
+void a () {}
 #define a 1
 hey;
 #define hey c

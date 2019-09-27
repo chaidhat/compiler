@@ -1,63 +1,36 @@
 #include "mcc.h"
-static void parseDirective ();
+
+static bool isFunc ();
 
 static Tree AST;
-static void parse (Token t);
 
 
-static void parseDirective ()
+
+static bool isFunc ()
 {
-    PPisIgnoreLex = true;
-    Token inToken = lex();
-
-    if (tokcmpId("include"))
-        readInclude();
-    else if (tokcmpId("define"))
-        readDefine();
-    else if (tokcmpId("if"))
-        readIf();
-    else if (tokcmpId("endif"))
-        readEndif();
-    else
-        mccErrC(EC_PARSE, "unexpected keyword \"%s\" after \"#\". Expected preprocessor token", peek().id);
-    PPisIgnoreLex = false;
-
-        
-}
-
-static void parse (Token t)
-{
-    printf("parse lex %d %s\n", t.type, t.id);
-}
-
-void next()
-{
-    Token inToken = lex();
-    if (tokcmpType(T_EOF))
+    lex();
+    if (tokcmpType(T_ID))
     {
-        if (prevInclude()) 
+        lex();
+        if (tokcmpId("("))
         {
-            resetEOF();
+            return true;
         }
-        return;
+        unlex();
     }
+    unlex();
+    return false;
+}
 
-    if (tokcmpId("#"))
+void parse (Token t)
+{
+    mccLog("parse lex %d %s", t.type, t.id);
+    if (isFunc())
     {
-        parseDirective();
-        return;
+        mccLog("func def");
     }
-
-    if (PPisIgnore)
-        return;
-
-    if (!doParsing)
+    else
     {
-        //TODO: dump
-        return;
     }
-
-    parse(inToken);
-
 }
 

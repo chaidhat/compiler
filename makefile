@@ -2,8 +2,9 @@
 #               https://www.gnu.org/software/make/manual/make.html#Using-Implicit
 # for the initial makefile template - this is my first time!
 
-CC=cc
+CC=gcc
 ECC=$(BDIR)/./mcc
+TESTCMD= -v -D c 1 -I test/u.mh
 
 _SRC := $(wildcard *.c)
 _OBJ := $(_SRC:.c=.o) 
@@ -23,7 +24,7 @@ all:
 
 test1:
 	$(info ***test1***)
-	$(ECC) -v $(wildcard $(TDIR)/*.mc) -D a 1 -I test/u.mh
+	@for f in $(wildcard $(TDIR)/*.mc); do $(ECC) $(TESTCMD) $${f} ; done
     
 clean:
 	rm -f *.o *~ core $(INCDIR)/*~ 

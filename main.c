@@ -28,8 +28,9 @@ int main (int argc, char* argv[])
     do
         next();
     while (!tokcmpType(T_EOF));
+    inpAppend("aa");
     inpClose();
-    inpOutput(outFilepath);
+    inpWrite(outFilepath);
     mccExit(0, __LINE__);
 }
 
