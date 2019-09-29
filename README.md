@@ -38,19 +38,20 @@ Mainly made because I neither got the skill or patience to fully follow the C IS
 * comments (`//`, `/*`, `*/`)
 * data types (`char`, `int`)
 * arithmetic (`+`, `-`, `*`, `/`) with (`(`, `)`)
+* binary logic (`!`, `&&`, `||`)
 * equality testing (`==`, `>`)
 * pointers (`*`, `&`)
 * *very* limited use of arrays (`[`, `]`)
 * string literals (`"`) to char arrays
-* basic data structures (`struct`, `.`, `,`, `;`)
+* basic data structures (`struct`, `union`, `.`, `,`, `;`)
 * code structures & scope (`{`, `}`)
 * functions (`void`, `return`)
-* if statements (`if`, `else`)
+* if statements (`if`)
 * control flow (`while` loops)
 * user I/O
 
 That's it. 8 keywords, 4 preprocessor directives,\
-and a charset of `a..z`, `0..9` with 18 symbols `. , ; + - * / = # & " > ( ) [ ] { }`
+and a charset of `a..z`, `0..9` with 20 symbols `. , ; + - * / = # ! & | " > ( ) [ ] { }`
 
 
 ## Min-C Compiler (MCC)
