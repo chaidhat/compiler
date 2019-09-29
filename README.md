@@ -1,4 +1,4 @@
-# Minimalistic-C Programming Language & Compiler
+# MinimalistiC Programming Language & Compiler
 ### Made by Chaidhat Chaimongkol, starting on 27 August 2019
 
 ## About
@@ -10,7 +10,7 @@ This is a personal project of mine of trying to teach myself...
 
 it's a fun challenge.\
 \
-I aim to develop a ultra-simple, easy to read, inefficient compiler which compiles my variant of C (called Minimalistic-C or Min-C)
+I aim to develop a ultra-simple, easy to read, inefficient compiler which compiles my variant of C (called MinimalistiC or MinC)
 into x86_64 assembly as a *.o* file. No optimisations, as little confusion as possible (I hope) so that other people can look
 at the source code and understand what on earth is going on. 
 
@@ -27,9 +27,9 @@ Run the executable with -h flag for instructions.
 ./mcc -h
 ```
 doing `make all` will auto build, self-run an test program and clean the directory.
-## Minimalistic-C
+## MinimalistiC
 "*C is too powerful*" - no one ever.\
-Minimalistic-C (Min-C) is my take on a ultra-simplified, derated version of the C Programming language.\
+MinimalistiC (MinC) is my take on a ultra-simplified, derated version of the C Programming language.\
 Mainly made because I neither got the skill or patience to fully follow the C ISOs to call it a 'C Compiler'. Note that there are no additional changes to C, only removals.
 
 **Capabilities**
@@ -54,7 +54,7 @@ and a charset of `a..z`, `0..9` with 18 symbols `. , ; + - * / = # & " > ( ) [ ]
 
 
 ## Min-C Compiler (MCC)
-Compiles Min-C into x86_64 assembly *.o* files then asks linker to link into binaries\
+Compiles MinC into x86_64 assembly *.o* files then asks linker to link into binaries\
 **What it does**
 1. reads input char by char, being lexed into tokens
    * `file.c` and `io.c` take in the source code as a stream
