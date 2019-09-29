@@ -58,8 +58,8 @@ Compiles Min-C into x86_64 assembly *.o* files then asks linker to link into bin
 **What it does**
 1. reads input char by char, being lexed into tokens
    * `file.c` and `io.c` take in the source code as a stream
-   * `parse.c` sends preprocessor directives `#` to `pp.c`
-   * `parse.c` asks for `lex.c` to tokenise into one of `NULL`, `LITERAL`, `PREPROCESSOR`, `IDENTIFIER`, `KEYWORD`, `SEPARATOR`, `OPERATOR`, or `END OF FILE`
+   * `pp.c` gets preprocessor directives `#` to parse
+   * `pp.c` asks for `lex.c` to tokenise into one of `NULL`, `LITERAL`, `PREPROCESSOR`, `IDENTIFIER`, `KEYWORD`, `SEPARATOR`, `OPERATOR`, or `END OF FILE`
    *  `lex.c` tokenises after sending lexeme to `pp.c` for preprocessing.
 2. preprocesses in `pp.c` and parses in `parse.c` one by one into an Abstract Syntax Tree in one pass
 3. generate an Intermediate Representation based on that AST
