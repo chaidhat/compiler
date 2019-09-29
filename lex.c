@@ -1,10 +1,11 @@
 #include <ctype.h>
 #include "mcc.h"
 
-const Token TOKEN_NULL = {0,"NULL",0};
 
 static char lexeme[128];
 Token tokens[DB_SIZE];
+
+static const Token TOKEN_NULL = {T_NULL,"NULL",0};
 
 static int i = 0, j = 0;
 static int tokenNo = 0, tokenNoActual = 0;
@@ -221,14 +222,28 @@ static void readCom ()
 
 bool tokcmpType (enum TokType type)
 {
-    if (tokens[tokenNo - 1].type == type)
+    if (tokT.type == type)
         return true;
     return false;
 }
 
 bool tokcmpId (char *id)
 {
-    if (strcmp(tokens[tokenNo - 1].id, id) == 0)
+    if (strcmp(tokT.id, id) == 0)
+        return true;
+    return false;
+}
+
+bool tTokcmpType (Token tok, enum TokType type)
+{
+    if (tok.type == type)
+        return true;
+    return false;
+}
+
+bool tTokcmpId (Token tok, char *id)
+{
+    if (strcmp(tok.id, id) == 0)
         return true;
     return false;
 }
@@ -236,6 +251,7 @@ bool tokcmpId (char *id)
 void resetEOF()
 {
     tokens[tokenNo - 1].type = T_NULL;
+    tokT = tokens[tokenNo - 1];
     isEOF = false;
 }
 Token lex ()

@@ -4,7 +4,8 @@
 
 CC=gcc
 ECC=$(BDIR)/./mcc
-TESTCMD= -v -D c 1 -I test/u.mh
+# TESTCMD= -v -D c 1 -I test/u.mh
+TESTCMD = -v -D c 1
 
 _SRC := $(wildcard *.c)
 _OBJ := $(_SRC:.c=.o) 

@@ -17,7 +17,8 @@ static FileDir incFiles;
 static Macro macros[128];
 static int ifScope = 0;
 
-static Macro NULL_MACRO = {"\0", "0"}; // \0 is null name and macro with value 0 is undefined
+static const Token TOKEN_NULL = {T_NULL,"NULL",0};
+static Macro MACRO_NULL = {"\0", "0"}; // \0 is null name and macro with value 0 is undefined
 
 static void doInclude (char *inFilepath);
 static bool prevInclude ();
@@ -61,7 +62,7 @@ static Macro *getMacro (char *name)
             return &macros[i];
         }
     }
-    return &NULL_MACRO;
+    return &MACRO_NULL;
 }
 
 static void doInclude (char *inFilepath)
@@ -79,7 +80,7 @@ static bool prevInclude ()
     char idir[128];
     if (*nf == 1)
     {
-        strcpy(idir, inFilepath);
+        strcpy(idir, startFilepath);
     }
     else
     {
@@ -203,42 +204,41 @@ char *ppLexeme (char *lexeme)
     return lexeme;
 }
 
-void ppInit ()
+Token ppToken (Token token)
 {
-    init();
-    if (incFiles.noFile > 0)
-    {
-        doInclude (incFiles.dir[incFiles.noFile - 1]);
-    }
-}
-
-void next()
-{
-    Token inToken = lex();
-    if (tokcmpType(T_EOF))
+    if (tTokcmpType(token, T_EOF))
     {
         if (prevInclude()) 
         {
             resetEOF();
         }
-        return;
+        return TOKEN_NULL;
     }
 
-    if (tokcmpId("#"))
+    if (tTokcmpId(token, "#"))
     {
         parseDirective();
-        return;
+        return TOKEN_NULL;
     }
 
     if (PPisIgnore)
-        return;
+        return TOKEN_NULL;
 
     if (!doParsing)
     {
-        inpAppend(inToken.id);
-        return;
+        inpPush(peek().id);
+        return TOKEN_NULL;
     }
 
-    parse(inToken);
-
+    return token;
 }
+
+void ppInit ()
+{
+    init();
+    if (incFiles.noFile > 0)
+    {
+        doInclude(incFiles.dir[incFiles.noFile - 1]);
+    }
+}
+

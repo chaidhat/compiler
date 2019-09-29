@@ -7,6 +7,9 @@
 
 // thank you to
 // compiler - http://www.cs.man.ac.uk/~pjj/farrell/compmain.html 
+//          - http://lisperator.net/pltut/
+// parser   - http://lisperator.net/pltut/parser/
+//          - https://stackoverflow.com/questions/2245962/is-there-an-alternative-for-flex-bison-that-is-usable-on-8-bit-embedded-systems/2336769#2336769
 // lexing -   http://www.cse.chalmers.se/edu/year/2015/course/DAT150/lectures/proglang-04.html
 
 enum TokType
@@ -20,6 +23,13 @@ enum TokType
     T_COM = 6,  // COMMENTS
     T_EOF = 7,  // END
 }; 
+enum InstType
+{
+    IT_NumberInt,
+    IT_NumberChar,
+    IT_String,
+    IT_Cond,
+};
 enum eCodes
 {
     EC_FATAL,
@@ -35,7 +45,6 @@ typedef struct
     int total;
 } Pos;
 
-
 typedef struct
 {
     enum TokType type;
@@ -46,11 +55,33 @@ typedef struct
 typedef struct Tree
 {
     char id[128];
+    enum InstType type;
+    union
+    {
+        struct
+        {
+            int val;
+        } NumberInt;
+        struct
+        {
+            char val;
+        } NumberChar;
+        struct
+        {
+            char val[128];
+        } String;
+        struct
+        {
+            struct Tree *conditional;
+            struct Tree *block;
+        } Cond;
+    } Data;
     struct Tree *children; // neat self-referential struct
     int noChild;
 } Tree;
 
 
+char startFilepath[128];
 char inFilepath[128];
 char outFilepath[128];
 
@@ -76,7 +107,7 @@ char inpN; // next char
 void inpOpen (char *filename); // opens file
 void inpClose ();
 void inpWrite (char *toFilename); // closes and writes file
-void inpAppend (char *inDataBuffer);
+void inpPush (char *inDataBuffer);
 void inpGoto (Pos pos);
 
 // io.c
@@ -97,20 +128,23 @@ Token unlex ();
 
 bool tokcmpType (enum TokType type);
 bool tokcmpId (char *id);
+bool tTokcmpType (Token tok, enum TokType type);
+bool tTokcmpId (Token tok, char *id);
 
 
 // pp.c
 
 void ppInit ();
 char *ppLexeme (char *lexeme);
+Token ppToken (Token token);
 
 void predefineMacro (char *name, char *val);
 void predefineInclude (char *dir);
 
-void next ();
-
 // parse.c
 void parse (Token t);
+
+void next ();
 
 // vec.c
 Tree crtTree (char *id);

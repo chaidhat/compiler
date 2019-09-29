@@ -17,6 +17,8 @@ void inpOpen (char *filename)
         mccExit(1, __LINE__);
     }
 
+    if (strcmp(inFilepath, filename) != 0)
+        strcpy(inFilepath, filename);
     inp();
     inpPos.h = -1;
     inpPos.total = 1;
@@ -44,10 +46,11 @@ void inpWrite (char *toFilename)
     fclose(fp);
 }
  
-void inpAppend (char *inDataBuffer)
+void inpPush (char *inDataBuffer)
 {
     strcat(datBuf, inDataBuffer);
 }
+
 void inpGoto(Pos pos)
 {
     for (int i = 0; i < pos.total - 1; i++)

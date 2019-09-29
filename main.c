@@ -21,6 +21,7 @@ int main (int argc, char* argv[])
     mccLog("reading from %s", inFilepath);
     mccLog("writing to %s", outFilepath);
     mccLog("verbose debugger enabled");
+    strcpy(startFilepath, inFilepath);
     inpOpen(inFilepath);
     printf("\n");
 
@@ -28,7 +29,7 @@ int main (int argc, char* argv[])
     do
         next();
     while (!tokcmpType(T_EOF));
-    inpAppend("aa");
+    inpPush("aa");
     inpClose();
     inpWrite(outFilepath);
     mccExit(0, __LINE__);
