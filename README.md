@@ -1,3 +1,4 @@
+![](https://github.com/Chai112/MinC-Compiler/blob/master/doc/thumb.png)
 # MinimalistiC Programming Language & Compiler
 ### Made by Chaidhat Chaimongkol, starting on 27 August 2019
 
@@ -54,15 +55,15 @@ That's it. 8 keywords, 4 preprocessor directives,\
 and a charset of `a..z`, `0..9` with 20 symbols `. , ; + - * / = # ! & | " > ( ) [ ] { }`
 
 
-## Min-C Compiler (MCC)
+## MinimalistiC Compiler (MCC)
 Compiles MinC into x86_64 assembly *.o* files then asks linker to link into binaries\
 **What it does**
 1. reads input char by char, being lexed into tokens
    * `file.c` and `io.c` take in the source code as a stream
-   * `pp.c` gets preprocessor directives `#` to parse
-   * `pp.c` asks for `lex.c` to tokenise into one of `NULL`, `LITERAL`, `PREPROCESSOR`, `IDENTIFIER`, `KEYWORD`, `SEPARATOR`, `OPERATOR`, or `END OF FILE`
-   *  `lex.c` tokenises after sending lexeme to `pp.c` for preprocessing.
-2. preprocesses in `pp.c` and parses in `parse.c` one by one into an Abstract Syntax Tree in one pass
+   * `pp.c` for preprocesses input char stream.
+   * `lex.c` tokenise into one of `NULL`, `LITERAL`, `PREPROCESSOR`, `IDENTIFIER`, `KEYWORD`, `SEPARATOR`, `OPERATOR`, or `END OF FILE`
+   * `pp.c` parses preprocessor directives `#` and macros
+2. parses tokens in `parse.c` one by one into an Abstract Syntax Tree using a top-down recursive descent algorithm
 3. generate an Intermediate Representation based on that AST
 4. assemble code from the IR, as an *.o* file
 5. ask the system's linker (ld) to link the file. I ain't writing that.
