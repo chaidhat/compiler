@@ -7,5 +7,7 @@
 #define ap 1
 ap;
 #include "test/two.mh"
-a () {};
+a 
+b () {};
+int b;
 
