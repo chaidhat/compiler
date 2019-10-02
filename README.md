@@ -1,7 +1,6 @@
-![](https://github.com/Chai112/MinC-Compiler/blob/master/doc/thumb.png)
-# MinimalistiC Programming Language & Compiler
-### Made by Chaidhat Chaimongkol, starting on 27 August 2019
-
+![MinimalistiC Programming Language & Compiler](https://github.com/Chai112/MinC-Compiler/blob/master/doc/thumb.png)
+# MinimalistiC by Chaidhat Chaimongkol
+### started 27.08.19
 ## About
 This is a personal project of mine of trying to teach myself...
 1. how compilers work

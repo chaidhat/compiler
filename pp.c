@@ -166,7 +166,7 @@ static void parseDirective ()
     else if (tokcmpId("endif"))
         readEndif();
     else
-        mccErrC(EC_PARSE, "unexpected keyword \"%s\" after \"#\". Expected preprocessor token", peek().id);
+        mccErrC(EC_PP, "unexpected keyword \"%s\" after \"#\". Expected preprocessor token", peek().id);
     PPisIgnoreLex = false;
 
         

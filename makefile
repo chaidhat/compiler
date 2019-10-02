@@ -19,13 +19,14 @@ $(BDIR)/mcc: $(_OBJ)
 
 # automatically makes, self-test and clean
 all:
+	$(MAKE) clean
 	$(MAKE) 
 	$(MAKE) clean
 	$(MAKE) test1
 
 test1:
 	$(info ***test1***)
-	@for f in $(wildcard $(TDIR)/*.mc); do $(ECC) $(TESTCMD) $${f} ; done
+	@for f in $(wildcard $(TDIR)/*.mnc); do $(ECC) $(TESTCMD) $${f} ; done
     
 clean:
 	rm -f *.o *~ core $(INCDIR)/*~ 

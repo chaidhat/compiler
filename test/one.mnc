@@ -8,6 +8,6 @@
 ap;
 #include "test/two.mh"
 a 
-b () {};
+int b () {};
 int b;
 

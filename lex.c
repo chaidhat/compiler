@@ -34,10 +34,10 @@ static const char* ReKeywords[] =
     "char",
     "int",
     "struct",
+    "union",
     "void",
     "return",
     "if",
-    "else",
     "while",
 };
 
@@ -66,6 +66,8 @@ static const char ReOp[] =
     '/',
     '&',
     '>',
+    '!',
+    '|',
 };
 
 static void lRec (char in)
@@ -335,4 +337,29 @@ Token unlex ()
     tokenNo--;
     tokT = tokens[tokenNo - 1];
     return tokT;
+}
+
+bool isLit ()
+{
+    return tokcmpType(T_LIT);
+}
+
+bool isId ()
+{
+    return tokcmpType(T_ID);
+}
+
+bool isKw (char *id)
+{
+    return tokcmpType(T_KEY) && tokcmpId(id);
+}
+
+bool isSep (char *id)
+{
+    return tokcmpType(T_SEP) && tokcmpId(id);
+}
+
+bool isOp (char *id)
+{
+    return tokcmpType(T_OP) && tokcmpId(id);
 }

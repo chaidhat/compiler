@@ -49,7 +49,8 @@ void mccErrC (enum eCodes eCode, char* format, ... )
     if (eCode == EC_FATAL)               { strcat (eMsg, "FATAL ERROR");  }
     if (eCode == EC_LEX) { strcat (eMsg, "lexical error");  }
     if (eCode == EC_PP) { strcat (eMsg, "preprocessor error");  }
-    if (eCode == EC_PARSE) { strcat (eMsg, "parsing error");  }
+    if (eCode == EC_PARSE_SEM) { strcat (eMsg, "parsing semantic error");  }
+    if (eCode == EC_PARSE_SYN) { strcat (eMsg, "parsing syntax error");  }
     strcat(eMsg, ":\033[m\033[1;38m");
     mccPrintE (eMsg, format, args);
     va_end (args);
@@ -159,6 +160,7 @@ void mccDoArgs (int argc, char* argv[])
                 case 12:
                     printf("\033[1;30mMinimal-C Compiler created by Chaidhat Chaimongkol\n%s %s\n\n\033[m", __DATE__, __TIME__);
                     printf("usage: mcc [-h] [-V] [arg1 arg2 ...] <inpath1 inpath2 ...>\n\n" 
+                    "mcc only accepts .mnc as inpath, dir and include accepts any types\n"
                     "args:\n"
                     "   -V                  display version info\n"
                     "   -b                  display compilation stats once end\n"
@@ -177,7 +179,6 @@ void mccDoArgs (int argc, char* argv[])
                     "\n"
                     "   -h                  display this help\n"
                     "\n"
-                    "inpath only accepts .mc\n"
                     );
                     mccExit(2, __LINE__);
                     break;
@@ -188,9 +189,9 @@ void mccDoArgs (int argc, char* argv[])
                     int j = 0;
                     while (argv[line][i] != '.')
                         i++;
-                    if (argv[line][i + 1] != 'm' || argv[line][i + 2] != 'c')
+                    if (argv[line][i + 1] != 'm' || argv[line][i + 2] != 'n' || argv[line][i + 3] != 'c') 
                     {
-                        mccErr("Unexpected file type (expected .mc)\n ./mcc -h for help");
+                        mccErr("Unexpected file type (expected .mnc)\n ./mcc -h for help");
                         mccExit(1, __LINE__);
                     }
                     while (i > 0)
