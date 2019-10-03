@@ -10,6 +10,7 @@ static const Token TOKEN_NULL = {T_NULL,"NULL",0};
 static int i = 0, j = 0;
 static int tokenNo = 0, tokenNoActual = 0;
 static bool isEOF = false;
+static bool isAstr = false;
 static Token tokT;
 
 //   lexemes
@@ -292,7 +293,7 @@ Token lex ()
         }
         if (c == '\n')
             c = ' ';
-        
+
         enum TokType t = getTChar(c); 
 
         char l[128];
@@ -337,6 +338,20 @@ Token unlex ()
     tokenNo--;
     tokT = tokens[tokenNo - 1];
     return tokT;
+}
+
+char *getLit ()
+{
+    if (!tokcmpType(T_LIT))
+        mccErrC(EC_PARSE_SYN, "expected literal");
+    return tokT.id;
+}
+
+char *getId ()
+{
+    if (!tokcmpType(T_ID))
+        mccErrC(EC_PARSE_SYN, "expected identifier");
+    return tokT.id;
 }
 
 bool isLit ()

@@ -4,13 +4,15 @@ static bool isDecl ();
 static bool isFunc ();
 
 static void readDecl (Tree *parent);
-static void readFunc (Tree *oarent);
+static void readFunc (Tree *parent);
 
-static void parseVar (Tree *oarent);
+static void parseType (enum LitType *type, bool *isPtr);
+
+static void parseVar (Tree *parent);
 static void parseFunc (Tree *parent);
 static void parseAssign (Tree *parent);
-static void parseStruct (Tree *oarent);
-static void parseUnion (Tree *oarent);
+static void parseStruct (Tree *parent);
+static void parseUnion (Tree *parent);
 
 static Tree AST;
 
@@ -19,7 +21,9 @@ static bool isDecl ()
 {
     bool ret = false;
     lex();
-    if (isKw("char") || isKw("int") || isKw("void") || isKw("struct") || isKw("union"))
+    if (isKw("struct") || isKw("union"))
+        ret = true;
+    if (isKw("char") || isKw("int") || isKw("void"))
         ret = true;
     unlex();
     return ret;
@@ -44,47 +48,122 @@ static bool isFunc ()
     return ret;
 }
 
+
+
 static void readDecl (Tree *parent)
 {
-    Tree inst;
     lex();
     if (isKw("char") || isKw("int") || isKw("void"))
-        parseVar (parent);
+        parseVar(parent);
     else if (isKw("struct"))
         parseStruct (parent);
     else if (isKw("union"))
         parseUnion (parent);
+    if (!isSep(";")) // happy coincidence that union and struct also need ';' as ending
+        mccErrC(EC_PARSE_SYN, "expected endline ';', instead got '%s'", peek().id);
+}
+
+static void readFunc (Tree *parent)
+{
+    lex();
+    parseFunc(parent);
+
+    lex();
+    if (isSep("{"))
+        mccLog("scope");
+    else if (!isSep(";"))
+        mccErrC(EC_PARSE_SYN, "expected endline ';' or scope '{', instead got '%s'", peek().id);
+    else
+        unlex();
+}
+
+
+
+static void parseType (enum LitType *type, bool *isPtr)
+{
+    if (isKw("char"))
+       *type = LT_CHAR;
+    if (isKw("int"))
+        *type = LT_INT;
+    if (isKw("void"))
+        *type = LT_VOID;
+
+    lex();
+    bool initIsPtr = *isPtr;
+    *isPtr = isOp("*");
+    if (isId())
+        unlex();
+    if (!*isPtr)
+    {
+        *isPtr = initIsPtr;
+        unlex(); // assume it is a list of var declaration
+        unlex();
+        // TODO: mccErrC(EC_PARSE_SYN, "expected identifier or ptr");
+    }
+}
+
+
+
+static void parseVar (Tree *parent)
+{
+    static Tree inst;
+
     unlex();
-}
+    do
+    {
+        lex();
+        parseType(&inst.Inst.Var.varType, &inst.Inst.Var.isPtr);
+        if (inst.Inst.Var.varType == LT_VOID && !inst.Inst.Var.isPtr) 
+            mccErrC(EC_PARSE_SYN, "variable has incomplete type \"void\"");
 
-static void readFunc (Tree *oarent)
-{
-}
+        lex();
+        strcpy(inst.Inst.Var.varName, getId());
+        strcpy(inst.id, getId());
 
+        if (deleteChild(parent, inst.id)) // does this variable already exist?
+            mccErrC(EC_PARSE_SEM, "%s has been declared above", inst.id);
+        appendChild(parent, inst);
 
-
-static void parseVar (Tree *oarent)
-{
-    Tree inst;
-    strcpy(inst.id, "placeholder");
-    inst.type = IT_Var;
+        lex(); // expect "," or ";"
+    } while (isSep(","));
 }
 
 static void parseFunc (Tree *parent)
 {
+    static Tree inst;
+
+    parseType(&inst.Inst.Func.retType, &inst.Inst.Func.isPtr);
+
+    lex();
+    strcpy(inst.id, getId());
+    strcpy(inst.Inst.Func.funcName, getId());
+
+    lex(); // expect "("
+    lex();
+    static Tree parameters;
+    if (!isSep(")"))
+        parseVar(&parameters); // the elegant variable parsing! :D
+    inst.Inst.Func.parameters = &parameters;
+    logTree(inst.Inst.Func.parameters); // debug
+
+    if (deleteChild(parent, inst.id)) // does this variable already exist?
+        mccErrC(EC_PARSE_SEM, "%s has been declared above", inst.id);
+    appendChild(parent, inst);
 }
 
 static void parseAssign (Tree *parent)
 {
 }
 
-static void parseStruct (Tree *oarent)
+static void parseStruct (Tree *parent)
 {
 }
 
-static void parseUnion (Tree *oarent)
+static void parseUnion (Tree *parent)
 {
 }
+
+
 
 void parse (Token t)
 {
@@ -107,6 +186,7 @@ void parse (Token t)
             mccLog("declare");
             readDecl(&AST);
         }
+        logTree(&AST);
     }
     /*else
     {

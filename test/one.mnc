@@ -9,5 +9,5 @@ ap;
 #include "test/two.mh"
 a 
 int b () {};
-int b;
+char *f, aj;
 

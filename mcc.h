@@ -4,13 +4,6 @@
 #include <stdbool.h>
 #define DB_SIZE 2048
 
-// thank you to
-// compiler - http://www.cs.man.ac.uk/~pjj/farrell/compmain.html 
-//          - http://lisperator.net/pltut/
-// parser   - http://lisperator.net/pltut/parser/
-//          - https://stackoverflow.com/questions/2245962/is-there-an-alternative-for-flex-bison-that-is-usable-on-8-bit-embedded-systems/2336769#2336769
-// lexing -   http://www.cse.chalmers.se/edu/year/2015/course/DAT150/lectures/proglang-04.html
-
 enum TokType
 {
     T_NULL = 0, // NULL
@@ -24,9 +17,9 @@ enum TokType
 }; 
 enum LitType
 {
-    LT_Void,
-    LT_Int,
-    LT_Char,
+    LT_CHAR,
+    LT_INT,
+    LT_VOID,
 };
 enum InstType
 {
@@ -86,11 +79,13 @@ typedef struct Tree
         struct
         {
             enum LitType varType; 
+            bool isPtr;
             char varName[128];
         } Var;
         struct
         {
             enum LitType retType;
+            bool isPtr;
             char funcName[128];
             struct Tree *parameters;
             struct Tree *scope;
@@ -102,11 +97,13 @@ typedef struct Tree
         struct
         {
             enum LitType type;
+            bool isPtr;
             LitVal val;
         } Literal;
         struct
         {
             enum LitType type;
+            bool isPtr;
             char varName[128];
         } Id;
         struct
@@ -216,6 +213,8 @@ bool tokcmpId (char *id);
 bool tTokcmpType (Token tok, enum TokType type);
 bool tTokcmpId (Token tok, char *id);
 
+char *getLit ();
+char *getId ();
 bool isLit ();
 bool isId ();
 bool isKw (char *id);
@@ -230,6 +229,7 @@ Token ppToken (Token token);
 
 void predefineMacro (char *name, char *val);
 void predefineInclude (char *dir);
+
 
 
 // parse.c

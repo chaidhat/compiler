@@ -37,10 +37,7 @@ bool deleteChild (Tree *parent, char id[128])
 {
     int i = 0;
     while (i < parent->noChild && strcmp(parent->children[i].id, id) != 0)
-    {
-        printf("%d\n", i);
         i++;
-    }
 
     if (i == parent->noChild)
         return false; // cannot find child
