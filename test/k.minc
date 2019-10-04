@@ -1,0 +1,11 @@
+int a;
+
+int b, c;
+
+char d ();
+
+char e (int ea, int eb);
+
+char f (char fa) 
+{
+}

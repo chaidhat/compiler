@@ -34,10 +34,9 @@ enum InstType
     IT_Call,
     IT_Binary,
     IT_Cond,
-    IT_While,
-    IT_Struct,
-    IT_Union,
-    IT_Scope,
+    IT_Ctrl,
+    IT_Strct,
+    IT_Unin,
 };
 enum eCodes
 {
@@ -46,6 +45,7 @@ enum eCodes
     EC_PP,
     EC_PARSE_SEM,
     EC_PARSE_SYN,
+    EC_PARSE_SYN_FAT,
 };
 
 typedef union
@@ -69,91 +69,108 @@ typedef struct
     Pos pos; // for later stages
 } Token;
 
+typedef struct
+{
+    enum LitType varType; 
+    bool isPtr;
+    char varName[128];
+} Var;
+
+typedef struct
+{
+    enum LitType retType;
+    bool isPtr;
+    char funcName[128];
+    struct Tree *parameters; // only Var
+    struct Tree *scope;
+} Func;
+typedef struct
+{
+    struct Tree *retval; // only Exprsn
+} Ret;
+typedef struct
+{
+    enum LitType type;
+    bool isPtr;
+    LitVal val;
+} Literal; // is Exprsn
+typedef struct
+{
+    enum LitType type;
+    bool isPtr;
+    char varName[128];
+} Id; // is Exprsn
+typedef struct
+{
+    char varName[128];
+    struct Tree *val; // only Exprsn
+} Assign;
+typedef struct
+{
+    Id id;
+} Ptr;
+typedef struct
+{
+    Ptr ptr;
+} Addr;
+typedef struct
+{
+    char funcName[128];
+    struct Tree *args; // only Var
+} Call;
+typedef struct
+{
+    struct Tree *left; // only Exprsn
+    struct Tree *right; // only Exprsn
+    char operation;
+} Binary; // is Exprsn
+typedef struct
+{
+    struct Tree *conditional; // only Exprsn
+    struct Tree *scope;
+} Cond;
+typedef struct
+{
+    struct Tree *conditional; // only Exprsn
+    struct Tree *scope;
+} Ctrl;
+typedef struct
+{
+    char structName[128];
+    struct Tree *vars; // only decl
+} Strct;
+typedef struct
+{
+    char unionName[128];
+    struct Tree *vars; // only decl
+} Unin;
+typedef struct
+{
+    struct Tree *block;
+} Scope;
+
 typedef struct Tree
 {
     char id[128];
     enum InstType type;
     union
     {
+        Var var;
+        Func func;
+        Ret ret;
+        Literal literal;
+        Id id;
+        Assign assign;
+        Ptr ptr;
+        Addr addr;
+        Call call;
+        Binary binary;
+        Cond cond;
+        Ctrl ctrl;
+        Strct strct;
+        Unin unin;
+        Scope scope;
         void *null;
-        struct
-        {
-            enum LitType varType; 
-            bool isPtr;
-            char varName[128];
-        } Var;
-        struct
-        {
-            enum LitType retType;
-            bool isPtr;
-            char funcName[128];
-            struct Tree *parameters;
-            struct Tree *scope;
-        } Func;
-        struct
-        {
-            struct Tree *retval;
-        } Ret;
-        struct
-        {
-            enum LitType type;
-            bool isPtr;
-            LitVal val;
-        } Literal;
-        struct
-        {
-            enum LitType type;
-            bool isPtr;
-            char varName[128];
-        } Id;
-        struct
-        {
-            char varName[128];
-            struct Tree *val;
-        } Assign;
-        struct
-        {
-            struct Tree *var;
-        } Ptr;
-        struct
-        {
-            struct Tree *ptr;
-        } Addr;
-        struct
-        {
-            char funcName[128];
-            struct Tree *args;
-        } Call;
-        struct
-        {
-            struct Tree *left;
-            struct Tree *right;
-            char operation;
-        } Binary;
-        struct
-        {
-            struct Tree *conditional;
-            struct Tree *scope;
-        } Cond;
-        struct
-        {
-            struct Tree *conditional;
-            struct Tree *scope;
-        } While;
-        struct
-        {
-            char structName[128];
-            struct Tree *vars;
-        } Struct;
-        struct
-        {
-            char unionName[128];
-            struct Tree *vars;
-        } Union;
-        struct
-        {
-            struct Tree *block;
-        } Scope;
     } Inst;
     struct Tree *children; // neat self-referential struct
     int noChild;

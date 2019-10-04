@@ -46,15 +46,17 @@ void mccErrC (enum eCodes eCode, char* format, ... )
     for (int i = 0; i < 128; i++)
         eMsg[i] = '\0';
     strcat(eMsg, "\033[1;31m");
-    if (eCode == EC_FATAL)               { strcat (eMsg, "FATAL ERROR");  }
+    bool fat = false;
+    if (eCode == EC_FATAL)               { strcat (eMsg, "*** INTERNAL FATAL ERROR***"); fat = true; }
     if (eCode == EC_LEX) { strcat (eMsg, "lexical error");  }
     if (eCode == EC_PP) { strcat (eMsg, "preprocessor error");  }
     if (eCode == EC_PARSE_SEM) { strcat (eMsg, "parsing semantic error");  }
     if (eCode == EC_PARSE_SYN) { strcat (eMsg, "parsing syntax error");  }
+    if (eCode == EC_PARSE_SYN_FAT) { strcat (eMsg, "***FATAL parsing syntax error***"); fat = true; }
     strcat(eMsg, ":\033[m\033[1;38m");
     mccPrintE (eMsg, format, args);
     va_end (args);
-    if (eCode == EC_FATAL) { mccExit(1, 0); }
+    if (fat) { mccExit(1, 0); }
 }
 
 void mccExit (int code, int debugLine)
@@ -160,7 +162,7 @@ void mccDoArgs (int argc, char* argv[])
                 case 12:
                     printf("\033[1;30mMinimal-C Compiler created by Chaidhat Chaimongkol\n%s %s\n\n\033[m", __DATE__, __TIME__);
                     printf("usage: mcc [-h] [-V] [arg1 arg2 ...] <inpath1 inpath2 ...>\n\n" 
-                    "mcc only accepts .mnc as inpath, dir and include accepts any types\n"
+                    "mcc only accepts .minc as inpath, dir and include accepts any types\n"
                     "args:\n"
                     "   -V                  display version info\n"
                     "   -b                  display compilation stats once end\n"
@@ -189,9 +191,9 @@ void mccDoArgs (int argc, char* argv[])
                     int j = 0;
                     while (argv[line][i] != '.')
                         i++;
-                    if (argv[line][i + 1] != 'm' || argv[line][i + 2] != 'n' || argv[line][i + 3] != 'c') 
+                    if (argv[line][i + 1] != 'm' || argv[line][i + 2] != 'i' ||  argv[line][i + 3] != 'n' || argv[line][i + 4] != 'c') 
                     {
-                        mccErr("Unexpected file type (expected .mnc)\n ./mcc -h for help");
+                        mccErr("Unexpected file type (expected .minc)\n ./mcc -h for help");
                         mccExit(1, __LINE__);
                     }
                     while (i > 0)

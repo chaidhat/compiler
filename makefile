@@ -26,7 +26,7 @@ all:
 
 test1:
 	$(info ***test1***)
-	@for f in $(wildcard $(TDIR)/*.mnc); do $(ECC) $(TESTCMD) $${f} ; done
+	@for f in $(wildcard $(TDIR)/*.minc); do $(ECC) $(TESTCMD) $${f} ; done
     
 clean:
 	rm -f *.o *~ core $(INCDIR)/*~ 

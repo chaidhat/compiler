@@ -5,12 +5,13 @@ static bool isFunc ();
 
 static void readDecl (Tree *parent);
 static void readFunc (Tree *parent);
+static void readScope (Tree *parent);
 
 static void parseType (enum LitType *type, bool *isPtr);
 static bool checkDecl (Tree *parent, char *name);
 
-static void parseVar (Tree *parent, bool inFunc);
-static void parseFunc (Tree *parent);
+static Tree *parseVar (Tree *parent, bool inFunc);
+static Tree *parseFunc (Tree *parent);
 static void parseAssign (Tree *parent);
 static void parseStruct (Tree *parent);
 static void parseUnion (Tree *parent);
@@ -18,22 +19,9 @@ static void parseUnion (Tree *parent);
 static Tree AST;
 
 
-static bool isDecl ()
-{
-    bool ret = false;
-    lex();
-    if (isKw("struct") || isKw("union"))
-        ret = true;
-    if (isKw("char") || isKw("int") || isKw("void"))
-        ret = true;
-    unlex();
-    return ret;
-}
-
 static bool isFunc ()
 {
     bool ret = false;
-    lex();
     lex();
     if (isId())
     {
@@ -45,7 +33,6 @@ static bool isFunc ()
         unlex();
     }
     unlex();
-    unlex();
     return ret;
 }
 
@@ -53,29 +40,42 @@ static bool isFunc ()
 
 static void readDecl (Tree *parent)
 {
-    lex();
     if (isKw("char") || isKw("int") || isKw("void"))
         parseVar(parent, false);
     else if (isKw("struct"))
-        parseStruct (parent);
+        parseStruct(parent);
     else if (isKw("union"))
-        parseUnion (parent);
+        parseUnion(parent);
+    else
+    {
+        mccErrC(EC_PARSE_SYN, "unknown type for declaration \"%s\"", peek().id);
+        lex();
+    }
     if (!isSep(";")) // happy coincidence that union and struct also need ';' as ending
-        mccErrC(EC_PARSE_SYN, "expected endline ';', instead got '%s'", peek().id);
+        mccErrC(EC_PARSE_SYN_FAT, "expected endline ';', instead got '%s'", peek().id);
 }
 
 static void readFunc (Tree *parent)
 {
-    lex();
-    parseFunc(parent);
+    Tree *funcptr = parseFunc(parent);
 
     lex();
     if (isSep("{"))
-        mccLog("scope");
-    else if (isSep(";"))
-        unlex();
-    else
-        mccErrC(EC_PARSE_SYN, "expected endline ';' or scope '{', instead got '%s'", peek().id);
+    {
+        lex();
+        readScope(funcptr);
+    }
+    else if (!isSep(";"))
+        mccErrC(EC_PARSE_SYN_FAT, "expected endline ';' or scope '{', instead got '%s'", peek().id);
+}
+
+static void readScope (Tree *parent)
+{
+    if (isSep("}"))
+    {
+        lex();
+        return;
+    }
 }
 
 
@@ -95,8 +95,9 @@ static void parseType (enum LitType *type, bool *isPtr)
     if (isId())
         unlex();
     else if (!*isPtr)
-        mccErrC(EC_PARSE_SYN, "expected identifier or ptr, instead got \"%s\"", peek().id);
+        mccErrC(EC_PARSE_SYN_FAT, "expected identifier or ptr, instead got \"%s\"", peek().id);
 }
+
 
 static bool checkDecl (Tree *parent, char *name)
 {
@@ -108,12 +109,17 @@ static bool checkDecl (Tree *parent, char *name)
     return true;
 }
 
+static void parseScope (Tree *parent)
+{
+}
 
 
-static void parseVar (Tree *parent, bool inFunc)
+
+
+static Tree *parseVar (Tree *parent, bool inFunc)
 {
     static Tree inst;
-
+    
     bool getType = true;
     unlex();
     do
@@ -121,44 +127,48 @@ static void parseVar (Tree *parent, bool inFunc)
         if (getType)
         {
             lex();
-            parseType(&inst.Inst.Var.varType, &inst.Inst.Var.isPtr);
-            if (inst.Inst.Var.varType == LT_VOID && !inst.Inst.Var.isPtr) 
-                mccErrC(EC_PARSE_SYN, "variable has incomplete type \"void\"");
+            parseType(&inst.Inst.var.varType, &inst.Inst.var.isPtr);
+            if (inst.Inst.var.varType == LT_VOID && !inst.Inst.var.isPtr) 
+                mccErrC(EC_PARSE_SYN_FAT, "variable has incomplete type \"void\"");
             if (!inFunc)
                 getType = false;
         }
 
         lex();
-        strcpy(inst.Inst.Var.varName, getId());
+        strcpy(inst.Inst.var.varName, getId());
         strcpy(inst.id, getId());
 
-        checkDecl(parent, inst.id); 
-        appendChild(parent, inst);
+        if (checkDecl(parent, inst.id))
+            appendChild(parent, inst);
 
         lex(); // expect "," or ";"
     } while (isSep(","));
+    
+    return &inst;
 }
 
-static void parseFunc (Tree *parent)
+static Tree *parseFunc (Tree *parent)
 {
     static Tree inst;
 
-    parseType(&inst.Inst.Func.retType, &inst.Inst.Func.isPtr);
+    parseType(&inst.Inst.func.retType, &inst.Inst.func.isPtr);
 
     lex();
     strcpy(inst.id, getId());
-    strcpy(inst.Inst.Func.funcName, getId());
+    strcpy(inst.Inst.func.funcName, getId());
 
-    checkDecl(parent, inst.id); 
-    appendChild(parent, inst);
+    if (checkDecl(parent, inst.id))
+        appendChild(parent, inst);
 
     lex(); // expect "("
     lex();
     static Tree parameters;
     if (!isSep(")"))
         parseVar(&parameters, true); // the elegant variable parsing! :D
-    inst.Inst.Func.parameters = &parameters;
-    logTree(inst.Inst.Func.parameters); // debug
+    inst.Inst.func.parameters = &parameters;
+
+    return &inst;
+    //logTree(inst.Inst.func.parameters); // debug
 }
 
 static void parseAssign (Tree *parent)
@@ -184,22 +194,21 @@ void parse (Token t)
     appendChild(&AST, a);
     printf("%d\n", a.Data.NumberInt.val);*/
     // only variable and func decl are allowed in global scope
-    if (isDecl())
+    if (isFunc())
     {
-        if (isFunc())
-        {
-            mccLog("func def");
-            readFunc(&AST);
-        }
-        else
-        {
-            mccLog("declare");
-            readDecl(&AST);
-        }
-        logTree(&AST);
+        mccLog("func def");
+        readFunc(&AST);
     }
+    else
+    {
+        // assume decl
+        mccLog("declare");
+        readDecl(&AST);
+    }
+    //logTree(&AST);
     /*else
     {
+        // or assume type "int"
         mccErrC(EC_PARSE_SEM, "expected variable or function declaration");
     }
     */
