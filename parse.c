@@ -7,8 +7,9 @@ static void readDecl (Tree *parent);
 static void readFunc (Tree *parent);
 
 static void parseType (enum LitType *type, bool *isPtr);
+static bool checkDecl (Tree *parent, char *name);
 
-static void parseVar (Tree *parent);
+static void parseVar (Tree *parent, bool inFunc);
 static void parseFunc (Tree *parent);
 static void parseAssign (Tree *parent);
 static void parseStruct (Tree *parent);
@@ -54,7 +55,7 @@ static void readDecl (Tree *parent)
 {
     lex();
     if (isKw("char") || isKw("int") || isKw("void"))
-        parseVar(parent);
+        parseVar(parent, false);
     else if (isKw("struct"))
         parseStruct (parent);
     else if (isKw("union"))
@@ -71,10 +72,10 @@ static void readFunc (Tree *parent)
     lex();
     if (isSep("{"))
         mccLog("scope");
-    else if (!isSep(";"))
-        mccErrC(EC_PARSE_SYN, "expected endline ';' or scope '{', instead got '%s'", peek().id);
-    else
+    else if (isSep(";"))
         unlex();
+    else
+        mccErrC(EC_PARSE_SYN, "expected endline ';' or scope '{', instead got '%s'", peek().id);
 }
 
 
@@ -93,35 +94,45 @@ static void parseType (enum LitType *type, bool *isPtr)
     *isPtr = isOp("*");
     if (isId())
         unlex();
-    if (!*isPtr)
+    else if (!*isPtr)
+        mccErrC(EC_PARSE_SYN, "expected identifier or ptr, instead got \"%s\"", peek().id);
+}
+
+static bool checkDecl (Tree *parent, char *name)
+{
+    if (deleteChild(parent, name)) // does this variable already exist?
     {
-        *isPtr = initIsPtr;
-        unlex(); // assume it is a list of var declaration
-        unlex();
-        // TODO: mccErrC(EC_PARSE_SYN, "expected identifier or ptr");
+        mccErrC(EC_PARSE_SEM, "%s has been declared above", name);
+        return false;
     }
+    return true;
 }
 
 
 
-static void parseVar (Tree *parent)
+static void parseVar (Tree *parent, bool inFunc)
 {
     static Tree inst;
 
+    bool getType = true;
     unlex();
     do
     {
-        lex();
-        parseType(&inst.Inst.Var.varType, &inst.Inst.Var.isPtr);
-        if (inst.Inst.Var.varType == LT_VOID && !inst.Inst.Var.isPtr) 
-            mccErrC(EC_PARSE_SYN, "variable has incomplete type \"void\"");
+        if (getType)
+        {
+            lex();
+            parseType(&inst.Inst.Var.varType, &inst.Inst.Var.isPtr);
+            if (inst.Inst.Var.varType == LT_VOID && !inst.Inst.Var.isPtr) 
+                mccErrC(EC_PARSE_SYN, "variable has incomplete type \"void\"");
+            if (!inFunc)
+                getType = false;
+        }
 
         lex();
         strcpy(inst.Inst.Var.varName, getId());
         strcpy(inst.id, getId());
 
-        if (deleteChild(parent, inst.id)) // does this variable already exist?
-            mccErrC(EC_PARSE_SEM, "%s has been declared above", inst.id);
+        checkDecl(parent, inst.id); 
         appendChild(parent, inst);
 
         lex(); // expect "," or ";"
@@ -138,17 +149,16 @@ static void parseFunc (Tree *parent)
     strcpy(inst.id, getId());
     strcpy(inst.Inst.Func.funcName, getId());
 
+    checkDecl(parent, inst.id); 
+    appendChild(parent, inst);
+
     lex(); // expect "("
     lex();
     static Tree parameters;
     if (!isSep(")"))
-        parseVar(&parameters); // the elegant variable parsing! :D
+        parseVar(&parameters, true); // the elegant variable parsing! :D
     inst.Inst.Func.parameters = &parameters;
     logTree(inst.Inst.Func.parameters); // debug
-
-    if (deleteChild(parent, inst.id)) // does this variable already exist?
-        mccErrC(EC_PARSE_SEM, "%s has been declared above", inst.id);
-    appendChild(parent, inst);
 }
 
 static void parseAssign (Tree *parent)

@@ -65,12 +65,14 @@ Compiles MinC into x86_64 assembly *.o* files then asks linker to link into bina
 2. parses tokens in `parse.c` one by one into an Abstract Syntax Tree using a top-down recursive descent algorithm
 3. generate an Intermediate Representation based on that AST
 4. assemble code from the IR, as an *.o* file
-5. ask the system's linker (ld) to link the file. I ain't writing that.
+5. ask the system's linker (`ld`) to link the file. I ain't writing that.
 
 ## Thank you to 
-compiler http://www.cs.man.ac.uk/~pjj/farrell/compmain.html \
-         http://lisperator.net/pltut/ \
-parser   http://lisperator.net/pltut/parser/ \
-         https://stackoverflow.com/questions/2245962/is-there-an-alternative-for-flex-bison-that-is-usable-on-8-bit-embedded-systems/2336769#2336769
-         \
-lexing   http://www.cse.chalmers.se/edu/year/2015/course/DAT150/lectures/proglang-04.html \
+### compiler 
+* http://www.cs.man.ac.uk/~pjj/farrell/compmain.html
+* http://lisperator.net/pltut/
+### parser  
+* http://lisperator.net/pltut/parser/
+* https://stackoverflow.com/questions/2245962
+### lexing  
+* http://www.cse.chalmers.se/edu/year/2015/course/DAT150/lectures/proglang-04.html
