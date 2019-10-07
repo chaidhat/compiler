@@ -27,7 +27,7 @@ int main (int argc, char* argv[])
 
     ppInit();
     do
-        next();
+        parse();
     while (!tokcmpType(T_EOF));
     inpPush("aa");
     inpClose();

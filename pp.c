@@ -18,6 +18,7 @@ static Macro macros[128];
 static int ifScope = 0;
 
 static const Token TOKEN_NULL = {T_NULL,"NULL",0};
+static const Token TOKEN_EOF = {T_EOF,"EOF",0};
 static Macro MACRO_NULL = {"\0", "0"}; // \0 is null name and macro with value 0 is undefined
 
 static void doInclude (char *inFilepath);
@@ -211,8 +212,9 @@ Token ppToken (Token token)
         if (prevInclude()) 
         {
             resetEOF();
+            return TOKEN_NULL;
         }
-        return TOKEN_NULL;
+        return TOKEN_EOF;
     }
 
     if (tTokcmpId(token, "#"))

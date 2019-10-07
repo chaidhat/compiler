@@ -18,21 +18,20 @@ static void parseUnion (Tree *parent);
 
 static Tree AST;
 
-
 static bool isFunc ()
 {
     bool ret = false;
-    lex();
+    next();
     if (isId())
     {
-        lex();
+        next();
         if (isSep("("))
         {
             ret = true;
         }
-        unlex();
+        prev();
     }
-    unlex();
+    prev();
     return ret;
 }
 
@@ -49,7 +48,7 @@ static void readDecl (Tree *parent)
     else
     {
         mccErrC(EC_PARSE_SYN, "unknown type for declaration \"%s\"", peek().id);
-        lex();
+        next(); // expect ;
     }
     if (!isSep(";")) // happy coincidence that union and struct also need ';' as ending
         mccErrC(EC_PARSE_SYN_FAT, "expected endline ';', instead got '%s'", peek().id);
@@ -59,10 +58,9 @@ static void readFunc (Tree *parent)
 {
     Tree *funcptr = parseFunc(parent);
 
-    lex();
+    next();
     if (isSep("{"))
     {
-        lex();
         readScope(funcptr);
     }
     else if (!isSep(";"))
@@ -71,11 +69,15 @@ static void readFunc (Tree *parent)
 
 static void readScope (Tree *parent)
 {
-    if (isSep("}"))
+    mccLog("beginscope {");
+
+    while (!isSep("}"))
     {
-        lex();
-        return;
+        next(); // expect next expression
     }
+
+    mccLog("endscope }");
+    return;
 }
 
 
@@ -89,11 +91,11 @@ static void parseType (enum LitType *type, bool *isPtr)
     if (isKw("void"))
         *type = LT_VOID;
 
-    lex();
+    next();
     bool initIsPtr = *isPtr;
     *isPtr = isOp("*");
     if (isId())
-        unlex();
+        prev();
     else if (!*isPtr)
         mccErrC(EC_PARSE_SYN_FAT, "expected identifier or ptr, instead got \"%s\"", peek().id);
 }
@@ -109,11 +111,6 @@ static bool checkDecl (Tree *parent, char *name)
     return true;
 }
 
-static void parseScope (Tree *parent)
-{
-}
-
-
 
 
 static Tree *parseVar (Tree *parent, bool inFunc)
@@ -121,12 +118,12 @@ static Tree *parseVar (Tree *parent, bool inFunc)
     static Tree inst;
     
     bool getType = true;
-    unlex();
+    prev(); // for whileloop
     do
     {
         if (getType)
         {
-            lex();
+            next(); // expect type
             parseType(&inst.Inst.var.varType, &inst.Inst.var.isPtr);
             if (inst.Inst.var.varType == LT_VOID && !inst.Inst.var.isPtr) 
                 mccErrC(EC_PARSE_SYN_FAT, "variable has incomplete type \"void\"");
@@ -134,14 +131,14 @@ static Tree *parseVar (Tree *parent, bool inFunc)
                 getType = false;
         }
 
-        lex();
+        next(); // expect varname
         strcpy(inst.Inst.var.varName, getId());
         strcpy(inst.id, getId());
 
         if (checkDecl(parent, inst.id))
             appendChild(parent, inst);
 
-        lex(); // expect "," or ";"
+        next(); // expect "," or ";"
     } while (isSep(","));
     
     return &inst;
@@ -153,15 +150,15 @@ static Tree *parseFunc (Tree *parent)
 
     parseType(&inst.Inst.func.retType, &inst.Inst.func.isPtr);
 
-    lex();
+    next(); // expect funcname
     strcpy(inst.id, getId());
     strcpy(inst.Inst.func.funcName, getId());
 
     if (checkDecl(parent, inst.id))
         appendChild(parent, inst);
 
-    lex(); // expect "("
-    lex();
+    next(); // expect "("
+    next(); // expect var list (parameters)
     static Tree parameters;
     if (!isSep(")"))
         parseVar(&parameters, true); // the elegant variable parsing! :D
@@ -184,16 +181,14 @@ static void parseUnion (Tree *parent)
 }
 
 
-
-void parse (Token t)
+void parse ()
 {
+    Token t = next();
+
+    if (tokcmpType(T_EOF))
+        return;
     mccLog("parse lex %d %s", t.type, t.id);
-    /*Tree a = crtTree("a");
-    a.Data.NumberInt.val = 2;
-    a.Data.NumberChar.val = 1;
-    appendChild(&AST, a);
-    printf("%d\n", a.Data.NumberInt.val);*/
-    // only variable and func decl are allowed in global scope
+
     if (isFunc())
     {
         mccLog("func def");
@@ -205,21 +200,20 @@ void parse (Token t)
         mccLog("declare");
         readDecl(&AST);
     }
-    //logTree(&AST);
-    /*else
-    {
-        // or assume type "int"
-        mccErrC(EC_PARSE_SEM, "expected variable or function declaration");
-    }
-    */
 }
 
-void next()
+Token next ()
 {
     Token token = ppToken(lex());
-    if (tTokcmpType(token, T_NULL))
-        return;
 
-    parse(token);
+    if (tTokcmpType(token, T_NULL)) // is it an EOF that has a lower dir?
+        return next();
 
+    return token;
+}
+
+Token prev ()
+{
+    Token token = ppToken(unlex());
+    return token;
 }

@@ -1,11 +1,28 @@
+// comment test
+/* block comment test */
+// k.minc to test decls
+
+
+// var decl
 int a;
 
+// preprocessor tests
+#include "test/k.h"
+#define number int 
+
+// multiple var decl
 int b, c;
 
+// function decl
 char d ();
 
+// function decl w/ var list
 char e (int ea, int eb);
 
+// function w/ scope
 char f (char fa) 
 {
 }
+
+// relies on preprocessor to turn number to int
+number g;

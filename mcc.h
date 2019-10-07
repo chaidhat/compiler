@@ -248,11 +248,10 @@ void predefineMacro (char *name, char *val);
 void predefineInclude (char *dir);
 
 
-
 // parse.c
-void next ();
-void parse (Token t);
-
+Token next ();
+Token prev ();
+void parse ();
 
 // vec.c
 Tree crtTree (char *id);
