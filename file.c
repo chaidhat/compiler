@@ -69,6 +69,8 @@ char inp ()
         inpPos.line++;
         inpPos.h = 0;
     }
+    if (inpT == '\\' && inpN == '\n')
+        inp();
     return inpT;
 }
 

@@ -46,7 +46,7 @@ Mainly made because I neither got the skill or patience to fully follow the C IS
 * functions (`void`, `return`)
 * conditionals (`if`)
 * control flow (`while` loops)
-* arithmetic (`+`, `-`, `*`, `/`) with (`(`, `)`) (bidmas)
+* arithmetic (`+`, `-`, `*`, `/`) with (`(`, `)`) (with bidmas)
 * binary logic (`!`, `&&`, `||`)
 * equality testing (`==`, `>`)
 * user I/O

@@ -5,8 +5,12 @@
 //  preprocessor tests
 
 /*                PREPROCESSOR                 */
-#include "test/a_preprocessor.h"
+#include "test/1_preprocessor.h"
 #define number int 
 
 // relies on preprocessor to turn number to int
 number g;
+
+// backslash-newline
+int\
+a;
