@@ -248,12 +248,73 @@ static Tree *parseAssign (Tree *parent)
 static Tree *parseLit ()
 {
     static Tree inst;
+    strcpy(inst.id, peek().id);
+    inst.type = IT_Lit;
+    if (peek().id[0] == '"')
+    {
+        inst.Inst.lit.type = LT_CHAR; // TODO: String handling
+        inst.Inst.lit.val.tChar = peek().id[0];
+    }
+    else
+    {
+        inst.Inst.lit.type = LT_INT;
+        int num = 0;
+        for (int i = 0; i < strlen(peek().id); i++)
+        {
+            char n = 0;
+            switch (peek().id[i])
+            {
+                case '0':
+                    n = 0;  
+                    break;
+                case '1':
+                    n = 1;
+                    break;
+                case '2':
+                    n = 2;
+                    break;
+                case '3':
+                    n = 3;
+                    break;
+                case '4':
+                    n = 4;
+                    break;
+                case '5':
+                    n = 5;
+                    break;
+                case '6':
+                    n = 6;
+                    break;
+                case '7':
+                    n = 7;
+                    break;
+                case '8':
+                    n = 8;
+                    break;
+                case '9':
+                    n = 9;
+                    break;
+                default:
+                    n = -1;
+                    break;
+            }
+            int e = 1;
+            for (int j = 0; j < i; j++)
+                e *= 10;
+            num += e * n;
+            printf("%d\n", num);
+        }
+        inst.Inst.lit.val.tInt = num;
+    }
     return &inst;
 }
 
 static Tree *parseId ()
 {
     static Tree inst;
+    strcpy(inst.id, peek().id);
+    inst.type = IT_Id;
+    strcpy(inst.Inst.id.varName, peek().id);
     return &inst;
 }
 

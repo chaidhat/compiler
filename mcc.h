@@ -26,7 +26,7 @@ enum InstType
     IT_Var,
     IT_Func,
     IT_Ret,
-    IT_Literal,
+    IT_Lit,
     IT_Id,
     IT_Assign,
     IT_Ptr,
@@ -50,9 +50,9 @@ enum eCodes
 
 typedef union
 {
-    void *LT_Void;
-    int LT_Int;
-    char LT_Char;
+    void *tVoid;
+    int tInt;
+    char tChar;
 } LitVal;
 
 typedef struct
@@ -91,7 +91,6 @@ typedef struct
 typedef struct
 {
     enum LitType type;
-    bool isPtr;
     LitVal val;
 } Lit; // is Exprsn
 typedef struct
