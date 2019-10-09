@@ -86,14 +86,14 @@ typedef struct
 } Func;
 typedef struct
 {
-    struct Tree *retval; // only Exprsn
+    struct Tree *exprsn; // only Exprsn
 } Ret;
 typedef struct
 {
     enum LitType type;
     bool isPtr;
     LitVal val;
-} Literal; // is Exprsn
+} Lit; // is Exprsn
 typedef struct
 {
     enum LitType type;
@@ -103,7 +103,7 @@ typedef struct
 typedef struct
 {
     char varName[128];
-    struct Tree *val; // only Exprsn
+    struct Tree *exprsn; // only Exprsn
 } Assign;
 typedef struct
 {
@@ -122,16 +122,17 @@ typedef struct
 {
     struct Tree *left; // only Exprsn
     struct Tree *right; // only Exprsn
-    char operation;
+    bool stub;
+    Token op;
 } Binary; // is Exprsn
 typedef struct
 {
-    struct Tree *conditional; // only Exprsn
+    struct Tree *exprsn; // only Exprsn
     struct Tree *scope;
 } Cond;
 typedef struct
 {
-    struct Tree *conditional; // only Exprsn
+    struct Tree *exprsn; // only Exprsn
     struct Tree *scope;
 } Ctrl;
 typedef struct
@@ -158,7 +159,7 @@ typedef struct Tree
         Var var;
         Func func;
         Ret ret;
-        Literal literal;
+        Lit lit;
         Id id;
         Assign assign;
         Ptr ptr;
@@ -249,8 +250,6 @@ void predefineInclude (char *dir);
 
 
 // parse.c
-Token next ();
-Token prev ();
 void parse ();
 
 // vec.c

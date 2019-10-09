@@ -1,0 +1,12 @@
+// comment test
+/* block comment test */
+
+//          preprocessor.minc & preprocessor.h
+//  preprocessor tests
+
+/*                PREPROCESSOR                 */
+#include "test/a_preprocessor.h"
+#define number int 
+
+// relies on preprocessor to turn number to int
+number g;

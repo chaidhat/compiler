@@ -47,12 +47,12 @@ void mccErrC (enum eCodes eCode, char* format, ... )
         eMsg[i] = '\0';
     strcat(eMsg, "\033[1;31m");
     bool fat = false;
-    if (eCode == EC_FATAL)               { strcat (eMsg, "*** INTERNAL FATAL ERROR***"); fat = true; }
-    if (eCode == EC_LEX) { strcat (eMsg, "lexical error");  }
-    if (eCode == EC_PP) { strcat (eMsg, "preprocessor error");  }
-    if (eCode == EC_PARSE_SEM) { strcat (eMsg, "parsing semantic error");  }
-    if (eCode == EC_PARSE_SYN) { strcat (eMsg, "parsing syntax error");  }
-    if (eCode == EC_PARSE_SYN_FAT) { strcat (eMsg, "***FATAL parsing syntax error***"); fat = true; }
+    if (eCode == EC_FATAL)               { strcat (eMsg, "*** INTERNAL FATAL ERROR ***"); fat = true; }
+    if (eCode == EC_LEX) { strcat (eMsg, "lex error");  }
+    if (eCode == EC_PP) { strcat (eMsg, "preprocess error");  }
+    if (eCode == EC_PARSE_SEM) { strcat (eMsg, "parse semantic error");  }
+    if (eCode == EC_PARSE_SYN) { strcat (eMsg, "parse syntax error");  }
+    if (eCode == EC_PARSE_SYN_FAT) { strcat (eMsg, "F parse syntax error"); fat = true; }
     strcat(eMsg, ":\033[m\033[1;38m");
     mccPrintE (eMsg, format, args);
     va_end (args);

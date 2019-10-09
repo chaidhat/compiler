@@ -5,7 +5,7 @@
 CC=gcc
 ECC=$(BDIR)/./mcc
 # TESTCMD= -v -D c 1 -I test/u.mh
-TESTCMD = -v -D c 1
+TESTCMD = -v -D c 1 -o test/out 
 
 _SRC := $(wildcard *.c)
 _OBJ := $(_SRC:.c=.o) 
@@ -15,7 +15,7 @@ TDIR = test
 
 $(BDIR)/mcc: $(_OBJ)
 	$ mkdir -p bin 
-	$(CC) -o $@ $^
+	$(CC) -Werror -o $@ $^
 
 # automatically makes, self-test and clean
 all:
@@ -26,7 +26,7 @@ all:
 
 test1:
 	$(info ***test1***)
-	@for f in $(wildcard $(TDIR)/*.minc); do $(ECC) $(TESTCMD) $${f} ; done
+	@for f in $(wildcard $(TDIR)/*.minc); do echo A ; echo A ; echo A ; echo A NEXT FILE $${f} ; echo A ; echo A ; echo A ; $(ECC) $(TESTCMD) $${f} ; done
     
 clean:
 	rm -f *.o *~ core $(INCDIR)/*~ 

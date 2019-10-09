@@ -46,7 +46,7 @@ Mainly made because I neither got the skill or patience to fully follow the C IS
 * functions (`void`, `return`)
 * conditionals (`if`)
 * control flow (`while` loops)
-* arithmetic (`+`, `-`, `*`, `/`) with (`(`, `)`)
+* arithmetic (`+`, `-`, `*`, `/`) with (`(`, `)`) (bidmas)
 * binary logic (`!`, `&&`, `||`)
 * equality testing (`==`, `>`)
 * user I/O
@@ -74,5 +74,5 @@ Compiles MinC into x86_64 assembly *.o* files then asks linker to link into bina
 ### parser  
 * http://lisperator.net/pltut/parser/
 * https://stackoverflow.com/questions/2245962
-### lexing  
+### lexer
 * http://www.cse.chalmers.se/edu/year/2015/course/DAT150/lectures/proglang-04.html

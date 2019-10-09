@@ -1,0 +1,41 @@
+// comment test
+/* block comment test */
+
+//          assign.minc
+//  assignment tests
+
+/*               LINE 42 BASIC ASSIGNMENT                  */
+// excludes assignment to function calls, recursion, pointers, and preprocessor assignment
+
+// assign to literal
+int m = 1;
+
+// assign to identifier
+int n = m;
+
+// assign to binary literals
+int o = 1 + 2;
+
+// assign to binary identifer & literals
+int p = o + 1;
+
+// assignment to nested binaries
+int q = o + (2 * 1);
+
+// implied nested binaries, also tests BIDMAS
+int r = o + 2 + 1;
+
+void s ()
+{
+    // assignment without decl
+    r = 1;
+
+    // self assignment
+    r = r + 1;
+}
+
+// multiple implied nested binaries 
+int t = 1 + 2 + 3 * 4;
+
+// multiple implied nested binaries BIDMAS
+int u = 1 + 2 * 3 + 4;

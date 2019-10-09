@@ -1,14 +1,12 @@
 // comment test
 /* block comment test */
-// k.minc to test decls
 
+//          decl.minc
+//  decl tests
 
+/*               DECLARATION                 */
 // var decl
 int a;
-
-// preprocessor tests
-#include "test/k.h"
-#define number int 
 
 // multiple var decl
 int b, c;
@@ -20,9 +18,12 @@ char d ();
 char e (int ea, int eb);
 
 // function w/ scope
-char f (char fa) 
+void f (char fa) 
 {
 }
 
-// relies on preprocessor to turn number to int
-number g;
+// var ptr decl
+int *h, k;
+
+// func ptr decl 
+char *l (int *la, char *lb);
