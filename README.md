@@ -48,7 +48,7 @@ Mainly made because I neither got the skill or patience to fully follow the C IS
 * control flow (`while` loops)
 * arithmetic (`+`, `-`, `*`, `/`) with (`(`, `)`) (with bidmas)
 * binary logic (`!`, `&&`, `||`)
-* equality testing (`==`, `>`)
+* equality testing (`==`, `!=`, `>`)
 * user I/O
 
 That's it. 8 keywords, 4 preprocessor directives,\

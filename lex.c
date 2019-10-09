@@ -71,6 +71,14 @@ static const char ReOp[] =
     '|',
 };
 
+static const char* ReOpDiagraphs[] =
+{
+    "==",
+    "!=",
+    "&&",
+    "||",
+};
+
 static void lRec (char in)
 {
     lexeme[j] = in;
@@ -121,22 +129,12 @@ static enum TokType getTChar (char inChar)
     for (int i = 0; i < sizeof(ReSep)/sizeof(ReSep[0]); i++)
     {
         if (inChar == ReSep[i])
-        {
-            char inStr[2];
-            inStr[0] = inChar;
-            inStr[1] = '\0';
             return T_SEP;
-        }
     }
     for (int i = 0; i < sizeof(ReOp)/sizeof(ReOp[0]); i++)
     {
         if (inChar == ReOp[i])
-        {
-            char inStr[2];
-            inStr[0] = inChar;
-            inStr[1] = '\0';
             return T_OP;
-        }
     }
     return T_NULL;
     //TODO: no error catch
@@ -162,8 +160,20 @@ static bool logChar (char inChar)
     if (inChar == ' ' || inChar == '"')
         return false;
     Token inToken = crtToken(getTChar(inChar));
+
     strcpy(inToken.id, " ");
     inToken.id[0] = inChar;
+
+    // diagraphs
+    for (int i = 0; i < sizeof(ReOpDiagraphs)/sizeof(ReOpDiagraphs[0]); i++)
+    {
+        if (inpCT(ReOpDiagraphs[i][0]) && inpCN(ReOpDiagraphs[i][1]))
+        {
+            strcpy(inToken.id, ReOpDiagraphs[i]);
+            inp();
+        }
+    }
+
     tokens[tokenNo] = inToken; 
     tokenNoActual++;
     tokenNo++;

@@ -164,10 +164,10 @@ static int getPrecedence (Token op)
         return 2;
     if (tTokcmpId(op, "/"))
         return 3;
+    if (tTokcmpId(op, "==") || tTokcmpId(op, "!=") || tTokcmpId(op, "&&") || tTokcmpId(op, "||"))
+        return 4;
     return -1;
 }
-
-
 
 static Tree *parseVar (Tree *parent, bool inFunc)
 {
