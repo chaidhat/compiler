@@ -127,3 +127,52 @@ int mccStrtod (char *str)
     }
     return num;
 }
+
+char *mccDtostr (int in)
+{
+    double sIn = in;
+    char *str = malloc(sizeof(char[128]));
+    if (sIn == 0)
+        return "0";
+    for (int i = 0; sIn >= 1; i++)
+    {
+        sIn /= 10;
+        char n = '0';
+        switch (in)
+        {
+            case 0:
+                n = '0';  
+                break;
+            case 1:
+                n = '1';
+                break;
+            case 2:
+                n = '2';
+                break;
+            case 3:
+                n = '3';
+                break;
+            case 4:
+                n = '4';
+                break;
+            case 5:
+                n = '5';
+                break;
+            case 6:
+                n = '6';
+                break;
+            case 8:
+                n = '8';
+                break;
+            case 9:
+                n = '9';
+                break;
+            default:
+                n = 'e';
+                break;
+        }
+        str[i] = n;
+        str[i + 1] = '\0';
+    }
+    return str;
+}

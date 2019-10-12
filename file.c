@@ -1,5 +1,5 @@
 #include "mcc.h"
-static char datBuf[DB_SIZE];
+static char datBuf[DB_SIZE * DB_SIZE];
 
 FILE* fp;
 

@@ -265,6 +265,7 @@ Tree *getTree (Tree *parent, int index);
 void logTree (Tree *t);
 
 int mccStrtod (char *num);
+char *mccDtostr (int in);
 
 
 // dump.c

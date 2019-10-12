@@ -10,16 +10,48 @@ static void dumpTree (Tree *tree);
 
 static char *ITtostr (enum InstType type);
 
-static void print (char* format, ... )
+static void print (char* fmt, ... )
 {
-    va_list args;
-    va_start (args, format);
     char buf[256];
     printf("mcc fdast: ");
     for (int i = 0; i < scope; i++)
+    {
         printf("| ");
-    snprintf(buf, sizeof buf, "%s\n", format);
-    vprintf (buf, args);
+        inpPush("| ");
+    }
+    va_list args;
+    va_start(args, fmt);
+ 
+    while (*fmt != '\0') {
+        if (*fmt == '%')
+        {
+            fmt++;
+            if (*fmt == 'd') {
+                int i = va_arg(args, int);
+                printf("%s", mccDtostr(i));
+                inpPush(mccDtostr(i));
+            } else if (*fmt == 's') {
+                char *s = va_arg(args, char *);
+                printf("%s", s);
+                inpPush(s);
+            } else
+            {
+                mccErr("AST DUMP ERR %s in dump.c", __LINE__);
+            }
+        }
+        else
+        {
+            printf("%c", *fmt);
+            char st[2];
+            st[0] = *fmt;
+            st[1] = '\0';
+            inpPush(st);
+        }
+        fmt++;
+    }
+    printf("\n");
+    inpPush("\n");
+    va_end(args);
 }
 
 static void up ()
@@ -68,6 +100,24 @@ static char *ITtostr (enum InstType type)
     return sType;
 }
 
+static char *LTtostr (enum LitType type)
+{
+    static char sType[128];
+    switch (type)
+    {
+        case LT_CHAR:
+            strcpy(sType, "CHAR");
+            break;
+        case LT_INT:
+            strcpy(sType, "INT");
+            break;
+        case LT_VOID:
+            strcpy(sType, "VOID");
+            break;
+    }
+    return sType;
+}
+
 static void dumpInst (Tree *tree)
 {
     up();
@@ -79,12 +129,12 @@ static void dumpInst (Tree *tree)
     switch (tree->type)
     {
         case IT_Var:
-            print("varType: %d", tree->Inst.var.varType);
+            print("varType: %s", LTtostr(tree->Inst.var.varType));
             print("isPtr: %d", tree->Inst.var.isPtr);
             print("varName: %s", tree->Inst.var.varName);
             break;
         case IT_Func:
-            print("funcType: %d", tree->Inst.func.retType);
+            print("funcType: %s", LTtostr(tree->Inst.func.retType));
             print("isPtr: %d", tree->Inst.func.isPtr);
             print("funcName: %s", tree->Inst.func.funcName);
             print("");
@@ -108,11 +158,11 @@ static void dumpInst (Tree *tree)
             }
             break;
         case IT_Lit:
-            print("type: %d", tree->Inst.lit.type);
+            print("type: %s", LTtostr(tree->Inst.lit.type));
             if (tree->Inst.lit.type == LT_INT)
                 print("val: %d", tree->Inst.lit.val.tInt);
             else
-                print("val: CHAR NOT PROG");
+                mccErr("val: CHAR NOT PROG"); // TODO: char
             break;
         case IT_Id:
             print("isPtr: %d", tree->Inst.id.isPtr);
@@ -145,7 +195,7 @@ static void dumpInst (Tree *tree)
             }
             break;
         default:
-            print("ERR");
+            mccErr("AST DUMP ERR %s in dump.c", __LINE__);
             break;
     }
     down();
@@ -162,7 +212,13 @@ static void dumpTree (Tree *tree)
 void dumpAst (Tree *tree)
 {
     mccWarn("dumping AST...");
-    logTree(tree);
+    print("%s AST:", inFilepath);
+    up();
     dumpTree(tree);
+    down();
+    char outFilepathS[128];
+    strcpy(outFilepathS, outFilepath);
+    strcat(outFilepathS, ".mins");
+    inpWrite(outFilepathS);
 }
 

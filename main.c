@@ -35,7 +35,6 @@ int main (int argc, char* argv[])
 
     if (doDumpAst)
         dumpAst(&AST);
-    inpPush("aa");
     inpClose();
     inpWrite(outFilepath);
     mccExit(0, __LINE__);

@@ -223,7 +223,6 @@ void mccDoArgs (int argc, char* argv[])
 
                     if (strncmp(outFilepath,"$",strlen("$")) == 0)
                         strcpy(outFilepath, mcName);
-                    strcat(outFilepath, ".o");
                     break;
             }
         }
