@@ -5,7 +5,7 @@
 CC=gcc
 ECC=$(BDIR)/./mcc
 # TESTCMD= -v -D c 1 -I test/u.mh
-TESTCMD = -v -D c 1 -o test/out 
+TESTCMD = -v -D c 1 -o test/out -fdast
 
 _SRC := $(wildcard *.c)
 _OBJ := $(_SRC:.c=.o) 
@@ -15,7 +15,7 @@ TDIR = test
 
 $(BDIR)/mcc: $(_OBJ)
 	$ mkdir -p bin 
-	$(CC) -Werror -o $@ $^
+	$(CC) -o $@ -Werror $^
 
 # automatically makes, self-test and clean
 all:

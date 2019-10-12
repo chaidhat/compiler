@@ -11,8 +11,8 @@ static void mccPrint (char* suffix, char* format, va_list args )
 static void mccPrintE (char* suffix, char* format, va_list args)
 {
     char buf[256];
-    snprintf(buf, sizeof buf, "%s: %s on (%d,%d): %s\033[m\n", inFilepath, suffix, inpPos.line, inpPos.h,  format);
-  vprintf (buf, args);
+    snprintf(buf, sizeof buf, "%s: %s at (%d,%d):\n    %s\033[m\n", inFilepath, suffix, inpPos.line, inpPos.h,  format);
+    vprintf (buf, args);
 }
 
 void mccLog (char* format, ... )
@@ -93,12 +93,14 @@ void mccDoArgs (int argc, char* argv[])
                 "-r",
                 "-v",
                 "-w",
+                "-We",
                 "-I",
                 "-D",
-                "-U",
                 "-E",
                 "-S",
                 "-c",
+                "-fdast",
+                "-fdsta",
                 "-h",
             };
             int argNo = -1;
@@ -113,53 +115,60 @@ void mccDoArgs (int argc, char* argv[])
              
             switch (argNo)
             {
-                case 0:
+                case 0: // -V
                     printf("\033[1;30mMinimal-C Compiler created by Chaidhat Chaimongkol\033[m\n"
-                    "compiled on: %s %s\n"
+                    "CompileDate: %s\n"
+                    "CompileTime: %s\n"
+                    "Target: x86_64 Intel\n"
                     "\n"
                     , __DATE__, __TIME__);
                     mccExit(2, __LINE__);
                     break;
-                case 1:
+                case 1: // -b
                     doBenchmarking = true; 
                     break; 
-                case 2:
+                case 2: // -o
                     strcpy(outFilepath, argv[line + 1]);
                     line++;
                     break;
-                case 3:
+                case 3: // -r
                     doRun = true;
                     strcpy(doRunArgs, argv[line + 1]);
                     line++;
                     break;
-                case 4:
+                case 4: // -v
                     mode = 0;
                     break;
-                case 5:
+                case 5: // -w
                     doWarnings = false;
                     break;
-                case 6:
+                case 6: // -We
+                    doWarningsE = true;
+                    break;
+                case 7: // -I
                     predefineInclude(argv[line + 1]);
                     line++;
                     break;
-                case 7:
+                case 8: // -D
                     predefineMacro(argv[line + 1], argv[line + 2]);
                     line += 2;
                     break;
-                case 8:
-                    predefineMacro(argv[line + 1], 0);
-                    line++;
-                    break;
-                case 9:
+                case 9: // -E
                     doParsing = false;
                     break;
-                case 10:
+                case 10: // -S
                     doAssemble = false;
                     break;
-                case 11:
+                case 11: // -c
                     doLinker = false;
                     break;
-                case 12:
+                case 12: // -fdast
+                    doDumpAst = true;
+                    break;
+                case 13: // -fdsta
+                    doDumpSta = true;
+                    break;
+                case 14: // -h
                     printf("\033[1;30mMinimal-C Compiler created by Chaidhat Chaimongkol\n%s %s\n\n\033[m", __DATE__, __TIME__);
                     printf("usage: mcc [-h] [-V] [arg1 arg2 ...] <inpath1 inpath2 ...>\n\n" 
                     "mcc only accepts .minc as inpath, dir and include accepts any types\n"
@@ -167,17 +176,21 @@ void mccDoArgs (int argc, char* argv[])
                     "   -V                  display version info\n"
                     "   -b                  display compilation stats once end\n"
                     "   -o <path>           write output to <path>\n"
-                    "   -r <args ...>       run output\n"
+                    "   -r <args ...>       run output with <args ...>\n"
+                    "\n"
                     "   -v                  verbose compiler debugger\n"
                     "   -w                  supress all warnings\n"
+                    "   -We                 treat warnings as errors\n"
                     "\n"
                     "   -I <dir>            add include path <dir>\n"
                     "   -D <macro> <val>    set <macro> to <val>\n"
-                    "   -U <macro>          undefine <macro>\n"
-                    "   -E                  stop after preproccessing\n"
                     "\n"
-                    "   -S                  stop after parsing. do not asm\n"
+                    "   -E                  stop after preproccessing\n"
+                    "   -S                  stop after parsing.\n"
                     "   -c                  do not link\n"
+                    "\n"
+                    "   -fdast              dump AST\n"
+                    "   -fdsta              dump stack-trace\n"
                     "\n"
                     "   -h                  display this help\n"
                     "\n"

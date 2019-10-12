@@ -41,4 +41,4 @@ int t = 1 + 2 + 3 * 4;
 int u = 1 + 2 * 3 + 4;
 
 // digraph test
-int v = 1 == 2 && 3;
+int v = 1 || 2 && 3;

@@ -11,6 +11,9 @@ static void init ()
     doAssemble = true;
     doLinker = true;
     doWarnings = true;
+    doWarningsE = false;
+    doDumpAst = false;
+    doDumpSta = false;
 }
 
 int main (int argc, char* argv[])
@@ -29,6 +32,9 @@ int main (int argc, char* argv[])
     do
         parse();
     while (!tokcmpType(T_EOF));
+
+    if (doDumpAst)
+        dumpAst(&AST);
     inpPush("aa");
     inpClose();
     inpWrite(outFilepath);

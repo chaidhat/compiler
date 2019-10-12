@@ -13,9 +13,9 @@ static void parseType (enum LitType *type, bool *isPtr);
 static bool checkDecl (Tree *parent, char *name);
 static precedence getPrecedence (Token op);
 
-static Tree *parseVar (Tree *parent, bool inFunc);
+static int parseVar (Tree *parent, bool inFunc);
 static Tree *parseFunc (Tree *parent);
-static Tree *parseAssign (Tree *parent);
+static void parseAssign (Tree *parent);
 
 static Tree *parseLit ();
 static Tree *parseId ();
@@ -28,7 +28,6 @@ static Token next ();
 static Token prev ();
 
 
-static Tree AST;
 
 static bool isFunc ()
 {
@@ -169,11 +168,13 @@ static int getPrecedence (Token op)
     return -1;
 }
 
-static Tree *parseVar (Tree *parent, bool inFunc)
+static int parseVar (Tree *parent, bool inFunc)
 {
     static Tree inst;
-    
+    inst.type = IT_Var;
+
     bool getType = true;
+    int nVars = 0;
     prev(); // for whileloop
     do
     {
@@ -191,24 +192,27 @@ static Tree *parseVar (Tree *parent, bool inFunc)
         strcpy(inst.Inst.var.varName, getId());
         strcpy(inst.id, getId());
 
+        nVars++;
         if (checkDecl(parent, inst.id))
             appendChild(parent, inst);
 
         next(); // expect "," or ";" or "="
 
-        if (isOp("=")) // assign
+        if (isOp("=") && !inFunc) // assign
         {
             prev(); // expect varname
-            Tree *instAssign = parseAssign(parent);
+            parseAssign(parent);
         }
     } while (isSep(","));
-    
-    return &inst;
+    return nVars;
 }
 
 static Tree *parseFunc (Tree *parent)
 {
     static Tree inst;
+    inst.type = IT_Func;
+    inst.Inst.func.noParameters = 0;
+    inst.Inst.func.noScope = 0;
 
     parseType(&inst.Inst.func.retType, &inst.Inst.func.isPtr);
 
@@ -216,20 +220,20 @@ static Tree *parseFunc (Tree *parent)
     strcpy(inst.id, getId());
     strcpy(inst.Inst.func.funcName, getId());
 
-    if (checkDecl(parent, inst.id))
-        appendChild(parent, inst);
-
     next(); // expect "("
     next(); // expect var list (parameters)
     static Tree parameters;
     if (!isSep(")"))
-        parseVar(&parameters, true); // the elegant variable parsing! :D
+        inst.Inst.func.noParameters = parseVar(&parameters, true); // the elegant variable parsing! :D
     inst.Inst.func.parameters = &parameters;
+
+    if (checkDecl(parent, inst.id))
+        appendChild(parent, inst);
 
     return &inst;
 }
 
-static Tree *parseAssign (Tree *parent)
+static void parseAssign (Tree *parent)
 {
     static Tree inst;
     inst.type = IT_Assign;
@@ -238,102 +242,60 @@ static Tree *parseAssign (Tree *parent)
     strcpy(inst.Inst.assign.varName, getId());
 
     next(); // expect "="
-    parseBinary(inst.Inst.assign.exprsn);
+    inst.Inst.assign.exprsn = parseBinary();
 
-    return &inst;
+    appendChild(parent, inst);
 }
 
 
 
 static Tree *parseLit ()
 {
-    static Tree inst;
-    strcpy(inst.id, peek().id);
-    inst.type = IT_Lit;
+    Tree *inst = malloc(sizeof(Tree));
+    strcpy(inst->id, peek().id);
+    inst->type = IT_Lit;
     if (peek().id[0] == '"')
     {
-        inst.Inst.lit.type = LT_CHAR; // TODO: String handling
-        inst.Inst.lit.val.tChar = peek().id[0];
+        inst->Inst.lit.type = LT_CHAR; // TODO: String handling
+        mccErrC(EC_FATAL, "does not do string handling!");
+        inst->Inst.lit.val.tChar = peek().id[0];
     }
     else
     {
-        inst.Inst.lit.type = LT_INT;
-        int num = 0;
-        for (int i = 0; i < strlen(peek().id); i++)
-        {
-            char n = 0;
-            switch (peek().id[i])
-            {
-                case '0':
-                    n = 0;  
-                    break;
-                case '1':
-                    n = 1;
-                    break;
-                case '2':
-                    n = 2;
-                    break;
-                case '3':
-                    n = 3;
-                    break;
-                case '4':
-                    n = 4;
-                    break;
-                case '5':
-                    n = 5;
-                    break;
-                case '6':
-                    n = 6;
-                    break;
-                case '7':
-                    n = 7;
-                    break;
-                case '8':
-                    n = 8;
-                    break;
-                case '9':
-                    n = 9;
-                    break;
-                default:
-                    n = -1;
-                    break;
-            }
-            int e = 1;
-            for (int j = 0; j < i; j++)
-                e *= 10;
-            num += e * n;
-            printf("%d\n", num);
-        }
-        inst.Inst.lit.val.tInt = num;
+        inst->Inst.lit.type = LT_INT;
+        int num = mccStrtod(peek().id);
+        /**/
+        inst->Inst.lit.val.tInt = num;
     }
-    return &inst;
+    return inst;
 }
 
 static Tree *parseId ()
 {
-    static Tree inst;
-    strcpy(inst.id, peek().id);
-    inst.type = IT_Id;
-    strcpy(inst.Inst.id.varName, peek().id);
-    return &inst;
+    Tree *inst = malloc(sizeof(Tree));
+    strcpy(inst->id, peek().id);
+    inst->type = IT_Id;
+    strcpy(inst->Inst.id.varName, peek().id);
+    return inst;
 }
 
 static Tree *parseBinary ()
 {
-    static Tree inst;
-    inst.type = IT_Binary;
-    inst.Inst.binary.stub = false;
+    Tree *inst = malloc(sizeof(Tree));
+    inst->type = IT_Binary;
+    inst->Inst.binary.stub = false;
+    inst->Inst.binary.single = true;
 
     next(); // expect left side
-    strcpy(inst.id, peek().id);
-    mccErr("l %s", peek().id);
+    strcpy(inst->id, peek().id);
+    mccLog("l %s", peek().id);
     if (isLit())
-        inst.Inst.binary.left = parseLit();
+        inst->Inst.binary.left = parseLit();
     else if (isId())
-        inst.Inst.binary.left = parseId();
+        inst->Inst.binary.left = parseId();
     else if (isSep("("))
     {
-        inst.Inst.binary.left = parseBinary();
+        inst->Inst.binary.left = parseBinary();
     }
     else
         mccErrC(EC_PARSE_SYN, "expected literal or identifier in left expression");
@@ -341,60 +303,61 @@ static Tree *parseBinary ()
     next(); // expect op or ";"
     if (tokcmpType(T_OP)) // is there an operator?
     {
-        mccErr("op %s", peek().id);
-        inst.Inst.binary.op = peek();
+        inst->Inst.binary.single = false;
+        mccLog("op %s", peek().id);
+        inst->Inst.binary.op = peek();
 
         if (isNextExprsn() == -1) // is it the last operator?
         {
-            inst.Inst.binary.stub = true;
+            inst->Inst.binary.stub = true;
             next(); // expect right side 
-            mccErr("r %s", peek().id);
+            mccLog(" %s", peek().id);
             if (isLit())
-                inst.Inst.binary.right = parseLit();
+                inst->Inst.binary.right = parseLit();
             else if (isId())
-                inst.Inst.binary.right = parseId();
+                inst->Inst.binary.right = parseId();
             else if (isSep("("))
             {
-                inst.Inst.binary.right = parseBinary();
+                inst->Inst.binary.right = parseBinary();
             }
             else
                 mccErrC(EC_PARSE_SYN, "expected literal or identifier in right expression");
         }
-        else if (getPrecedence(inst.Inst.binary.op) > isNextExprsn())
+        else if (getPrecedence(inst->Inst.binary.op) > isNextExprsn())
         { 
             // e.g. 1 * 2 + 5 should be (1 * 2) + 5
             // e.g. 1 / 2 * 3 + 4 should be ((1 / 2) * 3) + 4 
-            mccErr("con %s", peek().id);
+            mccLog("con %s", peek().id);
             Tree *ptrInst = parseBinary();
             Tree *finalLeft = ptrInst;
-            mccErr("f %s", ptrInst->Inst.binary.op.id);
+            mccLog("f %s", ptrInst->Inst.binary.op.id);
             while (!finalLeft->Inst.binary.stub) // find the leftmost tree
             {
-                mccErr("f");
+                mccLog("f");
                 finalLeft = finalLeft->Inst.binary.left;
             }
             // start off (1 * NULL), (2 + 5)
             // 1. (1 * 2), (NULL + 5)
             // 2. NULL, ((1 * 2) + 5)
             // 3. ((1 * 2) + 5), NULL
-            inst.Inst.binary.right = finalLeft->Inst.binary.left; // 1. right of inst to leftmost
-            static Tree tempInst;
+            inst->Inst.binary.right = finalLeft->Inst.binary.left; // 1. right of inst to leftmost
+            Tree *tempInst;
             tempInst = inst;
-            finalLeft->Inst.binary.left = &tempInst; // 2. inst inside the leftmost
-            inst = *ptrInst; // 3. claim the entire left as itself, swap
+            finalLeft->Inst.binary.left = tempInst; // 2. inst inside the leftmost
+            inst = ptrInst; // 3. claim the entire left as itself, swap
             prev();
         }
         else
         {
             // e.g. 1 + 2 * 5 should be 1 + (2 * 5)
             // OR 1 + 2 + 3 should be  1 + (2 + 3)
-            mccErr("c con %s", peek().id);
-            inst.Inst.binary.right = parseBinary();
-            mccErr("f %s", inst.Inst.binary.right->id);
+            mccLog("c con %s", peek().id);
+            inst->Inst.binary.right = parseBinary();
+            mccLog("f %s", inst->Inst.binary.right->id);
             prev();
         }
         next(); // expect ";" or next expression
-        mccErr("yyy %s", peek().id);
+        mccLog("yyy %s", peek().id);
     }
     else if (isSep(")"))
     {
@@ -403,7 +366,7 @@ static Tree *parseBinary ()
     else if (!isSep(";"))
         mccErrC(EC_PARSE_SYN, "expected operator or endline \";\" or \")\" in expression");
 
-    return &inst;
+    return inst;
 }
 
 

@@ -72,3 +72,58 @@ void logTree (Tree *t)
 
     mccLog("end log tree %s", t->id);
 }
+
+
+int mccStrtod (char *str)
+{
+    int num = 0;
+    int i = 0;
+    while (true)
+    {
+        if (str[i] == '\0')
+            break;
+        char n = 0;
+        switch (str[i])
+        {
+            case '0':
+                n = 0;  
+                break;
+            case '1':
+                n = 1;
+                break;
+            case '2':
+                n = 2;
+                break;
+            case '3':
+                n = 3;
+                break;
+            case '4':
+                n = 4;
+                break;
+            case '5':
+                n = 5;
+                break;
+            case '6':
+                n = 6;
+                break;
+            case '7':
+                n = 7;
+                break;
+            case '8':
+                n = 8;
+                break;
+            case '9':
+                n = 9;
+                break;
+            default:
+                n = -1;
+                break;
+        }
+        int e = 1;
+        for (int j = 0; j < i; j++)
+            e *= 10;
+        num += e * n;
+        i++;
+    }
+    return num;
+}

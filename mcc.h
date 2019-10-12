@@ -81,7 +81,9 @@ typedef struct
     enum LitType retType;
     bool isPtr;
     char funcName[128];
+    int noParameters;
     struct Tree *parameters; // only Var
+    int noScope;
     struct Tree *scope;
 } Func;
 typedef struct
@@ -95,7 +97,6 @@ typedef struct
 } Lit; // is Exprsn
 typedef struct
 {
-    enum LitType type;
     bool isPtr;
     char varName[128];
 } Id; // is Exprsn
@@ -119,10 +120,11 @@ typedef struct
 } Call;
 typedef struct
 {
+    bool stub;
+    bool single;
+    Token op;
     struct Tree *left; // only Exprsn
     struct Tree *right; // only Exprsn
-    bool stub;
-    Token op;
 } Binary; // is Exprsn
 typedef struct
 {
@@ -190,7 +192,11 @@ bool doParsing;
 bool doAssemble;
 bool doLinker;
 bool doWarnings;
+bool doWarningsE;
+bool doDumpAst;
+bool doDumpSta;
 
+Tree AST;
 
 // file.c
 Pos inpPos;
@@ -257,3 +263,9 @@ void appendChild (Tree *parent, Tree child);
 bool deleteChild (Tree *parent, char id[128]);
 Tree *getTree (Tree *parent, int index);
 void logTree (Tree *t);
+
+int mccStrtod (char *num);
+
+
+// dump.c
+void dumpAst (Tree *tree);
