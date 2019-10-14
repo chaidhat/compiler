@@ -72,6 +72,7 @@ typedef struct
 {
     enum LitType varType; 
     bool isPtr;
+    bool isStatic;
     char varName[128];
 } Var;
 
@@ -79,6 +80,7 @@ typedef struct
 {
     enum LitType retType;
     bool isPtr;
+    bool isStatic;
     char funcName[128];
     int noParameters;
     struct Tree *parameters; // only Var

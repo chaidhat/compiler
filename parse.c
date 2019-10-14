@@ -2,7 +2,7 @@
 
 typedef int precedence;
 
-static void parseType (enum LitType *type, bool *isPtr);
+static void parseType (enum LitType *type, bool *isPtr, bool *isStatic);
 static bool checkDecl (Tree *parent, char *name);
 static precedence getPrecedence (Token op);
 
@@ -29,8 +29,15 @@ static Token prev ();
 
 
 
-static void parseType (enum LitType *type, bool *isPtr)
+static void parseType (enum LitType *type, bool *isPtr, bool *isStatic)
 {
+    *isStatic = false;
+    if (isKw("static"))
+    {
+        *isStatic = true;
+        next();
+    }
+
     if (isKw("byte"))
        *type = LT_CHAR;
     else if (isKw("int"))
@@ -39,6 +46,13 @@ static void parseType (enum LitType *type, bool *isPtr)
         mccErrC(EC_PARSE_SYN_FAT, "unexpected declaration type \"%s\"", peek().id);
 
     next();
+
+    if (isKw("static"))
+    {
+        *isStatic = true;
+        next();
+    }
+
     bool initIsPtr = *isPtr;
     *isPtr = isOp("*");
     if (isId())
@@ -91,6 +105,12 @@ static bool isFunc ()
     if (isOp("*"))
         ret = isFunc();
     prev();
+    if (isKw("static"))
+    {
+        next();
+        ret = isFunc();
+        prev();
+    }
     return ret;
 }
 
@@ -178,9 +198,11 @@ static int parseVar (Tree *parent, bool inFunc)
         if (getType)
         {
             next(); // expect type
-            parseType(&inst.Inst.var.varType, &inst.Inst.var.isPtr);
+            parseType(&inst.Inst.var.varType, &inst.Inst.var.isPtr, &inst.Inst.var.isStatic);
             if (!inFunc)
                 getType = false;
+            else if (inst.Inst.var.isStatic)
+                mccErrC(EC_PARSE_SEM, "unexpected static specifier inside function parameters");
         }
 
         next(); // expect varname
@@ -209,7 +231,7 @@ static Tree *parseFunc (Tree *parent)
     inst.Inst.func.noParameters = 0;
     inst.Inst.func.noScope = 0;
 
-    parseType(&inst.Inst.func.retType, &inst.Inst.func.isPtr);
+    parseType(&inst.Inst.func.retType, &inst.Inst.func.isPtr, &inst.Inst.func.isStatic);
 
     next(); // expect funcname
     strcpy(inst.id, getId());
@@ -217,10 +239,10 @@ static Tree *parseFunc (Tree *parent)
 
     next(); // expect "("
     next(); // expect var list (parameters)
-    static Tree parameters;
+    Tree *parameters = malloc(sizeof(Tree));
     if (!isSep(")"))
-        inst.Inst.func.noParameters = parseVar(&parameters, true); // the elegant variable parsing! :D
-    inst.Inst.func.parameters = &parameters;
+        inst.Inst.func.noParameters = parseVar(parameters, true); // the elegant variable parsing! :D
+    inst.Inst.func.parameters = parameters;
 
     if (checkDecl(parent, inst.id))
         appendChild(parent, inst);

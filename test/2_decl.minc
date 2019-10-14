@@ -27,3 +27,12 @@ byte *h, k;
 
 // func ptr decl 
 byte *l (int *la, byte *lb);
+
+// static var 
+static byte m;
+
+// static var 
+byte static n;
+
+// static function 
+static byte *o (byte oa);

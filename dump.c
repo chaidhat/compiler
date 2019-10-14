@@ -128,11 +128,13 @@ static void dumpInst (Tree *tree)
         case IT_Var:
             print("varType: %s", LTtostr(tree->Inst.var.varType));
             print("isPtr: %d", tree->Inst.var.isPtr);
+            print("isStatic: %d", tree->Inst.var.isStatic);
             print("varName: %s", tree->Inst.var.varName);
             break;
         case IT_Func:
             print("funcType: %s", LTtostr(tree->Inst.func.retType));
             print("isPtr: %d", tree->Inst.func.isPtr);
+            print("isStatic: %d", tree->Inst.func.isStatic);
             print("funcName: %s", tree->Inst.func.funcName);
             print("");
             print("noParameters: %d", tree->Inst.func.noParameters);

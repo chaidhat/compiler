@@ -31,13 +31,15 @@ doing `make all` will auto build, self-run an test program and clean the directo
 ## MinimalistiC
 "*C is too powerful*" - no one ever.\
 MinimalistiC (MinC) is my take on a ultra-simplified, derated version of the C Programming language.\
-Mainly made because I neither got the skill or patience to fully follow the C ISOs to call it a 'C Compiler'. Note that there are no additional changes to C, only removals.
+Mainly made because I neither got the skill or patience to fully follow the C ISOs to call it a 'C Compiler'. 
+Note that there are no additional changes to C (with the expection of `byte` instead of `char`), only removals.
 
 **Capabilities**
 * preprocessor directives (`#include`, `#define`, `#ifdef`, `#endif`)
 * preprocessor macros (`__FILE__`, `__LINE___`, `__TIME__`, `__ASM`, etc.)
 * comments (`//`, `/*`, `*/`)
 * data types (`byte`, `int`)
+* static declarations (`static`) 
 * pointers (`*`, `&`)
 * *very* limited use of arrays
 * string literals (`"`) to char arrays
@@ -49,7 +51,6 @@ Mainly made because I neither got the skill or patience to fully follow the C IS
 * arithmetic (`+`, `-`, `*`, `/`) with (`(`, `)`) (with bidmas)
 * binary logic (`!`, `&&`, `||`)
 * equality testing (`==`, `!=`, `>`)
-* placeholder keyword
 * stdlib
 
 That's it. 8 keywords, 4 preprocessor directives,\

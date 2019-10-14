@@ -7,6 +7,7 @@ test/2_decl.minc AST:
 | | {
 | | | varType: BYTE
 | | | isPtr: 0
+| | | isStatic: 0
 | | | varName: 
 | | },
 | },
@@ -17,6 +18,7 @@ test/2_decl.minc AST:
 | | {
 | | | varType: INT
 | | | isPtr: 0
+| | | isStatic: 0
 | | | varName: a
 | | },
 | },
@@ -27,6 +29,7 @@ test/2_decl.minc AST:
 | | {
 | | | varType: INT
 | | | isPtr: 0
+| | | isStatic: 0
 | | | varName: b
 | | },
 | },
@@ -37,6 +40,7 @@ test/2_decl.minc AST:
 | | {
 | | | varType: INT
 | | | isPtr: 0
+| | | isStatic: 0
 | | | varName: c
 | | },
 | },
@@ -47,6 +51,7 @@ test/2_decl.minc AST:
 | | {
 | | | funcType: BYTE
 | | | isPtr: 0
+| | | isStatic: 0
 | | | funcName: d
 | | | 
 | | | noParameters: 0
@@ -61,6 +66,7 @@ test/2_decl.minc AST:
 | | {
 | | | funcType: BYTE
 | | | isPtr: 0
+| | | isStatic: 0
 | | | funcName: e
 | | | 
 | | | noParameters: 2
@@ -73,6 +79,7 @@ test/2_decl.minc AST:
 | | | | | {
 | | | | | | varType: INT
 | | | | | | isPtr: 0
+| | | | | | isStatic: 0
 | | | | | | varName: ea
 | | | | | },
 | | | | },
@@ -83,6 +90,7 @@ test/2_decl.minc AST:
 | | | | | {
 | | | | | | varType: INT
 | | | | | | isPtr: 0
+| | | | | | isStatic: 0
 | | | | | | varName: eb
 | | | | | },
 | | | | },
@@ -98,19 +106,21 @@ test/2_decl.minc AST:
 | | {
 | | | funcType: BYTE
 | | | isPtr: 0
+| | | isStatic: 0
 | | | funcName: f
 | | | 
 | | | noParameters: 1
 | | | parameters:
 | | | {
 | | | | {
-| | | | | id: ea
+| | | | | id: fa
 | | | | | type: VAR
 | | | | | Inst:
 | | | | | {
-| | | | | | varType: INT
+| | | | | | varType: BYTE
 | | | | | | isPtr: 0
-| | | | | | varName: ea
+| | | | | | isStatic: 0
+| | | | | | varName: fa
 | | | | | },
 | | | | },
 | | | },
@@ -125,6 +135,7 @@ test/2_decl.minc AST:
 | | {
 | | | varType: BYTE
 | | | isPtr: 1
+| | | isStatic: 0
 | | | varName: h
 | | },
 | },
@@ -135,6 +146,7 @@ test/2_decl.minc AST:
 | | {
 | | | varType: BYTE
 | | | isPtr: 1
+| | | isStatic: 0
 | | | varName: k
 | | },
 | },
@@ -145,34 +157,88 @@ test/2_decl.minc AST:
 | | {
 | | | funcType: BYTE
 | | | isPtr: 1
+| | | isStatic: 0
 | | | funcName: l
 | | | 
 | | | noParameters: 2
 | | | parameters:
 | | | {
 | | | | {
-| | | | | id: ea
+| | | | | id: la
 | | | | | type: VAR
 | | | | | Inst:
 | | | | | {
 | | | | | | varType: INT
-| | | | | | isPtr: 0
-| | | | | | varName: ea
+| | | | | | isPtr: 1
+| | | | | | isStatic: 0
+| | | | | | varName: la
 | | | | | },
 | | | | },
 | | | | {
-| | | | | id: eb
+| | | | | id: lb
 | | | | | type: VAR
 | | | | | Inst:
 | | | | | {
-| | | | | | varType: INT
-| | | | | | isPtr: 0
-| | | | | | varName: eb
+| | | | | | varType: BYTE
+| | | | | | isPtr: 1
+| | | | | | isStatic: 0
+| | | | | | varName: lb
 | | | | | },
 | | | | },
 | | | },
 | | | 
 | | | noScope: 2
+| | },
+| },
+| {
+| | id: m
+| | type: VAR
+| | Inst:
+| | {
+| | | varType: BYTE
+| | | isPtr: 0
+| | | isStatic: 1
+| | | varName: m
+| | },
+| },
+| {
+| | id: n
+| | type: VAR
+| | Inst:
+| | {
+| | | varType: BYTE
+| | | isPtr: 0
+| | | isStatic: 1
+| | | varName: n
+| | },
+| },
+| {
+| | id: o
+| | type: FUNC
+| | Inst:
+| | {
+| | | funcType: BYTE
+| | | isPtr: 1
+| | | isStatic: 1
+| | | funcName: o
+| | | 
+| | | noParameters: 1
+| | | parameters:
+| | | {
+| | | | {
+| | | | | id: oa
+| | | | | type: VAR
+| | | | | Inst:
+| | | | | {
+| | | | | | varType: BYTE
+| | | | | | isPtr: 0
+| | | | | | isStatic: 0
+| | | | | | varName: oa
+| | | | | },
+| | | | },
+| | | },
+| | | 
+| | | noScope: 1
 | | },
 | },
 },

@@ -34,6 +34,7 @@ static const char* ReKeywords[] =
 {
     "byte",
     "int",
+    "static",
     "struct",
     "union",
     "return",
