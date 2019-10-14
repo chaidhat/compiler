@@ -3,6 +3,7 @@
 # for the initial makefile template - this is my first time!
 
 CC=gcc
+CFLAGS=-Werror
 ECC=$(BDIR)/./mcc
 # TESTCMD= -v -D c 1 -I test/u.mh
 TESTCMD = -v -D c 1 -o test/out -fdast
@@ -15,7 +16,7 @@ TDIR = test
 
 $(BDIR)/mcc: $(_OBJ)
 	$ mkdir -p bin 
-	$(CC) -o $@ -Werror $^
+	$(CC) -o $@ $^
 
 # automatically makes, self-test and clean
 all:

@@ -44,7 +44,11 @@ enum eCodes
     EC_PP,
     EC_PARSE_SEM,
     EC_PARSE_SYN,
-    EC_PARSE_SYN_FAT,
+};
+enum wCodes
+{
+    WC_PARSE_SEM,
+    WC_PARSE_SYN,
 };
 
 typedef union
@@ -220,6 +224,7 @@ void inpGoto (Pos pos);
 void mccLog (char* format, ... );
 void mccWarn (char* format, ... );
 void mccErrC (enum eCodes eCode, char* format, ... );
+void mccWarnC (enum wCodes wCode, char* format, ... );
 void mccErr (char* format, ... );
 void mccDoArgs (int argc, char *argv[]);
 

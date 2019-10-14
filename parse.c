@@ -43,7 +43,7 @@ static void parseType (enum LitType *type, bool *isPtr, bool *isStatic)
     else if (isKw("int"))
         *type = LT_INT;
     else
-        mccErrC(EC_PARSE_SYN_FAT, "unexpected declaration type \"%s\"", peek().id);
+        mccErrC(EC_PARSE_SYN, "unexpected declaration type \"%s\"", peek().id);
 
     next();
 
@@ -58,7 +58,7 @@ static void parseType (enum LitType *type, bool *isPtr, bool *isStatic)
     if (isId())
         prev();
     else if (!*isPtr)
-        mccErrC(EC_PARSE_SYN_FAT, "expected identifier or ptr, instead got \"%s\"", peek().id);
+        mccErrC(EC_PARSE_SYN, "expected identifier or ptr, instead got \"%s\"", peek().id);
 }
 
 static bool checkDecl (Tree *parent, char *name)
@@ -155,7 +155,7 @@ static void readDecl (Tree *parent)
     else
         parseVar(parent, false);
     if (!isSep(";")) // happy coincidence that union and struct also need ';' as ending
-        mccErrC(EC_PARSE_SYN_FAT, "expected endline ';', instead got '%s'", peek().id);
+        mccErrC(EC_PARSE_SYN, "expected endline ';', instead got '%s'", peek().id);
 }
 
 static void readFunc (Tree *parent)
@@ -168,7 +168,7 @@ static void readFunc (Tree *parent)
         readScope(funcptr);
     }
     else if (!isSep(";"))
-        mccErrC(EC_PARSE_SYN_FAT, "expected endline ';' or scope '{', instead got '%s'", peek().id);
+        mccErrC(EC_PARSE_SYN, "expected endline ';' or scope '{', instead got '%s'", peek().id);
 }
 
 static void readScope (Tree *parent)
@@ -315,7 +315,7 @@ static Tree *parseBinary ()
         inst->Inst.binary.left = parseBinary();
     }
     else
-        mccErrC(EC_PARSE_SYN, "expected literal or identifier in left expression");
+        mccWarnC(WC_PARSE_SYN, "expected literal or identifier in left expression");
 
     next(); // expect op or ";"
     if (tokcmpType(T_OP)) // is there an operator?
@@ -338,7 +338,7 @@ static Tree *parseBinary ()
                 inst->Inst.binary.right = parseBinary();
             }
             else
-                mccErrC(EC_PARSE_SYN, "expected literal or identifier in right expression");
+                mccWarnC(WC_PARSE_SYN, "expected literal or identifier in right expression");
         }
         else if (getPrecedence(inst->Inst.binary.op) > isNextExprsn())
         { 
@@ -381,7 +381,7 @@ static Tree *parseBinary ()
         
     }
     else if (!isSep(";"))
-        mccErrC(EC_PARSE_SYN, "expected operator or endline \";\" or \")\" in expression");
+        mccWarnC(WC_PARSE_SYN, "expected operator or endline \";\" or \")\" in expression");
 
     return inst;
 }

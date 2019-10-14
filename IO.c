@@ -46,17 +46,30 @@ void mccErrC (enum eCodes eCode, char* format, ... )
     for (int i = 0; i < 128; i++)
         eMsg[i] = '\0';
     strcat(eMsg, "\033[1;31m");
-    bool fat = false;
-    if (eCode == EC_FATAL)               { strcat (eMsg, "*** INTERNAL FATAL ERROR ***"); fat = true; }
+    if (eCode == EC_FATAL)               { strcat (eMsg, "*** INTERNAL FATAL ERROR ***"); }
     if (eCode == EC_LEX) { strcat (eMsg, "lex error");  }
     if (eCode == EC_PP) { strcat (eMsg, "preprocess error");  }
-    if (eCode == EC_PARSE_SEM) { strcat (eMsg, "parse semantic error");  }
-    if (eCode == EC_PARSE_SYN) { strcat (eMsg, "parse syntax error");  }
-    if (eCode == EC_PARSE_SYN_FAT) { strcat (eMsg, "F parse syntax error"); fat = true; }
+    if (eCode == EC_PARSE_SEM) { strcat (eMsg, "semantic error");  }
+    if (eCode == EC_PARSE_SYN) { strcat (eMsg, "syntax error");  }
     strcat(eMsg, ":\033[m\033[1;38m");
     mccPrintE (eMsg, format, args);
     va_end (args);
-    if (fat) { mccExit(1, 0); }
+    mccExit(1,-1);
+}
+
+void mccWarnC (enum wCodes wCode, char* format, ... )
+{
+    va_list args;
+    va_start (args, format);
+    char wMsg[128];
+    for (int i = 0; i < 128; i++)
+        wMsg[i] = '\0';
+    strcat(wMsg, "\033[1;33m");
+    if (wCode == WC_PARSE_SEM) { strcat (wMsg, "syntax warning"); }
+    if (wCode == WC_PARSE_SYN) { strcat (wMsg, "semantic warning");  }
+    strcat(wMsg, ":\033[m\033[1;38m");
+    mccPrintE (wMsg, format, args);
+    va_end (args);
 }
 
 void mccExit (int code, int debugLine)
