@@ -37,22 +37,23 @@ Mainly made because I neither got the skill or patience to fully follow the C IS
 * preprocessor directives (`#include`, `#define`, `#ifdef`, `#endif`)
 * preprocessor macros (`__FILE__`, `__LINE___`, `__TIME__`, `__ASM`, etc.)
 * comments (`//`, `/*`, `*/`)
-* data types (`char`, `int`)
+* data types (`byte`, `int`)
 * pointers (`*`, `&`)
-* *very* limited use of arrays (`[`, `]`)
+* *very* limited use of arrays
 * string literals (`"`) to char arrays
 * code structures & scope (`{`, `}`)
 * basic data structures (`struct`, `union`, `.`, `,`, `;`)
-* functions (`void`, `return`)
+* functions (`return`)
 * conditionals (`if`)
 * control flow (`while` loops)
 * arithmetic (`+`, `-`, `*`, `/`) with (`(`, `)`) (with bidmas)
 * binary logic (`!`, `&&`, `||`)
 * equality testing (`==`, `!=`, `>`)
-* user I/O
+* placeholder keyword
+* stdlib
 
 That's it. 8 keywords, 4 preprocessor directives,\
-and a charset of `a..z`, `0..9` with 20 symbols `. , ; + - * / = # ! & | " > ( ) [ ] { }`
+and a charset of `a..z`, `0..9` with 20 symbols `. , ; + - * / = # ! & | " > ( ) { }`
 
 ## MinimalistiC Compiler (MCC)
 Compiles MinC into x86_64 assembly *.o* files then asks linker to link into binaries\

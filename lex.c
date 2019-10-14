@@ -32,11 +32,10 @@ static void readCom ();
 // regular expressions
 static const char* ReKeywords[] =
 {
-    "char",
+    "byte",
     "int",
     "struct",
     "union",
-    "void",
     "return",
     "if",
     "while",
@@ -51,8 +50,6 @@ static const char ReSep[] =
     ';',
     '(',
     ')',
-    '[',
-    ']',
     '{',
     '}',
     '"',

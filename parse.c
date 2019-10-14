@@ -2,16 +2,16 @@
 
 typedef int precedence;
 
+static void parseType (enum LitType *type, bool *isPtr);
+static bool checkDecl (Tree *parent, char *name);
+static precedence getPrecedence (Token op);
+
 static bool isFunc ();
 static precedence isNextExprsn ();
 
 static void readDecl (Tree *parent);
 static void readFunc (Tree *parent);
 static void readScope (Tree *parent);
-
-static void parseType (enum LitType *type, bool *isPtr);
-static bool checkDecl (Tree *parent, char *name);
-static precedence getPrecedence (Token op);
 
 static int parseVar (Tree *parent, bool inFunc);
 static Tree *parseFunc (Tree *parent);
@@ -26,6 +26,52 @@ static void parseUnion (Tree *parent);
 
 static Token next ();
 static Token prev ();
+
+
+
+static void parseType (enum LitType *type, bool *isPtr)
+{
+    if (isKw("byte"))
+       *type = LT_CHAR;
+    else if (isKw("int"))
+        *type = LT_INT;
+    else
+        mccErrC(EC_PARSE_SYN_FAT, "unexpected declaration type \"%s\"", peek().id);
+
+    next();
+    bool initIsPtr = *isPtr;
+    *isPtr = isOp("*");
+    if (isId())
+        prev();
+    else if (!*isPtr)
+        mccErrC(EC_PARSE_SYN_FAT, "expected identifier or ptr, instead got \"%s\"", peek().id);
+}
+
+static bool checkDecl (Tree *parent, char *name)
+{
+    if (deleteChild(parent, name)) // does this variable already exist?
+    {
+        mccErrC(EC_PARSE_SEM, "%s has been declared above", name);
+        return false;
+    }
+    return true;
+}
+
+static int getPrecedence (Token op)
+{
+    // the higher, the more important
+    if (tTokcmpId(op, "-"))
+        return 0;
+    if (tTokcmpId(op, "+"))
+        return 1;
+    if (tTokcmpId(op, "*"))
+        return 2;
+    if (tTokcmpId(op, "/"))
+        return 3;
+    if (tTokcmpId(op, "==") || tTokcmpId(op, "!=") || tTokcmpId(op, "&&") || tTokcmpId(op, "||"))
+        return 4;
+    return -1;
+}
 
 
 
@@ -82,17 +128,12 @@ static precedence isNextExprsn ()
 
 static void readDecl (Tree *parent)
 {
-    if (isKw("char") || isKw("int") || isKw("void"))
-        parseVar(parent, false);
-    else if (isKw("struct"))
+    if (isKw("struct"))
         parseStruct(parent);
     else if (isKw("union"))
         parseUnion(parent);
     else
-    {
-        mccErrC(EC_PARSE_SYN, "unknown type for declaration \"%s\"", peek().id);
-        next(); // expect ;
-    }
+        parseVar(parent, false);
     if (!isSep(";")) // happy coincidence that union and struct also need ';' as ending
         mccErrC(EC_PARSE_SYN_FAT, "expected endline ';', instead got '%s'", peek().id);
 }
@@ -124,50 +165,6 @@ static void readScope (Tree *parent)
 
 
 
-static void parseType (enum LitType *type, bool *isPtr)
-{
-    if (isKw("char"))
-       *type = LT_CHAR;
-    if (isKw("int"))
-        *type = LT_INT;
-    if (isKw("void"))
-        *type = LT_VOID;
-
-    next();
-    bool initIsPtr = *isPtr;
-    *isPtr = isOp("*");
-    if (isId())
-        prev();
-    else if (!*isPtr)
-        mccErrC(EC_PARSE_SYN_FAT, "expected identifier or ptr, instead got \"%s\"", peek().id);
-}
-
-static bool checkDecl (Tree *parent, char *name)
-{
-    if (deleteChild(parent, name)) // does this variable already exist?
-    {
-        mccErrC(EC_PARSE_SEM, "%s has been declared above", name);
-        return false;
-    }
-    return true;
-}
-
-static int getPrecedence (Token op)
-{
-    // the higher, the more important
-    if (tTokcmpId(op, "-"))
-        return 0;
-    if (tTokcmpId(op, "+"))
-        return 1;
-    if (tTokcmpId(op, "*"))
-        return 2;
-    if (tTokcmpId(op, "/"))
-        return 3;
-    if (tTokcmpId(op, "==") || tTokcmpId(op, "!=") || tTokcmpId(op, "&&") || tTokcmpId(op, "||"))
-        return 4;
-    return -1;
-}
-
 static int parseVar (Tree *parent, bool inFunc)
 {
     static Tree inst;
@@ -182,8 +179,6 @@ static int parseVar (Tree *parent, bool inFunc)
         {
             next(); // expect type
             parseType(&inst.Inst.var.varType, &inst.Inst.var.isPtr);
-            if (inst.Inst.var.varType == LT_VOID && !inst.Inst.var.isPtr) 
-                mccErrC(EC_PARSE_SYN_FAT, "variable has incomplete type \"void\"");
             if (!inFunc)
                 getType = false;
         }

@@ -51,6 +51,11 @@ void inpPush (char *inDataBuffer)
     strcat(datBuf, inDataBuffer);
 }
 
+void inpPop ()
+{
+    datBuf[0] = '\0';
+}
+
 void inpGoto(Pos pos)
 {
     for (int i = 0; i < pos.total - 1; i++)

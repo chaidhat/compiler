@@ -106,13 +106,10 @@ static char *LTtostr (enum LitType type)
     switch (type)
     {
         case LT_CHAR:
-            strcpy(sType, "CHAR");
+            strcpy(sType, "BYTE");
             break;
         case LT_INT:
             strcpy(sType, "INT");
-            break;
-        case LT_VOID:
-            strcpy(sType, "VOID");
             break;
     }
     return sType;

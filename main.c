@@ -36,7 +36,12 @@ int main (int argc, char* argv[])
     if (doDumpAst)
         dumpAst(&AST);
     inpClose();
-    inpWrite(outFilepath);
+    char outFilepathS[128];
+    strcpy(outFilepathS, outFilepath);
+    strcat(outFilepathS, ".mino");
+    inpPop();
+    inpPush("a");
+    inpWrite(outFilepathS);
     mccExit(0, __LINE__);
 }
 

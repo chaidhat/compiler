@@ -7,9 +7,9 @@
 enum TokType
 {
     T_NULL = 0, // NULL
-    T_LIT = 1,  // LITERALS T_ID = 2,   // IDENTIFIERS T_KEY = 3,  // KEYWORDS
-    T_ID = 2,
-    T_KEY = 3,
+    T_LIT = 1,  // LITERALS
+    T_ID = 2,   // IDENTIFIERS 
+    T_KEY = 3,  // KEYWORDS
     T_SEP = 4,  // SEPARATORS
     T_OP = 5,   // OPERATORS
     T_COM = 6,  // COMMENTS
@@ -19,7 +19,6 @@ enum LitType
 {
     LT_CHAR,
     LT_INT,
-    LT_VOID,
 };
 enum InstType
 {
@@ -211,6 +210,7 @@ void inpOpen (char *filename); // opens file
 void inpClose ();
 void inpWrite (char *toFilename); // closes and writes file
 void inpPush (char *inDataBuffer);
+void inpPop ();
 void inpGoto (Pos pos);
 
 

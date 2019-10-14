@@ -12,18 +12,18 @@ int a;
 int b, c;
 
 // function decl
-char d ();
+byte d ();
 
 // function decl w/ var list
-char e (int ea, int eb);
+byte e (int ea, int eb);
 
 // function w/ scope
-void f (char fa) 
+byte f (byte fa) 
 {
 }
 
 // var ptr decl
-int *h, k;
+byte *h, k;
 
 // func ptr decl 
-char *l (int *la, char *lb);
+byte *l (int *la, byte *lb);
