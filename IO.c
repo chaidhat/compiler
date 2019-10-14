@@ -1,6 +1,17 @@
 #include <stdarg.h>
 #include "mcc.h"
 
+// http://www.codebind.com/cprogramming/get-current-directory-using-c-program/
+#ifdef WINDOWS
+#include <direct.h>
+#define GetCurrentDir _getcwd
+#define OS "WINDOWS" 
+#else
+#include <unistd.h>
+#define GetCurrentDir getcwd
+#define OS "MACOSX/LINUX" 
+#endif
+
 static void mccPrint (char* suffix, char* format, va_list args )
 {
     char buf[256];
@@ -68,7 +79,10 @@ void mccWarnC (enum wCodes wCode, char* format, ... )
     if (wCode == WC_PARSE_SEM) { strcat (wMsg, "syntax warning"); }
     if (wCode == WC_PARSE_SYN) { strcat (wMsg, "semantic warning");  }
     strcat(wMsg, ":\033[m\033[1;38m");
+    if (doWarnings)
     mccPrintE (wMsg, format, args);
+    if (doWarningsE)
+        mccExit(1, -2);
     va_end (args);
 }
 
@@ -126,15 +140,19 @@ void mccDoArgs (int argc, char* argv[])
                 }
             }
              
+            char homedir[FILENAME_MAX];
+            GetCurrentDir( homedir, FILENAME_MAX );
             switch (argNo)
             {
                 case 0: // -V
-                    printf("\033[1;30mMinimal-C Compiler created by Chaidhat Chaimongkol\033[m\n"
-                    "CompileDate: %s\n"
-                    "CompileTime: %s\n"
-                    "Target: x86_64 Intel\n"
+                    printf("\033[1;30mMinimalistiC Compiler created by Chaidhat Chaimongkol\033[m\n"
+                    "https://github.com/Chai112/MinC-Compiler\n"
+                    "Compiled on: %s %s\n"
+                    "Target: x86_64 Intel %s\n"
+                    "Installed with: gcc %s\n"
+                    "Installed dir: %s\n"
                     "\n"
-                    , __DATE__, __TIME__);
+                    , __DATE__, __TIME__, OS, __VERSION__, homedir);
                     mccExit(2, __LINE__);
                     break;
                 case 1: // -b
@@ -142,6 +160,7 @@ void mccDoArgs (int argc, char* argv[])
                     break; 
                 case 2: // -o
                     strcpy(outFilepath, argv[line + 1]);
+                    isChangeFilepath = true;
                     line++;
                     break;
                 case 3: // -r
@@ -182,12 +201,13 @@ void mccDoArgs (int argc, char* argv[])
                     doDumpSta = true;
                     break;
                 case 14: // -h
-                    printf("\033[1;30mMinimal-C Compiler created by Chaidhat Chaimongkol\n%s %s\n\n\033[m", __DATE__, __TIME__);
-                    printf("usage: mcc [-h] [-V] [arg1 arg2 ...] <inpath1 inpath2 ...>\n\n" 
+                    printf("\033[1;30mMinimalistiC Compiler created by Chaidhat Chaimongkol\n%s %s\n\033[m", __DATE__, __TIME__);
+                    printf("https://github.com/Chai112/MinC-Compiler\n\n"
+                    "usage: mcc [-h] [-V] [arg1 arg2 ...] <inpath1 inpath2 ...>\n\n" 
                     "mcc only accepts .minc as inpath, dir and include accepts any types\n"
                     "args:\n"
                     "   -V                  display version info\n"
-                    "   -b                  display compilation stats once end\n"
+                    "   -b                  display compilation benchmarks\n"
                     "   -o <path>           write output to <path>\n"
                     "   -r <args ...>       run output with <args ...>\n"
                     "\n"
@@ -197,10 +217,10 @@ void mccDoArgs (int argc, char* argv[])
                     "\n"
                     "   -I <dir>            add include path <dir>\n"
                     "   -D <macro> <val>    set <macro> to <val>\n"
+                    "   -E                  preprocess only\n"
                     "\n"
-                    "   -E                  stop after preproccessing\n"
-                    "   -S                  stop after parsing.\n"
-                    "   -c                  do not link\n"
+                    "   -S                  stop before assembly\n"
+                    "   -c                  stop before linking\n"
                     "\n"
                     "   -fdast              dump AST\n"
                     "   -fdsta              dump stack-trace\n"
@@ -239,10 +259,5 @@ void mccDoArgs (int argc, char* argv[])
                     break;
             }
         }
-    }
-    else
-    {
-        mccErr("no input arguments.\n ./mcc -h for help");
-        mccExit(2, __LINE__);
     }
 }

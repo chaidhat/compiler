@@ -36,3 +36,27 @@ byte static n;
 
 // static function 
 static byte *o (byte oa);
+
+// struct data structure
+struct p
+{
+    int pa;
+    byte *pb, pc;
+};
+
+// nested struct data structure
+struct q
+{
+    // this is allowed to promote consistency, unlike C
+    struct qa 
+    {
+        int qaa;
+    };
+};
+
+// union data structure
+union s
+{
+    int sa;
+    byte *sb, sc;
+};

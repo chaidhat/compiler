@@ -2,8 +2,9 @@
 
 static void init ()
 {
-    strcpy(inFilepath, "main.mc");
+    strcpy(inFilepath, "$");
     strcpy(outFilepath, "$");
+    isChangeFilepath = false;
     mode = 1; // default mode (compiler debug)s
     doBenchmarking = false;
     doRun = false;
@@ -36,12 +37,9 @@ int main (int argc, char* argv[])
     if (doDumpAst)
         dumpAst(&AST);
     inpClose();
-    char outFilepathS[128];
-    strcpy(outFilepathS, outFilepath);
-    strcat(outFilepathS, ".mino");
     inpPop();
     inpPush("a");
-    inpWrite(outFilepathS);
+    inpWrite(outFilepath, ".mino");
     mccExit(0, __LINE__);
 }
 

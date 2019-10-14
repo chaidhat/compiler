@@ -25,7 +25,7 @@ int q = o + (2 * 1);
 // implied nested binaries, also tests BIDMAS
 int r = o + 2 + 1;
 
-void s ()
+int s ()
 {
     // assignment without decl
     r = 1;
@@ -42,3 +42,6 @@ int u = 1 + 2 * 3 + 4;
 
 // digraph test
 int v = 1 || 2 && 3;
+
+// multiple assign
+int w = 0, x = 1;

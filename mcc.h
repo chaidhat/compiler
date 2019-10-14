@@ -143,13 +143,13 @@ typedef struct
 } Ctrl;
 typedef struct
 {
-    char structName[128];
-    struct Tree *vars; // only decl
+    char strctName[128];
+    struct Tree *decls; // only decl
 } Strct;
 typedef struct
 {
-    char unionName[128];
-    struct Tree *vars; // only decl
+    char uninName[128];
+    struct Tree *decls; // only decl
 } Unin;
 typedef struct
 {
@@ -187,6 +187,7 @@ typedef struct Tree
 char startFilepath[128];
 char inFilepath[128];
 char outFilepath[128];
+bool isChangeFilepath;
 
 
 bool mode;
@@ -214,7 +215,7 @@ char inpN; // next char
 
 void inpOpen (char *filename); // opens file
 void inpClose ();
-void inpWrite (char *toFilename); // closes and writes file
+void inpWrite (char *toFilename, char *extn); // closes and writes file
 void inpPush (char *inDataBuffer);
 void inpPop ();
 void inpGoto (Pos pos);

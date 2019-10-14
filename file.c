@@ -9,6 +9,11 @@ FILE* fp;
 // reads files
 void inpOpen (char *filename)
 {
+    if (strcmp(filename, "$") == 0)
+    {
+        mccErr("no input arguments.\n ./mcc -h for help");
+        mccExit(2, __LINE__);
+    }
     fp = fopen(filename, "r"); // read mode
 
     if (fp == NULL)
@@ -32,13 +37,22 @@ void inpClose ()
 }
 
 // write files
-void inpWrite (char *toFilename)
+void inpWrite (char *toFilename, char *extn)
 {
-    fp = fopen(toFilename, "w"); // write mode
+    char filename[128];
+    if (!isChangeFilepath)
+    {
+        strcpy(filename, toFilename);
+        strcat(filename, extn);
+    }
+    else
+        strcpy(filename, toFilename);
+
+    fp = fopen(filename, "w"); // write mode
 
     if(fp == NULL)
     {
-        mccErr("Write error while opening the file %s", toFilename);
+        mccErr("Write error while opening the file %s", filename);
         mccExit(1, __LINE__);
     }
 

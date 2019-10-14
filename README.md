@@ -11,7 +11,7 @@ This is a personal project of mine of trying to teach myself...
 
 it's a fun challenge.\
 \
-I aim to develop a ultra-simple, easy to read, inefficient compiler which compiles my variant of C (called MinimalistiC or MinC)
+I aim to develop a ultra-simple, ultra-lightweight, easy to read, compiler which compiles my variant of C (called MinimalistiC or MinC)
 into x86_64 assembly as a *.o* file. No optimisations, as little confusion as possible (I hope) so that other people can look
 at the source code and understand what on earth is going on. 
 
@@ -30,7 +30,7 @@ Run the executable with -h flag for instructions.
 doing `make all` will auto build, self-run an test program and clean the directory.
 ## MinimalistiC
 "*C is too powerful*" - no one ever.\
-MinimalistiC (MinC) is my take on a ultra-simplified, derated version of the C Programming language.\
+MinimalistiC (MinC) is my take on a ultra-simplified, ultra-lightweight, derated version of the C Programming language.\
 Mainly made because I neither got the skill or patience to fully follow the C ISOs to call it a 'C Compiler'. 
 Note that there are no additional changes to C (with the expection of `byte` instead of `char`), only removals.
 
@@ -54,7 +54,7 @@ Note that there are no additional changes to C (with the expection of `byte` ins
 * stdlib
 
 That's it. 8 keywords, 4 preprocessor directives,\
-and a charset of `a..z`, `0..9` with 20 symbols `. , ; + - * / = # ! & | " > ( ) { }`
+and a charset of `a..z`, `0..9` with 18 symbols `. , ; + - * / = # ! & | " > ( ) { }`
 
 ## MinimalistiC Compiler (MCC)
 Compiles MinC into x86_64 assembly *.o* files then asks linker to link into binaries\

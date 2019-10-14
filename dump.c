@@ -92,6 +92,12 @@ static char *ITtostr (enum InstType type)
         case IT_Binary:
             strcpy(sType, "BINARY");
             break;
+        case IT_Strct:
+            strcpy(sType, "STRUCT");
+            break;
+        case IT_Unin:
+            strcpy(sType, "UNION");
+            break;
         default:
             printf("UNKNOWN %d\n", type);
             strcpy(sType, "UNKNOWN");
@@ -122,6 +128,8 @@ static void dumpInst (Tree *tree)
     print("type: %s", ITtostr(tree->type));
     print("Inst:");
 
+    if (tree->id[0] == '\0') // first item could be blank
+        return;
     up();
     switch (tree->type)
     {
@@ -193,6 +201,19 @@ static void dumpInst (Tree *tree)
                 down();
             }
             break;
+        case IT_Strct:
+            print("strctName: %s", tree->Inst.strct.strctName);
+            print("noChild: %d", tree->Inst.strct.decls->noChild);
+            print("");
+            print("decls:");
+            up();
+                dumpTree(tree->Inst.strct.decls);
+            down();
+            break;
+        case IT_Unin:
+            print("uninName: %s", tree->Inst.unin.uninName);
+            print("noChild: %d", tree->Inst.strct.decls->noChild);
+            break;
         default:
             mccErr("AST DUMP ERR %s in dump.c", __LINE__);
             break;
@@ -215,9 +236,6 @@ void dumpAst (Tree *tree)
     up();
     dumpTree(tree);
     down();
-    char outFilepathS[128];
-    strcpy(outFilepathS, outFilepath);
-    strcat(outFilepathS, ".mins");
-    inpWrite(outFilepathS);
+    inpWrite(outFilepath, "-dump-ast.txt");
 }
 

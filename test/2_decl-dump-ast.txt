@@ -1,0 +1,330 @@
+test/2_decl.minc AST:
+{
+| {
+| | id: 
+| | type: VAR
+| | Inst:
+| | {
+| | | id: a
+| | | type: VAR
+| | | Inst:
+| | | {
+| | | | varType: INT
+| | | | isPtr: 0
+| | | | isStatic: 0
+| | | | varName: a
+| | | },
+| | },
+| | {
+| | | id: b
+| | | type: VAR
+| | | Inst:
+| | | {
+| | | | varType: INT
+| | | | isPtr: 0
+| | | | isStatic: 0
+| | | | varName: b
+| | | },
+| | },
+| | {
+| | | id: c
+| | | type: VAR
+| | | Inst:
+| | | {
+| | | | varType: INT
+| | | | isPtr: 0
+| | | | isStatic: 0
+| | | | varName: c
+| | | },
+| | },
+| | {
+| | | id: d
+| | | type: FUNC
+| | | Inst:
+| | | {
+| | | | funcType: BYTE
+| | | | isPtr: 0
+| | | | isStatic: 0
+| | | | funcName: d
+| | | | 
+| | | | noParameters: 0
+| | | | 
+| | | | noScope: 0
+| | | },
+| | },
+| | {
+| | | id: e
+| | | type: FUNC
+| | | Inst:
+| | | {
+| | | | funcType: BYTE
+| | | | isPtr: 0
+| | | | isStatic: 0
+| | | | funcName: e
+| | | | 
+| | | | noParameters: 2
+| | | | parameters:
+| | | | {
+| | | | | {
+| | | | | | id: ea
+| | | | | | type: VAR
+| | | | | | Inst:
+| | | | | | {
+| | | | | | | varType: INT
+| | | | | | | isPtr: 0
+| | | | | | | isStatic: 0
+| | | | | | | varName: ea
+| | | | | | },
+| | | | | },
+| | | | | {
+| | | | | | id: eb
+| | | | | | type: VAR
+| | | | | | Inst:
+| | | | | | {
+| | | | | | | varType: INT
+| | | | | | | isPtr: 0
+| | | | | | | isStatic: 0
+| | | | | | | varName: eb
+| | | | | | },
+| | | | | },
+| | | | },
+| | | | 
+| | | | noScope: 2
+| | | },
+| | },
+| | {
+| | | id: f
+| | | type: FUNC
+| | | Inst:
+| | | {
+| | | | funcType: BYTE
+| | | | isPtr: 0
+| | | | isStatic: 0
+| | | | funcName: f
+| | | | 
+| | | | noParameters: 1
+| | | | parameters:
+| | | | {
+| | | | | {
+| | | | | | id: fa
+| | | | | | type: VAR
+| | | | | | Inst:
+| | | | | | {
+| | | | | | | varType: BYTE
+| | | | | | | isPtr: 0
+| | | | | | | isStatic: 0
+| | | | | | | varName: fa
+| | | | | | },
+| | | | | },
+| | | | },
+| | | | 
+| | | | noScope: 1
+| | | },
+| | },
+| | {
+| | | id: h
+| | | type: VAR
+| | | Inst:
+| | | {
+| | | | varType: BYTE
+| | | | isPtr: 1
+| | | | isStatic: 0
+| | | | varName: h
+| | | },
+| | },
+| | {
+| | | id: k
+| | | type: VAR
+| | | Inst:
+| | | {
+| | | | varType: BYTE
+| | | | isPtr: 1
+| | | | isStatic: 0
+| | | | varName: k
+| | | },
+| | },
+| | {
+| | | id: l
+| | | type: FUNC
+| | | Inst:
+| | | {
+| | | | funcType: BYTE
+| | | | isPtr: 1
+| | | | isStatic: 0
+| | | | funcName: l
+| | | | 
+| | | | noParameters: 2
+| | | | parameters:
+| | | | {
+| | | | | {
+| | | | | | id: la
+| | | | | | type: VAR
+| | | | | | Inst:
+| | | | | | {
+| | | | | | | varType: INT
+| | | | | | | isPtr: 1
+| | | | | | | isStatic: 0
+| | | | | | | varName: la
+| | | | | | },
+| | | | | },
+| | | | | {
+| | | | | | id: lb
+| | | | | | type: VAR
+| | | | | | Inst:
+| | | | | | {
+| | | | | | | varType: BYTE
+| | | | | | | isPtr: 1
+| | | | | | | isStatic: 0
+| | | | | | | varName: lb
+| | | | | | },
+| | | | | },
+| | | | },
+| | | | 
+| | | | noScope: 2
+| | | },
+| | },
+| | {
+| | | id: m
+| | | type: VAR
+| | | Inst:
+| | | {
+| | | | varType: BYTE
+| | | | isPtr: 0
+| | | | isStatic: 1
+| | | | varName: m
+| | | },
+| | },
+| | {
+| | | id: n
+| | | type: VAR
+| | | Inst:
+| | | {
+| | | | varType: BYTE
+| | | | isPtr: 0
+| | | | isStatic: 1
+| | | | varName: n
+| | | },
+| | },
+| | {
+| | | id: o
+| | | type: FUNC
+| | | Inst:
+| | | {
+| | | | funcType: BYTE
+| | | | isPtr: 1
+| | | | isStatic: 1
+| | | | funcName: o
+| | | | 
+| | | | noParameters: 1
+| | | | parameters:
+| | | | {
+| | | | | {
+| | | | | | id: oa
+| | | | | | type: VAR
+| | | | | | Inst:
+| | | | | | {
+| | | | | | | varType: BYTE
+| | | | | | | isPtr: 0
+| | | | | | | isStatic: 0
+| | | | | | | varName: oa
+| | | | | | },
+| | | | | },
+| | | | },
+| | | | 
+| | | | noScope: 1
+| | | },
+| | },
+| | {
+| | | id: p
+| | | type: STRUCT
+| | | Inst:
+| | | {
+| | | | strctName: p
+| | | | noChild: 2
+| | | | 
+| | | | decls:
+| | | | {
+| | | | | {
+| | | | | | id: 
+| | | | | | type: VAR
+| | | | | | Inst:
+| | | | | | {
+| | | | | | | id: pb
+| | | | | | | type: VAR
+| | | | | | | Inst:
+| | | | | | | {
+| | | | | | | | varType: BYTE
+| | | | | | | | isPtr: 1
+| | | | | | | | isStatic: 0
+| | | | | | | | varName: pb
+| | | | | | | },
+| | | | | | },
+| | | | | | {
+| | | | | | | id: pc
+| | | | | | | type: VAR
+| | | | | | | Inst:
+| | | | | | | {
+| | | | | | | | varType: BYTE
+| | | | | | | | isPtr: 1
+| | | | | | | | isStatic: 0
+| | | | | | | | varName: pc
+| | | | | | | },
+| | | | | | },
+| | | | | },
+| | | | },
+| | | },
+| | | {
+| | | | id: q
+| | | | type: STRUCT
+| | | | Inst:
+| | | | {
+| | | | | strctName: q
+| | | | | noChild: 1
+| | | | | 
+| | | | | decls:
+| | | | | {
+| | | | | | {
+| | | | | | | id: 
+| | | | | | | type: VAR
+| | | | | | | Inst:
+| | | | | | | {
+| | | | | | | | id: qa
+| | | | | | | | type: STRUCT
+| | | | | | | | Inst:
+| | | | | | | | {
+| | | | | | | | | strctName: qa
+| | | | | | | | | noChild: 1
+| | | | | | | | | 
+| | | | | | | | | decls:
+| | | | | | | | | {
+| | | | | | | | | | {
+| | | | | | | | | | | id: 
+| | | | | | | | | | | type: VAR
+| | | | | | | | | | | Inst:
+| | | | | | | | | | | {
+| | | | | | | | | | | | id: qaa
+| | | | | | | | | | | | type: VAR
+| | | | | | | | | | | | Inst:
+| | | | | | | | | | | | {
+| | | | | | | | | | | | | varType: INT
+| | | | | | | | | | | | | isPtr: 0
+| | | | | | | | | | | | | isStatic: 0
+| | | | | | | | | | | | | varName: qaa
+| | | | | | | | | | | | },
+| | | | | | | | | | | },
+| | | | | | | | | | },
+| | | | | | | | | },
+| | | | | | | | },
+| | | | | | | },
+| | | | | | },
+| | | | | },
+| | | | | {
+| | | | | | id: s
+| | | | | | type: UNION
+| | | | | | Inst:
+| | | | | | {
+| | | | | | | uninName: s
+| | | | | | | noChild: 2
+| | | | | | },
+| | | | | },
+| | | | },

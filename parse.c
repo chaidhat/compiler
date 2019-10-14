@@ -1,6 +1,7 @@
 #include "mcc.h"
 
 typedef int precedence;
+static bool inStrctUnin = false;
 
 static void parseType (enum LitType *type, bool *isPtr, bool *isStatic);
 static bool checkDecl (Tree *parent, char *name);
@@ -215,10 +216,15 @@ static int parseVar (Tree *parent, bool inFunc)
 
         next(); // expect "," or ";" or "="
 
-        if (isOp("=") && !inFunc) // assign
+        if (isOp("=")) // assign
         {
-            prev(); // expect varname
-            parseAssign(parent);
+            if (!inFunc && !inStrctUnin)
+            {
+                prev(); // expect varname
+                parseAssign(parent);
+            }
+            else
+                mccErrC(EC_PARSE_SEM, "unexpected assignment \"=\" in func param or struct or union");
         }
     } while (isSep(","));
     return nVars;
@@ -376,12 +382,12 @@ static Tree *parseBinary ()
         next(); // expect ";" or next expression
         mccLog("yyy %s", peek().id);
     }
-    else if (isSep(")"))
+    else if (isSep(")") || isSep(","))
     {
         
     }
     else if (!isSep(";"))
-        mccWarnC(WC_PARSE_SYN, "expected operator or endline \";\" or \")\" in expression");
+        mccWarnC(WC_PARSE_SYN, "expected operator or endline \";\" or \")\" or \",\" in expression");
 
     return inst;
 }
@@ -390,10 +396,58 @@ static Tree *parseBinary ()
 
 static void parseStruct (Tree *parent)
 {
+    Tree *inst = malloc(sizeof(Tree)); // declared on heap because recursion
+    inst->type = IT_Strct;
+    next(); // expect strctname
+    strcpy(inst->id, peek().id);
+    strcpy(inst->Inst.strct.strctName, peek().id);
+    next(); // expect {
+    next();
+    inStrctUnin = true;
+    while (!isSep("}"))
+    {
+        mccLog("struct parse lex %d %s", peek().type, peek().id);
+
+        // assume decl
+        mccLog("declare");
+        Tree *decls = malloc(sizeof(Tree));
+        inst->Inst.strct.decls = decls;
+        readDecl(inst->Inst.strct.decls);
+        next();
+    }
+    next();
+    inStrctUnin = false;
+
+    if (checkDecl(parent, inst->id))
+        appendChild(parent, *inst);
 }
 
 static void parseUnion (Tree *parent)
 {
+    Tree *inst = malloc(sizeof(Tree)); // declared on heap because recursion
+    inst->type = IT_Unin;
+    next(); // expect strctname
+    strcpy(inst->id, peek().id);
+    strcpy(inst->Inst.unin.uninName, peek().id);
+    next(); // expect {
+    next();
+    inStrctUnin = true;
+    while (!isSep("}"))
+    {
+        mccLog("union parse lex %d %s", peek().type, peek().id);
+
+        // assume decl
+        mccLog("declare");
+        Tree *decls = malloc(sizeof(Tree));
+        inst->Inst.unin.decls = decls;
+        readDecl(inst->Inst.unin.decls);
+        next();
+    }
+    next();
+    inStrctUnin = false;
+
+    if (checkDecl(parent, inst->id))
+        appendChild(parent, *inst);
 }
 
 
