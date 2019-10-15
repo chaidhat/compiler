@@ -1,4 +1,4 @@
-# MinimalistiC by Chaidhat Chaimongkol
+ # MinimalistiC by Chaidhat Chaimongkol
 ### Programming Language & Compiler started 27.08.19
 ![MinimalistiC Programming Language & Compiler](https://github.com/Chai112/MinC-Compiler/blob/master/doc/thumb.png)
 
@@ -6,14 +6,13 @@
 This is a personal project of mine of trying to teach myself...
 1. how compilers work
 2. how to write assembly (for an x86_64 Intel architecture)
-3. modifying the C programming language
+3. the C programming language
 4. (teach myself how to use Vim)
 
 it's a fun challenge.\
 \
-I aim to develop a ultra-simple, ultra-lightweight, easy to read, compiler which compiles my variant of C (called MinimalistiC or MinC)
-into x86_64 assembly as a *.o* file. No optimisations, as little confusion as possible (I hope) so that other people can look
-at the source code and understand what on earth is going on. 
+I aim to develop a ultra-simple, easy to read, compiler which compiles my variant of C (called MinimalistiC or MinC)
+into x86_64 assembly as a *.o* file. No optimisations, horrible memory cleanup in as little confusion as possible (I hope) so that other people can look at the source code and understand what on earth is going on. 
 
 ## Install
 Mac & Windows are OK, tested on Mac\
@@ -28,11 +27,11 @@ Run the executable with -h flag for instructions.
 ./mcc -h
 ```
 doing `make all` will auto build, self-run an test program and clean the directory.
-## MinimalistiC
+## MinimalistiC Programming Language
 "*C is too powerful*" - no one ever.\
 MinimalistiC (MinC) is my take on a ultra-simplified, ultra-lightweight, derated version of the C Programming language.\
-Mainly made because I neither got the skill or patience to fully follow the C ISOs to call it a 'C Compiler'. 
-Note that there are no additional changes to C (with the expection of `byte` instead of `char`), only removals.
+Mainly because I don't want to follow C ISOs. \
+It is faithful to C so it does not add anything new, only removals and a few changes.
 
 **Capabilities**
 * preprocessor directives (`#include`, `#define`, `#ifdef`, `#endif`)
@@ -41,7 +40,7 @@ Note that there are no additional changes to C (with the expection of `byte` ins
 * data types (`byte`, `int`)
 * static declarations (`static`) 
 * pointers (`*`, `&`)
-* *very* limited use of arrays
+* *very* limited use of arrays (a lá ptr math)
 * string literals (`"`) to char arrays
 * code structures & scope (`{`, `}`)
 * basic data structures (`struct`, `union`, `.`, `,`, `;`)
@@ -54,7 +53,8 @@ Note that there are no additional changes to C (with the expection of `byte` ins
 * stdlib
 
 That's it. 8 keywords, 4 preprocessor directives,\
-and a charset of `a..z`, `0..9` with 18 symbols `. , ; + - * / = # ! & | " > ( ) { }`
+and a charset of `a..z`, `0..9` with 18 symbols `. , ; + - * / = # ! & | " > ( ) { }`\
+**It's incredibly easy to master compared to C.**
 
 ## MinimalistiC Compiler (MCC)
 Compiles MinC into x86_64 assembly *.o* files then asks linker to link into binaries\
