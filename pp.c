@@ -229,6 +229,7 @@ Token ppToken (Token token)
     if (!doParsing)
     {
         inpPush(peek().id);
+        inpPush(" ");
         return TOKEN_NULL;
     }
 

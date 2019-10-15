@@ -239,3 +239,8 @@ void dumpAst (Tree *tree)
     inpWrite(outFilepath, "-dump-ast.txt");
 }
 
+void dumpPp ()
+{
+    inpWrite(outFilepath, "-pp.minc");
+    mccExit(0, __LINE__);
+}

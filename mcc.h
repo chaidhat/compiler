@@ -277,4 +277,5 @@ char *mccDtostr (int in);
 
 
 // dump.c
+void dumpPp ();
 void dumpAst (Tree *tree);

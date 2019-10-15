@@ -455,13 +455,6 @@ static void parseUnion (Tree *parent)
 static Token next ()
 {
     Token token = ppToken(lex());
-    if (!doParsing)
-    {
-        if (tTokcmpType(token, T_NULL) || tTokcmpType(token, T_EOF))
-            strcpy(token.id, " ");
-        else
-            printf("b%sb\n", token.id);
-    }
 
     if (tTokcmpType(token, T_NULL)) // is it an EOF that has a lower dir?
         return next();

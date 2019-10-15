@@ -34,6 +34,10 @@ int main (int argc, char* argv[])
         parse();
     while (!tokcmpType(T_EOF));
 
+    if (!doParsing)
+        dumpPp();
+
+    inpPop();
     if (doDumpAst)
         dumpAst(&AST);
     inpClose();
