@@ -28,8 +28,8 @@ enum InstType
     IT_Lit,
     IT_Id,
     IT_Assign,
-    IT_Ptr,
-    IT_Addr,
+    IT_Deref,
+    IT_Ref,
     IT_Call,
     IT_Binary,
     IT_Cond,
@@ -112,12 +112,12 @@ typedef struct
 } Assign;
 typedef struct
 {
-    Id id;
-} Ptr;
+    struct Tree *exprsn; // only Exprsn
+} Deref;
 typedef struct
 {
-    Ptr ptr;
-} Addr;
+    struct Tree *ptr; // must be ptr
+} Ref;
 typedef struct
 {
     char funcName[128];
@@ -168,8 +168,8 @@ typedef struct Tree
         Lit lit;
         Id id;
         Assign assign;
-        Ptr ptr;
-        Addr addr;
+        Deref deref;
+        Ref ref;
         Call call;
         Binary binary;
         Cond cond;
@@ -266,7 +266,6 @@ void predefineInclude (char *dir);
 void parse ();
 
 // vec.c
-Tree crtTree (char *id);
 void appendChild (Tree *parent, Tree child);
 bool deleteChild (Tree *parent, char id[128]);
 Tree *getTree (Tree *parent, int index);

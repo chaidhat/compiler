@@ -8,40 +8,46 @@
 // excludes assignment to function calls, recursion, pointers, and preprocessor assignment
 
 // assign to literal
-int m = 1;
+int a = 1;
 
 // assign to identifier
-int n = m;
+int b = a;
 
 // assign to binary literals
-int o = 1 + 2;
+int c = 1 + 2;
 
 // assign to binary identifer & literals
-int p = o + 1;
+int d = c + 1;
 
 // assignment to nested binaries
-int q = o + (2 * 1);
+int e = c + (2 * 1);
 
 // implied nested binaries, also tests BIDMAS
-int r = o + 2 + 1;
+int f = c + 2 + 1;
 
-int s ()
+int g ()
 {
     // assignment without decl
-    r = 1;
+    h = 1;
 
     // self assignment
-    r = r + 1;
+    i = h + 1;
 }
 
 // multiple implied nested binaries 
-int t = 1 + 2 + 3 * 4;
+int j = 1 + 2 + 3 * 4;
 
 // multiple implied nested binaries BIDMAS
-int u = 1 + 2 * 3 + 4;
+int k = 1 + 2 * 3 + 4;
 
 // digraph test
-int v = 1 || 2 && 3;
+int l = 1 || 2 && 3;
 
 // multiple assign
-int w = 0, x = 1;
+int m = 0, o = 1;
+
+// deref 
+int p = *m;
+
+// ref
+int q = &m;

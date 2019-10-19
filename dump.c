@@ -98,6 +98,18 @@ static char *ITtostr (enum InstType type)
         case IT_Unin:
             strcpy(sType, "UNION");
             break;
+        case IT_Deref:
+            strcpy(sType, "DEREF");
+            break;
+        case IT_Ref:
+            strcpy(sType, "REF");
+            break;
+        case IT_Cond:
+            strcpy(sType, "COND");
+            break;
+        case IT_Ctrl:
+            strcpy(sType, "CTRL");
+            break;
         default:
             printf("UNKNOWN %d\n", type);
             strcpy(sType, "UNKNOWN");
@@ -124,7 +136,7 @@ static char *LTtostr (enum LitType type)
 static void dumpInst (Tree *tree)
 {
     up();
-    print("id: %s", tree->id);
+    //print("id: %s", tree->id);
     print("type: %s", ITtostr(tree->type));
     print("Inst:");
 
@@ -192,9 +204,9 @@ static void dumpInst (Tree *tree)
             up();
                 dumpTree(tree->Inst.binary.left);
             down();
-            print("");
             if (!tree->Inst.binary.single)
             {
+                print("");
                 print("right:");
                 up();
                     dumpTree(tree->Inst.binary.right);
@@ -209,10 +221,49 @@ static void dumpInst (Tree *tree)
             up();
                 dumpTree(tree->Inst.strct.decls);
             down();
+            down();
             break;
         case IT_Unin:
             print("uninName: %s", tree->Inst.unin.uninName);
-            print("noChild: %d", tree->Inst.strct.decls->noChild);
+            print("noChild: %d", tree->Inst.unin.decls->noChild);
+            print("");
+            print("decls:");
+            up();
+                dumpTree(tree->Inst.unin.decls);
+            down();
+            down();
+            break;
+        case IT_Deref:
+            print("exprsn:");
+            up();
+                dumpTree(tree->Inst.deref.exprsn);
+            down();
+            break;
+        case IT_Ref:
+            print("ptr:");
+            up();
+                dumpTree(tree->Inst.ref.ptr);
+            down();
+            break;
+        case IT_Cond:
+            print("exprsn:");
+            up();
+                dumpTree(tree->Inst.cond.exprsn);
+            down();
+            print("scope:");
+            up();
+                dumpTree(tree->Inst.cond.scope);
+            down();
+            break;
+        case IT_Ctrl:
+            print("exprsn:");
+            up();
+                dumpTree(tree->Inst.cond.exprsn);
+            down();
+            print("scope:");
+            up();
+                dumpTree(tree->Inst.cond.scope);
+            down();
             break;
         default:
             mccErr("AST DUMP ERR %s in dump.c", __LINE__);
@@ -236,11 +287,12 @@ void dumpAst (Tree *tree)
     up();
     dumpTree(tree);
     down();
+    down();
     inpWrite(outFilepath, "-dump-ast.txt");
 }
 
 void dumpPp ()
 {
-    inpWrite(outFilepath, "-pp.minc");
+    inpWrite(outFilepath, "-pp.mc");
     mccExit(0, __LINE__);
 }

@@ -6,7 +6,7 @@ CC=gcc
 CFLAGS=-Werror
 ECC=$(BDIR)/./mcc
 # TESTCMD= -v -D c 1 -I test/u.mh
-TESTCMD = -v -D c 1 -E -fdast
+TESTCMD = -v -D c 1 -fdast
 
 _SRC := $(wildcard *.c)
 _OBJ := $(_SRC:.c=.o) 
@@ -27,7 +27,7 @@ all:
 
 test1:
 	$(info ***test1***)
-	@for f in $(wildcard $(TDIR)/*.minc); do echo A ; echo A ; echo A ; echo A NEXT FILE $${f} ; echo A ; echo A ; echo A ; $(ECC) $(TESTCMD) $${f} ; done
+	@for f in $(wildcard $(TDIR)/*.mc); do echo A ; echo A ; echo A ; echo A NEXT FILE $${f} ; echo A ; echo A ; echo A ; $(ECC) $(TESTCMD) $${f} ; done
     
 clean:
 	rm -f *.o *~ core $(INCDIR)/*~ 

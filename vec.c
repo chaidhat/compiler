@@ -1,13 +1,6 @@
 #include "mcc.h"
 
 
-Tree crtTree (char *id)
-{
-    static Tree t;
-    strcpy(t.id, id);
-    t.noChild = 0;
-    return t;
-}
 void appendChild (Tree *parent, Tree child)
 {
     if (parent->noChild == 0)

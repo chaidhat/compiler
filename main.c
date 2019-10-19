@@ -43,7 +43,7 @@ int main (int argc, char* argv[])
     inpClose();
     inpPop();
     inpPush("a");
-    inpWrite(outFilepath, ".mino");
+    inpWrite(outFilepath, ".mo");
     mccExit(0, __LINE__);
 }
 

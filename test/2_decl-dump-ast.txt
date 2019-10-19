@@ -1,4 +1,4 @@
-test/2_decl.minc AST:
+test/2_decl.mc AST:
 {
 | {
 | | id: 
@@ -273,44 +273,44 @@ test/2_decl.minc AST:
 | | | | | },
 | | | | },
 | | | },
+| | },
+| | {
+| | | id: q
+| | | type: STRUCT
+| | | Inst:
 | | | {
-| | | | id: q
-| | | | type: STRUCT
-| | | | Inst:
+| | | | strctName: q
+| | | | noChild: 1
+| | | | 
+| | | | decls:
 | | | | {
-| | | | | strctName: q
-| | | | | noChild: 1
-| | | | | 
-| | | | | decls:
 | | | | | {
+| | | | | | id: 
+| | | | | | type: VAR
+| | | | | | Inst:
 | | | | | | {
-| | | | | | | id: 
-| | | | | | | type: VAR
+| | | | | | | id: qa
+| | | | | | | type: STRUCT
 | | | | | | | Inst:
 | | | | | | | {
-| | | | | | | | id: qa
-| | | | | | | | type: STRUCT
-| | | | | | | | Inst:
+| | | | | | | | strctName: qa
+| | | | | | | | noChild: 1
+| | | | | | | | 
+| | | | | | | | decls:
 | | | | | | | | {
-| | | | | | | | | strctName: qa
-| | | | | | | | | noChild: 1
-| | | | | | | | | 
-| | | | | | | | | decls:
 | | | | | | | | | {
+| | | | | | | | | | id: 
+| | | | | | | | | | type: VAR
+| | | | | | | | | | Inst:
 | | | | | | | | | | {
-| | | | | | | | | | | id: 
+| | | | | | | | | | | id: qaa
 | | | | | | | | | | | type: VAR
 | | | | | | | | | | | Inst:
 | | | | | | | | | | | {
-| | | | | | | | | | | | id: qaa
-| | | | | | | | | | | | type: VAR
-| | | | | | | | | | | | Inst:
-| | | | | | | | | | | | {
-| | | | | | | | | | | | | varType: INT
-| | | | | | | | | | | | | isPtr: 0
-| | | | | | | | | | | | | isStatic: 0
-| | | | | | | | | | | | | varName: qaa
-| | | | | | | | | | | | },
+| | | | | | | | | | | | varType: INT
+| | | | | | | | | | | | isPtr: 0
+| | | | | | | | | | | | isStatic: 0
+| | | | | | | | | | | | varName: qaa
 | | | | | | | | | | | },
 | | | | | | | | | | },
 | | | | | | | | | },
@@ -318,13 +318,48 @@ test/2_decl.minc AST:
 | | | | | | | },
 | | | | | | },
 | | | | | },
+| | | | },
+| | | },
+| | },
+| | {
+| | | id: s
+| | | type: UNION
+| | | Inst:
+| | | {
+| | | | uninName: s
+| | | | noChild: 2
+| | | | 
+| | | | decls:
+| | | | {
 | | | | | {
-| | | | | | id: s
-| | | | | | type: UNION
+| | | | | | id: 
+| | | | | | type: VAR
 | | | | | | Inst:
 | | | | | | {
-| | | | | | | uninName: s
-| | | | | | | noChild: 2
+| | | | | | | id: sb
+| | | | | | | type: VAR
+| | | | | | | Inst:
+| | | | | | | {
+| | | | | | | | varType: BYTE
+| | | | | | | | isPtr: 1
+| | | | | | | | isStatic: 0
+| | | | | | | | varName: sb
+| | | | | | | },
+| | | | | | },
+| | | | | | {
+| | | | | | | id: sc
+| | | | | | | type: VAR
+| | | | | | | Inst:
+| | | | | | | {
+| | | | | | | | varType: BYTE
+| | | | | | | | isPtr: 1
+| | | | | | | | isStatic: 0
+| | | | | | | | varName: sc
+| | | | | | | },
 | | | | | | },
 | | | | | },
 | | | | },
+| | | },
+| | },
+| },
+},

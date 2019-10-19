@@ -204,7 +204,7 @@ void mccDoArgs (int argc, char* argv[])
                     printf("\033[1;30mMinimalistiC Compiler created by Chaidhat Chaimongkol\n%s %s\n\033[m", __DATE__, __TIME__);
                     printf("https://github.com/Chai112/MinC-Compiler\n\n"
                     "usage: mcc [-h] [-V] [arg1 arg2 ...] <inpath1 inpath2 ...>\n\n" 
-                    "mcc only accepts .minc as inpath, dir and include accepts any types\n"
+                    "mcc only accepts .mc as inpath, dir and include accepts any types\n"
                     "args:\n"
                     "   -V                  display version info\n"
                     "   -b                  display compilation benchmarks\n"
@@ -237,9 +237,9 @@ void mccDoArgs (int argc, char* argv[])
                     int j = 0;
                     while (argv[line][i] != '.')
                         i++;
-                    if (argv[line][i + 1] != 'm' || argv[line][i + 2] != 'i' ||  argv[line][i + 3] != 'n' || argv[line][i + 4] != 'c') 
+                    if (argv[line][i + 1] != 'm' || argv[line][i + 2] != 'c') 
                     {
-                        mccErr("Unexpected file type (expected .minc)\n ./mcc -h for help");
+                        mccErr("Unexpected file type (expected .mc)\n ./mcc -h for help");
                         mccExit(1, __LINE__);
                     }
                     while (i > 0)
