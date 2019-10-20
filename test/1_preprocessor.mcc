@@ -1,10 +1,9 @@
 // comment test
 /* block comment test */
 
-//          preprocessor.minc & preprocessor.h
+//          preprocessor.mc & preprocessor.h
 //  preprocessor tests
 
-/*                PREPROCESSOR                 */
 #include "test/1_preprocessor.h"
 #define number int 
 

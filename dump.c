@@ -110,6 +110,9 @@ static char *ITtostr (enum InstType type)
         case IT_Ctrl:
             strcpy(sType, "CTRL");
             break;
+        case IT_Scope:
+            strcpy(sType, "SCOPE");
+            break;
         default:
             printf("UNKNOWN %d\n", type);
             strcpy(sType, "UNKNOWN");
@@ -138,11 +141,9 @@ static void dumpInst (Tree *tree)
     up();
     //print("id: %s", tree->id);
     print("type: %s", ITtostr(tree->type));
-    print("Inst:");
 
     if (tree->id[0] == '\0') // first item could be blank
         return;
-    up();
     switch (tree->type)
     {
         case IT_Var:
@@ -156,23 +157,22 @@ static void dumpInst (Tree *tree)
             print("isPtr: %d", tree->Inst.func.isPtr);
             print("isStatic: %d", tree->Inst.func.isStatic);
             print("funcName: %s", tree->Inst.func.funcName);
-            print("");
-            print("noParameters: %d", tree->Inst.func.noParameters);
-            if (tree->Inst.func.noParameters > 0)
+            if (tree->Inst.func.parameters->noChild > 0)
             {
+                print("");
                 print("parameters:");
                 up();
-                    for (int i = 0; i < tree->Inst.func.noParameters; i++)
+                    for (int i = 0; i < tree->Inst.func.parameters->noChild; i++)
                         dumpTree(&tree->Inst.func.parameters->children[i]);
                 down();
             }
-            print("");
-            print("noScope: %d", tree->Inst.func.noParameters);
-            if (tree->Inst.func.noScope > 0)
+            if (tree->Inst.func.scope->noChild > 0)
             {
+                print("");
                 print("scope:");
                 up();
-
+                    for (int i = 0; i < tree->Inst.func.scope->noChild; i++)
+                        dumpTree(&tree->Inst.func.scope->children[i]);
                 down();
             }
             break;
@@ -250,9 +250,11 @@ static void dumpInst (Tree *tree)
             up();
                 dumpTree(tree->Inst.cond.exprsn);
             down();
+            print("");
             print("scope:");
             up();
-                dumpTree(tree->Inst.cond.scope);
+                for (int i = 0; i < tree->Inst.cond.scope->noChild; i++)
+                    dumpTree(&tree->Inst.cond.scope->children[i]);
             down();
             break;
         case IT_Ctrl:
@@ -260,16 +262,19 @@ static void dumpInst (Tree *tree)
             up();
                 dumpTree(tree->Inst.cond.exprsn);
             down();
+            print("");
             print("scope:");
             up();
-                dumpTree(tree->Inst.cond.scope);
+                for (int i = 0; i < tree->Inst.ctrl.scope->noChild; i++)
+                    dumpTree(&tree->Inst.ctrl.scope->children[i]);
             down();
+            break;
+        case IT_Scope:
             break;
         default:
             mccErr("AST DUMP ERR %s in dump.c", __LINE__);
             break;
     }
-    down();
     down();
 }
 

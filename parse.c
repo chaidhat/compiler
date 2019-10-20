@@ -7,6 +7,7 @@ static void parseType (enum LitType *type, bool *isPtr, bool *isStatic);
 static bool checkDecl (Tree *parent, char *name);
 static precedence getPrecedence (Token op);
 
+static bool isDecl ();
 static bool isFunc ();
 static bool isPtr ();
 static precedence isNextExprsn ();
@@ -15,11 +16,11 @@ static void readDecl (Tree *parent);
 static void readFunc (Tree *parent);
 static void readScope (Tree *parent);
 
-static int parseVar (Tree *parent, bool inFunc);
+static void parseVar (Tree *parent, bool inFunc);
 static Tree *parseFunc (Tree *parent);
 static void parseAssign (Tree *parent);
-static void parseCall (); // 
-static void parseRet (); //
+static void parseCall (Tree *parent); //
+static void parseRet (Tree *parent); //
 
 static Tree *parseLit ();
 static Tree *parseId ();
@@ -32,13 +33,16 @@ static Tree *parsePtr ();
 static Tree *parseDeref ();
 static Tree *parseRef ();
 
-static void parseCond (); //
-static void parseCtrl (); //
+static void parseCond (Tree *parent);
+static void parseCtrl (Tree *parent);
 
 static Token next ();
 static Token prev ();
 
 static Tree *crtInst (enum InstType type);
+
+static bool ff = false;
+static Tree *funcp;
 
 
 
@@ -101,6 +105,13 @@ static int getPrecedence (Token op)
 }
 
 
+
+static bool isDecl ()
+{
+    if (isKw("byte") || isKw("int"))
+        return true;
+    return false;
+}
 
 static bool isFunc ()
 {
@@ -189,23 +200,53 @@ static void readDecl (Tree *parent)
 static void readFunc (Tree *parent)
 {
     Tree *funcptr = parseFunc(parent);
-
+    Tree *scope = crtInst(IT_Scope);
+    funcptr->Inst.func.scope = scope;
+    
     next();
     if (isSep("{"))
     {
-        readScope(funcptr);
+        readScope(scope);
     }
     else if (!isSep(";"))
         mccErrC(EC_PARSE_SYN, "expected endline ';' or scope '{', instead got '%s'", peek().id);
+
+    if (checkDecl(parent, funcptr->id))
+        appendChild(parent, *funcptr);
+
 }
 
 static void readScope (Tree *parent)
 {
     mccLog("beginscope {");
+    bool ignoreEnd = false;
 
+    next(); // expect next expression
     while (!isSep("}"))
     {
-        next(); // expect next expression
+        ignoreEnd = true;
+        if (isKw("if"))
+            parseCond(parent);
+        else if (isKw("while"))
+            parseCtrl(parent);
+        else if (isKw("return"))
+            parseRet(parent);
+        else if (isFunc())
+            readFunc(parent);
+        else if (isDecl()) 
+        {
+            parseVar(parent, false);
+            if (!isSep(";") && !ignoreEnd)
+                mccErrC(EC_PARSE_SYN, "expected endline ';', instead got '%s'", peek().id);
+        }
+        else if (isId()) // assume assign
+            parseAssign(parent);
+        else
+            mccErrC(EC_PARSE_SYN, "expected keyword or identifier statement, instead got \"%s\"", peek().id);
+
+
+        next();
+        printf("fin %s f\n", peek().id);
     }
 
     mccLog("endscope }");
@@ -213,13 +254,12 @@ static void readScope (Tree *parent)
 
 
 
-static int parseVar (Tree *parent, bool inFunc)
+static void parseVar (Tree *parent, bool inFunc)
 {
     static Tree inst;
     inst.type = IT_Var;
 
     bool getType = true;
-    int nVars = 0;
     prev(); // for whileloop
     do
     {
@@ -237,7 +277,6 @@ static int parseVar (Tree *parent, bool inFunc)
         strcpy(inst.Inst.var.varName, getId());
         strcpy(inst.id, getId());
 
-        nVars++;
         if (checkDecl(parent, inst.id))
             appendChild(parent, inst);
 
@@ -254,33 +293,26 @@ static int parseVar (Tree *parent, bool inFunc)
                 mccErrC(EC_PARSE_SEM, "unexpected assignment \"=\" in func param or struct or union");
         }
     } while (isSep(","));
-    return nVars;
 }
 
 static Tree *parseFunc (Tree *parent)
 {
-    static Tree inst;
-    inst.type = IT_Func;
-    inst.Inst.func.noParameters = 0;
-    inst.Inst.func.noScope = 0;
+    Tree *inst = crtInst(IT_Func);
 
-    parseType(&inst.Inst.func.retType, &inst.Inst.func.isPtr, &inst.Inst.func.isStatic);
+    parseType(&inst->Inst.func.retType, &inst->Inst.func.isPtr, &inst->Inst.func.isStatic);
 
     next(); // expect funcname
-    strcpy(inst.id, getId());
-    strcpy(inst.Inst.func.funcName, getId());
+    strcpy(inst->id, getId());
+    strcpy(inst->Inst.func.funcName, getId());
 
     next(); // expect "("
     next(); // expect var list (parameters)
-    Tree *parameters = malloc(sizeof(Tree));
+    Tree *parameters = crtInst(IT_Scope);
     if (!isSep(")"))
-        inst.Inst.func.noParameters = parseVar(parameters, true); // the elegant variable parsing! :D
-    inst.Inst.func.parameters = parameters;
+        parseVar(parameters, true); // the elegant variable parsing! :D
+    inst->Inst.func.parameters = parameters;
 
-    if (checkDecl(parent, inst.id))
-        appendChild(parent, inst);
-
-    return &inst;
+    return inst;
 }
 
 static void parseAssign (Tree *parent)
@@ -294,14 +326,20 @@ static void parseAssign (Tree *parent)
     next(); // expect "="
     inst.Inst.assign.exprsn = parseBinary();
 
+    if (!isSep(";"))
+        mccErrC(EC_PARSE_SYN, "expected endline ';', instead got '%s'", peek().id);
+
     appendChild(parent, inst);
 }
 
-static void parseCall ()
+static void parseCall (Tree *parent)
 {
 }
-static void parseRet ()
+static void parseRet (Tree *parent)
 {
+    next();
+    if (!isSep(";"))
+        mccErrC(EC_PARSE_SYN, "expected endline ';', instead got '%s'", peek().id);
 }
 
 
@@ -350,6 +388,8 @@ static Tree *parseBinary ()
     else if (isSep("("))
     {
         inst->Inst.binary.left = parseBinary();
+        if (!isSep(")"))
+            mccErrC(EC_PARSE_SYN, "1 expected operator or endline \")\" in expression");
     }
     else
         mccWarnC(WC_PARSE_SYN, "expected literal or identifier in left expression");
@@ -375,6 +415,8 @@ static Tree *parseBinary ()
             else if (isSep("("))
             {
                 inst->Inst.binary.right = parseBinary();
+                if (!isSep(")"))
+                    mccErrC(EC_PARSE_SYN, "2 expected operator or endline \")\" in expression");
             }
             else
                 mccWarnC(WC_PARSE_SYN, "expected literal or identifier in right expression");
@@ -415,8 +457,8 @@ static Tree *parseBinary ()
         next(); // expect ";" or next expression
         mccLog("yyy %s", peek().id);
     }
-    else if (!(isSep(";") || isSep(")") || isSep(",")))
-        mccWarnC(WC_PARSE_SYN, "expected operator or endline \";\" or \")\" or \",\" in expression");
+    //else if (!(isSep(";") || isSep(")") || isSep(",")))
+    //    mccWarnC(WC_PARSE_SYN, "expected operator or endline \";\" or \")\" or \",\" in expression");
 
     return inst;
 }
@@ -434,7 +476,11 @@ static Tree *parseDeref ()
 {
     Tree *inst = crtInst(IT_Deref);
     if (isOp("("))
+    {
         inst->Inst.deref.exprsn = parseBinary();
+        if (!isSep(")"))
+            mccErrC(EC_PARSE_SYN, "5 expected operator or endline \")\" in expression");
+    }
     else
     {
         next(); // expect Id
@@ -456,11 +502,45 @@ static Tree *parseRef ()
 
 
 
-static void parseCond ()
+static void parseCond (Tree *parent)
 {
+    static Tree inst;
+    inst.type = IT_Cond;
+    strcpy(inst.id, "cond");
+    inst.Inst.cond.exprsn = parseBinary();
+
+    Tree *scope = crtInst(IT_Scope);
+    inst.Inst.cond.scope = scope;
+
+    if (isSep("{"))
+    {
+        readScope(scope);
+    }
+    else
+        mccErrC(EC_PARSE_SEM, "expected scope '{' after exprsn in cond statement", peek().id);
+
+    mccLog("scope if");
+    appendChild(parent, inst);
 }
-static void parseCtrl ()
+static void parseCtrl (Tree *parent)
 {
+    static Tree inst;
+    inst.type = IT_Ctrl;
+    strcpy(inst.id, "ctrl");
+    inst.Inst.ctrl.exprsn = parseBinary();
+
+    Tree *scope = crtInst(IT_Scope);
+    inst.Inst.cond.scope = scope;
+
+    if (isSep("{"))
+    {
+        readScope(scope);
+    }
+    else
+        mccErrC(EC_PARSE_SEM, "expected scope '{' after exprsn in ctrl statement", peek().id);
+
+    mccLog("scope while");
+    appendChild(parent, inst);
 }
 
 
@@ -534,7 +614,6 @@ static Token next ()
 
     if (tTokcmpType(token, T_NULL)) // is it an EOF that has a lower dir?
         return next();
-
 
     return token;
 }

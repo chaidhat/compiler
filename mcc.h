@@ -36,6 +36,7 @@ enum InstType
     IT_Ctrl,
     IT_Strct,
     IT_Unin,
+    IT_Scope,
 };
 enum eCodes
 {
@@ -86,9 +87,7 @@ typedef struct
     bool isPtr;
     bool isStatic;
     char funcName[128];
-    int noParameters;
     struct Tree *parameters; // only Var
-    int noScope;
     struct Tree *scope;
 } Func;
 typedef struct
@@ -153,8 +152,8 @@ typedef struct
 } Unin;
 typedef struct
 {
-    struct Tree *block;
 } Scope;
+
 
 typedef struct Tree
 {

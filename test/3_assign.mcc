@@ -1,10 +1,7 @@
 // comment test
 /* block comment test */
 
-//          assign.minc
-//  assignment tests
-
-/*               LINE 42 BASIC ASSIGNMENT                  */
+//          assign.mc
 // excludes assignment to function calls, recursion, pointers, and preprocessor assignment
 
 // assign to literal

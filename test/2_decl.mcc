@@ -1,10 +1,9 @@
 // comment test
 /* block comment test */
 
-//          decl.minc
+//          decl.mc
 //  decl tests
 
-/*               DECLARATION                 */
 // var decl
 int a;
 
