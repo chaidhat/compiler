@@ -2,13 +2,20 @@
 
 typedef int precedence;
 static bool inStrctUnin = false;
+static Tree types;
+static bool hasInitTypes = false;
 
+static Tree primitiveByte = { .id = "byte" };
+static Tree primitiveInt = { .id = "int" };
+
+static enum LitType getType();
+static void crtType(char *typeName);
 static void parseType (enum LitType *type, bool *isPtr, bool *isStatic);
 static bool checkDecl (Tree *parent, char *name);
 static precedence getPrecedence (Token op);
 
 static bool isDecl ();
-static bool isFunc ();
+static bool isFunc (bool decl);
 static bool isPtr ();
 static precedence isNextExprsn ();
 
@@ -19,9 +26,10 @@ static void readScope (Tree *parent);
 static void parseVar (Tree *parent, bool inFunc);
 static Tree *parseFunc (Tree *parent);
 static void parseAssign (Tree *parent);
-static void parseCall (Tree *parent); //
-static void parseRet (Tree *parent); //
+static void parseRet (Tree *parent);
+static Tree *parseArray ();
 
+static Tree *parseCall ();
 static Tree *parseLit ();
 static Tree *parseId ();
 static Tree *parseBinary ();
@@ -41,10 +49,41 @@ static Token prev ();
 
 static Tree *crtInst (enum InstType type);
 
-static bool ff = false;
-static Tree *funcp;
 
 
+static enum LitType getType ()
+{
+    if (!hasInitTypes) // has init?
+    {
+        // init primitives
+        appendChild(&types, primitiveByte);
+        appendChild(&types, primitiveInt);
+
+        hasInitTypes = true;
+    }
+
+    if (!(tokcmpType(T_KEY) || tokcmpType(T_ID))) // is it a keyword or custom type (id)?
+        return LT_INVALID; 
+
+    for (int i = 0; i < types.noChild; i++)
+    {
+        printf("%s %s\n", peek().id, types.children[i].id);
+        if (strcmp(peek().id, types.children[i].id) == 0)
+            return types.noChild - i;
+    }
+
+    return LT_INVALID;
+}
+
+static void crtType (char *typeName)
+{
+    static Tree type;
+    if (checkDecl(&types, typeName))
+    {
+        strcpy(type.id, typeName);
+        appendChild(&types, type);
+    }
+}
 
 static void parseType (enum LitType *type, bool *isPtr, bool *isStatic)
 {
@@ -59,8 +98,10 @@ static void parseType (enum LitType *type, bool *isPtr, bool *isStatic)
        *type = LT_CHAR;
     else if (isKw("int"))
         *type = LT_INT;
-    else
+    else if (getType() == LT_INVALID) // type does not exist
         mccErrC(EC_PARSE_SYN, "unexpected declaration type \"%s\"", peek().id);
+    else
+        *type = getType();
 
     next();
 
@@ -108,15 +149,27 @@ static int getPrecedence (Token op)
 
 static bool isDecl ()
 {
-    if (isKw("byte") || isKw("int"))
-        return true;
-    return false;
+    bool ret = false;
+    bool p = false;
+    if (isKw("static"))
+    {
+        p = true;
+        next();
+    }
+    if (getType() != LT_INVALID) // type exists
+        ret = true;
+    if (p)
+        prev();
+    return ret;
 }
 
-static bool isFunc ()
+static bool isFunc (bool decl)
 {
     bool ret = false;
-    next();
+    int a[2];
+    *(a+1) = 2;
+    if (decl)
+        next();
     if (isId())
     {
         next();
@@ -126,13 +179,14 @@ static bool isFunc ()
         }
         prev();
     }
-    if (isOp("*"))
-        ret = isFunc();
-    prev();
-    if (isKw("static"))
+    if (isOp("*") && decl)
+        ret = isFunc(true);
+    if (decl)
+        prev();
+    if (isKw("static") && decl)
     {
         next();
-        ret = isFunc();
+        ret = isFunc(true);
         prev();
     }
     return ret;
@@ -224,6 +278,8 @@ static void readScope (Tree *parent)
     next(); // expect next expression
     while (!isSep("}"))
     {
+        printf("f %s f\n", peek().id);
+
         ignoreEnd = true;
         if (isKw("if"))
             parseCond(parent);
@@ -231,22 +287,30 @@ static void readScope (Tree *parent)
             parseCtrl(parent);
         else if (isKw("return"))
             parseRet(parent);
-        else if (isFunc())
-            readFunc(parent);
+        else if (isFunc(false))
+        {
+            appendChild(parent, *parseCall());
+            next();
+            if (!isSep(";"))
+                mccErrC(EC_PARSE_SYN, "expected endline ';', instead got '%s'", peek().id);
+        }
         else if (isDecl()) 
         {
             parseVar(parent, false);
             if (!isSep(";") && !ignoreEnd)
                 mccErrC(EC_PARSE_SYN, "expected endline ';', instead got '%s'", peek().id);
         }
-        else if (isId()) // assume assign
+        else if (isId() || isPtr()) // assume assign
+        {
             parseAssign(parent);
+            if (!isSep(";"))
+                mccErrC(EC_PARSE_SYN, "expected endline ',', instead got '%s'", peek().id);
+        }
         else
             mccErrC(EC_PARSE_SYN, "expected keyword or identifier statement, instead got \"%s\"", peek().id);
 
 
         next();
-        printf("fin %s f\n", peek().id);
     }
 
     mccLog("endscope }");
@@ -259,16 +323,16 @@ static void parseVar (Tree *parent, bool inFunc)
     static Tree inst;
     inst.type = IT_Var;
 
-    bool getType = true;
+    bool findType = true;
     prev(); // for whileloop
     do
     {
-        if (getType)
+        if (findType)
         {
             next(); // expect type
             parseType(&inst.Inst.var.varType, &inst.Inst.var.isPtr, &inst.Inst.var.isStatic);
             if (!inFunc)
-                getType = false;
+                findType = false;
             else if (inst.Inst.var.isStatic)
                 mccErrC(EC_PARSE_SEM, "unexpected static specifier inside function parameters");
         }
@@ -277,10 +341,17 @@ static void parseVar (Tree *parent, bool inFunc)
         strcpy(inst.Inst.var.varName, getId());
         strcpy(inst.id, getId());
 
+        next(); // expect "," or ";" or "=" or "["
+        
+        if (isSep("["))
+        {
+            inst.Inst.var.isArray = true;
+            inst.Inst.var.isPtr = true;
+            inst.Inst.var.arrayLength = parseArray();
+        }
+
         if (checkDecl(parent, inst.id))
             appendChild(parent, inst);
-
-        next(); // expect "," or ";" or "="
 
         if (isOp("=")) // assign
         {
@@ -320,29 +391,74 @@ static void parseAssign (Tree *parent)
     static Tree inst;
     inst.type = IT_Assign;
 
-    strcpy(inst.id, getId());
-    strcpy(inst.Inst.assign.varName, getId());
+    if (isOp("*")) // must be dereference
+    {
+        inst.Inst.assign.varName = parseDeref();
+    }
+    else
+    {
+        Tree *varName = parseId();
+        strcpy(inst.id, getId());
+        inst.Inst.assign.varName = varName;
+    }
 
     next(); // expect "="
     inst.Inst.assign.exprsn = parseBinary();
 
-    if (!isSep(";"))
-        mccErrC(EC_PARSE_SYN, "expected endline ';', instead got '%s'", peek().id);
 
     appendChild(parent, inst);
 }
 
-static void parseCall (Tree *parent)
-{
-}
 static void parseRet (Tree *parent)
 {
-    next();
+    static Tree inst;
+    inst.type = IT_Ret;
+    strcpy(inst.id, "ret");
+
+    inst.Inst.ret.exprsn = parseBinary();
+
     if (!isSep(";"))
         mccErrC(EC_PARSE_SYN, "expected endline ';', instead got '%s'", peek().id);
+    appendChild(parent, inst);
+}
+
+static Tree *parseArray ()
+{
+    Tree *inst = parseBinary();
+    if (!isSep("]"))
+        mccErrC(EC_PARSE_SYN, "expected closing bracket ']', instead got '%s'", peek().id);
+    next();
+    return inst;
 }
 
 
+
+static Tree *parseCall ()
+{
+    Tree *inst = crtInst(IT_Call); // declare on heap, could be recursive
+    strcpy(inst->Inst.call.funcName, getId());
+    next(); // expect (
+
+    next(); // expect id or lit or )
+    if (!isSep(")"))
+        prev();
+
+    Tree *args = crtInst(IT_Scope); // declare on heap, could be recursive
+    inst->Inst.call.args = args;
+
+    Tree *arg = crtInst(IT_Binary); // declare on heap, could be recursive
+
+    while (!isSep(")"))
+    {
+        arg = parseBinary();
+        if (!isSep(",") && !isSep(")"))
+            mccErrC(EC_PARSE_SYN, "expected separator \",\" or end parameters \")\", instead got \"%s\" %s", peek().id,
+            inst->Inst.call.funcName);
+        appendChild(inst->Inst.call.args, *arg);
+    }
+    
+    return inst;
+}
 
 static Tree *parseLit ()
 {
@@ -366,7 +482,18 @@ static Tree *parseLit ()
 static Tree *parseId ()
 {
     Tree *inst = crtInst(IT_Id);
+    Tree *nested = crtInst(IT_Scope);
+    inst->Inst.id.nested = nested;
     strcpy(inst->Inst.id.varName, peek().id);
+    next(); // check for "."
+    if (isSep("."))
+    {
+        next();
+        appendChild(nested, *parseId());
+
+        return inst;
+    }
+    prev();
     return inst;
 }
 
@@ -376,10 +503,12 @@ static Tree *parseBinary ()
 
     Tree *inst = crtInst(IT_Binary);
     inst->Inst.binary.stub = false;
-    inst->Inst.binary.single = true;
+    //inst->Inst.binary.single = true;
 
     mccLog("l %s", peek().id);
-    if (isLit())
+    if (isFunc(false))
+        inst->Inst.binary.left = parseCall();
+    else if (isLit())
         inst->Inst.binary.left = parseLit();
     else if (isId())
         inst->Inst.binary.left = parseId();
@@ -397,7 +526,7 @@ static Tree *parseBinary ()
     next(); // expect op or ";"
     if (tokcmpType(T_OP)) // is there an operator?
     {
-        inst->Inst.binary.single = false;
+        //inst->Inst.binary.single = false;
         mccLog("op %s", peek().id);
         inst->Inst.binary.op = peek();
 
@@ -406,7 +535,9 @@ static Tree *parseBinary ()
             inst->Inst.binary.stub = true;
             next(); // expect right side 
             mccLog(" %s", peek().id);
-            if (isLit())
+            if (isFunc(false))
+                inst->Inst.binary.right = parseCall();
+            else if (isLit())
                 inst->Inst.binary.right = parseLit();
             else if (isId())
                 inst->Inst.binary.right = parseId();
@@ -457,6 +588,8 @@ static Tree *parseBinary ()
         next(); // expect ";" or next expression
         mccLog("yyy %s", peek().id);
     }
+    else
+        return inst->Inst.binary.left;
     //else if (!(isSep(";") || isSep(")") || isSep(",")))
     //    mccWarnC(WC_PARSE_SYN, "expected operator or endline \";\" or \")\" or \",\" in expression");
 
@@ -475,7 +608,8 @@ static Tree *parsePtr ()
 static Tree *parseDeref ()
 {
     Tree *inst = crtInst(IT_Deref);
-    if (isOp("("))
+    next();
+    if (isSep("("))
     {
         inst->Inst.deref.exprsn = parseBinary();
         if (!isSep(")"))
@@ -483,7 +617,6 @@ static Tree *parseDeref ()
     }
     else
     {
-        next(); // expect Id
         if (!isId())
             mccErrC(EC_PARSE_SEM, "expected \"(\" or identifier after \"*\" deref op");
         inst->Inst.deref.exprsn = parseId();
@@ -551,6 +684,7 @@ static void parseStruct (Tree *parent)
 
     Tree *inst = crtInst(IT_Strct); // declared on heap because recursion
     strcpy(inst->Inst.strct.strctName, peek().id);
+    crtType(peek().id);
     next(); // expect {
     next();
     inStrctUnin = true;
@@ -560,7 +694,7 @@ static void parseStruct (Tree *parent)
 
         // assume decl
         mccLog("declare");
-        Tree *decls = malloc(sizeof(Tree));
+        Tree *decls = crtInst(IT_Scope);
         inst->Inst.strct.decls = decls;
         readDecl(inst->Inst.strct.decls);
         next();
@@ -578,6 +712,7 @@ static void parseUnion (Tree *parent)
 
     Tree *inst = crtInst(IT_Unin); // declared on heap because recursion
     strcpy(inst->Inst.unin.uninName, peek().id);
+    crtType(peek().id);
     next(); // expect {
     next();
     inStrctUnin = true;
@@ -587,7 +722,7 @@ static void parseUnion (Tree *parent)
 
         // assume decl
         mccLog("declare");
-        Tree *decls = malloc(sizeof(Tree));
+        Tree *decls = crtInst(IT_Scope);
         inst->Inst.unin.decls = decls;
         readDecl(inst->Inst.unin.decls);
         next();
@@ -642,7 +777,7 @@ void parse ()
         return;
     mccLog("parse lex %d %s", t.type, t.id);
 
-    if (isFunc())
+    if (isFunc(true))
     {
         mccLog("func def");
         readFunc(&AST);

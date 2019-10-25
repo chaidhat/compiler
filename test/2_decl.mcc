@@ -53,6 +53,12 @@ struct q
     };
 };
 
+// self-referential struct
+struct r
+{
+    *r ra;
+};
+
 // union data structure
 union s
 {

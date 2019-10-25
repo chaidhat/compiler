@@ -80,6 +80,9 @@ static char *ITtostr (enum InstType type)
         case IT_Ret:
             strcpy(sType, "RET");
             break;
+        case IT_Call:
+            strcpy(sType, "CALL");
+            break;
         case IT_Lit:
             strcpy(sType, "LIT");
             break;
@@ -132,6 +135,10 @@ static char *LTtostr (enum LitType type)
         case LT_INT:
             strcpy(sType, "INT");
             break;
+        default:
+            strcpy(sType, "CUSTOM ");
+            strcat(sType, mccDtostr(type));
+            break;
     }
     return sType;
 }
@@ -147,10 +154,18 @@ static void dumpInst (Tree *tree)
     switch (tree->type)
     {
         case IT_Var:
+            print("varName: %s", tree->Inst.var.varName);
             print("varType: %s", LTtostr(tree->Inst.var.varType));
             print("isPtr: %d", tree->Inst.var.isPtr);
             print("isStatic: %d", tree->Inst.var.isStatic);
-            print("varName: %s", tree->Inst.var.varName);
+            print("isArray: %d", tree->Inst.var.isArray);
+            if (tree->Inst.var.isArray)
+            {
+                print("arrayLength:");
+                up();
+                    dumpTree(tree->Inst.var.arrayLength);
+                down();
+            }
             break;
         case IT_Func:
             print("funcType: %s", LTtostr(tree->Inst.func.retType));
@@ -186,9 +201,39 @@ static void dumpInst (Tree *tree)
         case IT_Id:
             print("isPtr: %d", tree->Inst.id.isPtr);
             print("varName: %s", tree->Inst.id.varName);
+            if (tree->Inst.id.nested->noChild > 0)
+            {
+                print("");
+                print("nested:");
+                up();
+                    for (int i = 0; i < tree->Inst.id.nested->noChild; i++)
+                        dumpTree(&tree->Inst.id.nested->children[i]);
+                down();
+            }
+            break;
+        case IT_Ret:
+            print("exprsn:");
+            up();
+                dumpTree(tree->Inst.ret.exprsn);
+            down();
+            break;
+        case IT_Call:
+            print("funcName: %s", tree->Inst.call.funcName);
+            if (tree->Inst.call.args->noChild > 0)
+            {
+                print("");
+                print("args:");
+                up();
+                    for (int i = 0; i < tree->Inst.call.args->noChild; i++)
+                        dumpTree(&tree->Inst.call.args->children[i]);
+                down();
+            }
             break;
         case IT_Assign:
-            print("varName: %s", tree->Inst.assign.varName);
+            print("varName:");
+            up();
+                dumpTree(tree->Inst.assign.varName);
+            down();
             print("");
             print("exprsn:");
             up();

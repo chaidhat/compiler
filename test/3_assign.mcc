@@ -48,3 +48,18 @@ int p = *m;
 
 // ref
 int q = &m;
+
+// func call
+int r = g();
+
+// array decl
+int s[2];
+
+// array decl with exprsn
+int t[2 + 5];
+
+int u ()
+{
+    // ptr assign
+    *(t + 2) = 1;
+}

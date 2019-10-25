@@ -11,38 +11,44 @@ This is a personal project of mine of trying to teach myself...
 
 it's a fun challenge.\
 \
-I aim to develop a ultra-simple, easy to read, compiler which compiles my variant of C (called MinimalistiC or MinC)
-into x86_64 assembly as a *.o* file. No optimisations, horrible memory cleanup in as little confusion as possible (I hope) so that other people can look at the source code and understand what on earth is going on. 
+I aim to develop a ultra-simple, easy to read, compiler which compiles my variant of C (named MinimalistiC or MinC)
+into x86_64 assembly as a *.o* file in as little confusion as possible (I hope) so others make sense of the source code. 
 
 ## Install
 Mac & Windows are OK, tested on Mac\
-Please download the repository and cd into it via console prompt or terminal.\
+Please download the repository and cd into it using command prompt or terminal.\
 Make sure [GNU Make is installed](http://gnuwin32.sourceforge.net/packages/make.htm), do
 ```
-make
+make all
 ```
 The source code will be compiled by GNU Make into an executable, mcc in the bin file.\
-Run the executable with -h flag for instructions.
+Compilation tests will be perfomed automatically after successful compilation by Make.\
+\
+Run the executable with -h flag for instructions. *(Unix terminal)*
 ```
-./mcc -h
+cd bin ; ./mcc -h
 ```
-doing `make all` will auto build, self-run an test program and clean the directory.
+or give it a MinC file, dump parser's AST `-fdast` and verbosely compile `-v` into executable
+```
+./mcc -fdast -v test/file.mc
+```
+
 ## MinimalistiC Programming Language
 "*C is too powerful*" - no one ever.\
 MinimalistiC (MinC) is my take on a ultra-simplified, ultra-lightweight, derated version of the C Programming language.\
 Mainly because I don't want to follow C ISOs. \
 It is faithful to C so it does not add anything new, only removals and a few changes.
 
-**Capabilities**
+**All Capabilities**
 * preprocessor directives (`#include`, `#define`, `#ifdef`, `#endif`)
 * preprocessor macros (`__FILE__`, `__LINE___`, `__TIME__`, `__ASM`, etc.)
 * comments (`//`, `/*`, `*/`)
 * data types (`byte`, `int`)
 * static declarations (`static`) 
 * pointers (`*`, `&`)
-* *very* limited use of arrays (a lá ptr math)
+* *very* limited use of arrays (a lá ptr math, declare with `[`, `]`)
 * string literals (`"`) to char arrays
-* code structures & scope (`{`, `}`)
+* code structures & scope (`{`, `}`, `.`)
 * basic data structures (`struct`, `union`, `.`, `,`, `;`)
 * functions (`return`)
 * conditionals (`if`)
@@ -50,10 +56,10 @@ It is faithful to C so it does not add anything new, only removals and a few cha
 * arithmetic (`+`, `-`, `*`, `/`) with (`(`, `)`) (with bidmas)
 * binary logic (`!`, `&&`, `||`)
 * equality testing (`==`, `!=`, `>`)
-* stdlib
+* standard library
 
 That's it. 8 keywords, 4 preprocessor directives,\
-and a charset of `a..z`, `0..9` with 18 symbols `. , ; + - * / = # ! & | " > ( ) { }`\
+and a charset of `a..z`, `0..9` with 20 symbols `. , ; + - * / = # ! & | " > ( ) [ ] { }`\
 **It's incredibly easy to master compared to C.**
 
 ## MinimalistiC Compiler (MCC)
@@ -64,7 +70,13 @@ Compiles MinC into x86_64 assembly *.o* files then asks linker to link into bina
    * `pp.c` for preprocesses input char stream.
    * `lex.c` tokenise into one of `NULL`, `LITERAL`, `IDENTIFIER`, `KEYWORD`, `SEPARATOR`, `OPERATOR`, or `END OF FILE`
    * `pp.c` parses preprocessor directives `#` and macros
-2. parses tokens in `parse.c` one by one into an Abstract Syntax Tree using a top-down recursive descent algorithm
+2. parses token stream in (handwritten!) `parse.c` into an Abstract Syntax Tree using a top-down recursive descent algorithm
+   * `parse.c` parses tokens into abstract instructions recursively
+   * parser is handwritten for better performance than FLEX or BISON - also a *headache* to write
+   * parsing is recursively called, so that is correctly mapped as a syntax tree (AST)
+   * binary expressions rearrange themselves to follow BIDMAS (insanely confusing too)
+   * memory management is absent (declares variables on heap but never frees it) 
+   * `dump.c` prints the instructions in english if `-fdast` (Dump-Abstact-Syntax-Tree) arg
 3. generate an Intermediate Representation based on that AST
 4. assemble code from the IR, as an *.o* file
 5. ask the system's linker (`ld`) to link the file. I ain't writing that.

@@ -17,20 +17,22 @@ enum TokType
 }; 
 enum LitType
 {
-    LT_CHAR,
-    LT_INT,
+    LT_INVALID = 0,
+    LT_CHAR = 1,
+    LT_INT = 2,
+    // user defined types are 2 and above
 };
 enum InstType
 {
     IT_Var,
     IT_Func,
-    IT_Ret,
     IT_Lit,
     IT_Id,
+    IT_Ret,
+    IT_Call,
     IT_Assign,
     IT_Deref,
     IT_Ref,
-    IT_Call,
     IT_Binary,
     IT_Cond,
     IT_Ctrl,
@@ -76,9 +78,11 @@ typedef struct
 typedef struct
 {
     enum LitType varType; 
+    char varName[128];
     bool isPtr;
     bool isStatic;
-    char varName[128];
+    bool isArray;
+    struct Tree *arrayLength; // only Exprsn
 } Var;
 
 typedef struct
@@ -92,10 +96,6 @@ typedef struct
 } Func;
 typedef struct
 {
-    struct Tree *exprsn; // only Exprsn
-} Ret;
-typedef struct
-{
     enum LitType type;
     LitVal val;
 } Lit; // is Exprsn
@@ -103,10 +103,20 @@ typedef struct
 {
     bool isPtr;
     char varName[128];
+    struct Tree *nested; // only Id
 } Id; // is Exprsn
 typedef struct
 {
-    char varName[128];
+    struct Tree *exprsn; // only Exprsn
+} Ret;
+typedef struct
+{
+    char funcName[128];
+    struct Tree *args; // only Var
+} Call;
+typedef struct
+{
+    struct Tree *varName; // only Id or Deref
     struct Tree *exprsn; // only Exprsn
 } Assign;
 typedef struct
@@ -117,11 +127,6 @@ typedef struct
 {
     struct Tree *ptr; // must be ptr
 } Ref;
-typedef struct
-{
-    char funcName[128];
-    struct Tree *args; // only Var
-} Call;
 typedef struct
 {
     bool stub;
@@ -163,13 +168,13 @@ typedef struct Tree
     {
         Var var;
         Func func;
-        Ret ret;
         Lit lit;
         Id id;
         Assign assign;
+        Ret ret;
+        Call call;
         Deref deref;
         Ref ref;
-        Call call;
         Binary binary;
         Cond cond;
         Ctrl ctrl;

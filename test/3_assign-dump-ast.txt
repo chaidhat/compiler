@@ -4,81 +4,85 @@ test/3_assign.mc AST:
 | | type: VAR
 | | {
 | | | type: VAR
+| | | varName: a
 | | | varType: INT
 | | | isPtr: 0
 | | | isStatic: 0
-| | | varName: a
+| | | isArray: 0
 | | },
 | | {
 | | | type: ASSIGN
-| | | varName: a
+| | | varName:
+| | | {
+| | | | {
+| | | | | type: ID
+| | | | | isPtr: 0
+| | | | | varName: a
+| | | | },
+| | | },
 | | | 
 | | | exprsn:
 | | | {
 | | | | {
-| | | | | type: BINARY
-| | | | | stub: 0
-| | | | | single: 1
-| | | | | op (id): 
-| | | | | 
-| | | | | left:
-| | | | | {
-| | | | | | {
-| | | | | | | type: LIT
-| | | | | | | type: INT
-| | | | | | | val: 1
-| | | | | | },
-| | | | | },
+| | | | | type: LIT
+| | | | | type: INT
+| | | | | val: 1
 | | | | },
 | | | },
 | | },
 | | {
 | | | type: VAR
+| | | varName: b
 | | | varType: INT
 | | | isPtr: 0
 | | | isStatic: 0
-| | | varName: b
+| | | isArray: 0
 | | },
 | | {
 | | | type: ASSIGN
-| | | varName: b
+| | | varName:
+| | | {
+| | | | {
+| | | | | type: ID
+| | | | | isPtr: 0
+| | | | | varName: b
+| | | | },
+| | | },
 | | | 
 | | | exprsn:
 | | | {
 | | | | {
-| | | | | type: BINARY
-| | | | | stub: 0
-| | | | | single: 1
-| | | | | op (id): 
-| | | | | 
-| | | | | left:
-| | | | | {
-| | | | | | {
-| | | | | | | type: ID
-| | | | | | | isPtr: 1
-| | | | | | | varName: a
-| | | | | | },
-| | | | | },
+| | | | | type: ID
+| | | | | isPtr: 0
+| | | | | varName: a
 | | | | },
 | | | },
 | | },
 | | {
 | | | type: VAR
+| | | varName: c
 | | | varType: INT
 | | | isPtr: 0
 | | | isStatic: 0
-| | | varName: c
+| | | isArray: 0
 | | },
 | | {
 | | | type: ASSIGN
-| | | varName: c
+| | | varName:
+| | | {
+| | | | {
+| | | | | type: ID
+| | | | | isPtr: 1
+| | | | | varName: c
+| | | | },
+| | | },
 | | | 
 | | | exprsn:
 | | | {
 | | | | {
 | | | | | type: BINARY
 | | | | | stub: 1
-| | | | | single: 0
+| | | | | single: 1
 | | | | | op (id): +
 | | | | | 
 | | | | | left:
@@ -89,28 +93,27 @@ test/3_assign.mc AST:
 | | | | | | | val: 1
 | | | | | | },
 | | | | | },
-| | | | | 
-| | | | | right:
-| | | | | {
-| | | | | | {
-| | | | | | | type: LIT
-| | | | | | | type: INT
-| | | | | | | val: 2
-| | | | | | },
-| | | | | },
 | | | | },
 | | | },
 | | },
 | | {
 | | | type: VAR
+| | | varName: d
 | | | varType: INT
 | | | isPtr: 0
 | | | isStatic: 0
-| | | varName: d
+| | | isArray: 0
 | | },
 | | {
 | | | type: ASSIGN
-| | | varName: d
+| | | varName:
+| | | {
+| | | | {
+| | | | | type: ID
+| | | | | isPtr: 0
+| | | | | varName: d
+| | | | },
+| | | },
 | | | 
 | | | exprsn:
 | | | {
@@ -142,14 +145,22 @@ test/3_assign.mc AST:
 | | },
 | | {
 | | | type: VAR
+| | | varName: e
 | | | varType: INT
 | | | isPtr: 0
 | | | isStatic: 0
-| | | varName: e
+| | | isArray: 0
 | | },
 | | {
 | | | type: ASSIGN
-| | | varName: e
+| | | varName:
+| | | {
+| | | | {
+| | | | | type: ID
+| | | | | isPtr: 0
+| | | | | varName: e
+| | | | },
+| | | },
 | | | 
 | | | exprsn:
 | | | {
@@ -200,14 +211,22 @@ test/3_assign.mc AST:
 | | },
 | | {
 | | | type: VAR
+| | | varName: f
 | | | varType: INT
 | | | isPtr: 0
 | | | isStatic: 0
-| | | varName: f
+| | | isArray: 0
 | | },
 | | {
 | | | type: ASSIGN
-| | | varName: f
+| | | varName:
+| | | {
+| | | | {
+| | | | | type: ID
+| | | | | isPtr: 0
+| | | | | varName: f
+| | | | },
+| | | },
 | | | 
 | | | exprsn:
 | | | {
@@ -267,30 +286,34 @@ test/3_assign.mc AST:
 | | | {
 | | | | {
 | | | | | type: ASSIGN
-| | | | | varName: h
+| | | | | varName:
+| | | | | {
+| | | | | | {
+| | | | | | | type: ID
+| | | | | | | isPtr: 0
+| | | | | | | varName: h
+| | | | | | },
+| | | | | },
 | | | | | 
 | | | | | exprsn:
 | | | | | {
 | | | | | | {
-| | | | | | | type: BINARY
-| | | | | | | stub: 0
-| | | | | | | single: 1
-| | | | | | | op (id): 
-| | | | | | | 
-| | | | | | | left:
-| | | | | | | {
-| | | | | | | | {
-| | | | | | | | | type: LIT
-| | | | | | | | | type: INT
-| | | | | | | | | val: 1
-| | | | | | | | },
-| | | | | | | },
+| | | | | | | type: LIT
+| | | | | | | type: INT
+| | | | | | | val: 1
 | | | | | | },
 | | | | | },
 | | | | },
 | | | | {
 | | | | | type: ASSIGN
-| | | | | varName: i
+| | | | | varName:
+| | | | | {
+| | | | | | {
+| | | | | | | type: ID
+| | | | | | | isPtr: 0
+| | | | | | | varName: i
+| | | | | | },
+| | | | | },
 | | | | | 
 | | | | | exprsn:
 | | | | | {
@@ -324,14 +347,22 @@ test/3_assign.mc AST:
 | | },
 | | {
 | | | type: VAR
+| | | varName: j
 | | | varType: INT
 | | | isPtr: 0
 | | | isStatic: 0
-| | | varName: j
+| | | isArray: 0
 | | },
 | | {
 | | | type: ASSIGN
-| | | varName: j
+| | | varName:
+| | | {
+| | | | {
+| | | | | type: ID
+| | | | | isPtr: 0
+| | | | | varName: j
+| | | | },
+| | | },
 | | | 
 | | | exprsn:
 | | | {
@@ -401,14 +432,22 @@ test/3_assign.mc AST:
 | | },
 | | {
 | | | type: VAR
+| | | varName: k
 | | | varType: INT
 | | | isPtr: 0
 | | | isStatic: 0
-| | | varName: k
+| | | isArray: 0
 | | },
 | | {
 | | | type: ASSIGN
-| | | varName: k
+| | | varName:
+| | | {
+| | | | {
+| | | | | type: ID
+| | | | | isPtr: 0
+| | | | | varName: k
+| | | | },
+| | | },
 | | | 
 | | | exprsn:
 | | | {
@@ -478,14 +517,22 @@ test/3_assign.mc AST:
 | | },
 | | {
 | | | type: VAR
+| | | varName: l
 | | | varType: INT
 | | | isPtr: 0
 | | | isStatic: 0
-| | | varName: l
+| | | isArray: 0
 | | },
 | | {
 | | | type: ASSIGN
-| | | varName: l
+| | | varName:
+| | | {
+| | | | {
+| | | | | type: ID
+| | | | | isPtr: 0
+| | | | | varName: l
+| | | | },
+| | | },
 | | | 
 | | | exprsn:
 | | | {
@@ -536,29 +583,89 @@ test/3_assign.mc AST:
 | | },
 | | {
 | | | type: VAR
+| | | varName: m
 | | | varType: INT
 | | | isPtr: 0
 | | | isStatic: 0
-| | | varName: m
+| | | isArray: 0
 | | },
 | | {
 | | | type: ASSIGN
-| | | varName: m
+| | | varName:
+| | | {
+| | | | {
+| | | | | type: ID
+| | | | | isPtr: 0
+| | | | | varName: m
+| | | | },
+| | | },
 | | | 
 | | | exprsn:
 | | | {
 | | | | {
-| | | | | type: BINARY
-| | | | | stub: 0
-| | | | | single: 1
-| | | | | op (id): 
-| | | | | 
-| | | | | left:
+| | | | | type: LIT
+| | | | | type: INT
+| | | | | val: 0
+| | | | },
+| | | },
+| | },
+| | {
+| | | type: VAR
+| | | varName: o
+| | | varType: INT
+| | | isPtr: 0
+| | | isStatic: 0
+| | | isArray: 0
+| | },
+| | {
+| | | type: ASSIGN
+| | | varName:
+| | | {
+| | | | {
+| | | | | type: ID
+| | | | | isPtr: 0
+| | | | | varName: o
+| | | | },
+| | | },
+| | | 
+| | | exprsn:
+| | | {
+| | | | {
+| | | | | type: LIT
+| | | | | type: INT
+| | | | | val: 1
+| | | | },
+| | | },
+| | },
+| | {
+| | | type: VAR
+| | | varName: p
+| | | varType: INT
+| | | isPtr: 0
+| | | isStatic: 0
+| | | isArray: 0
+| | },
+| | {
+| | | type: ASSIGN
+| | | varName:
+| | | {
+| | | | {
+| | | | | type: ID
+| | | | | isPtr: 0
+| | | | | varName: p
+| | | | },
+| | | },
+| | | 
+| | | exprsn:
+| | | {
+| | | | {
+| | | | | type: DEREF
+| | | | | exprsn:
 | | | | | {
 | | | | | | {
-| | | | | | | type: LIT
-| | | | | | | type: INT
-| | | | | | | val: 0
+| | | | | | | type: ID
+| | | | | | | isPtr: 0
+| | | | | | | varName: m
 | | | | | | },
 | | | | | },
 | | | | },
@@ -566,29 +673,33 @@ test/3_assign.mc AST:
 | | },
 | | {
 | | | type: VAR
+| | | varName: q
 | | | varType: INT
 | | | isPtr: 0
 | | | isStatic: 0
-| | | varName: o
+| | | isArray: 0
 | | },
 | | {
 | | | type: ASSIGN
-| | | varName: o
+| | | varName:
+| | | {
+| | | | {
+| | | | | type: ID
+| | | | | isPtr: 0
+| | | | | varName: q
+| | | | },
+| | | },
 | | | 
 | | | exprsn:
 | | | {
 | | | | {
-| | | | | type: BINARY
-| | | | | stub: 0
-| | | | | single: 1
-| | | | | op (id): 
-| | | | | 
-| | | | | left:
+| | | | | type: REF
+| | | | | ptr:
 | | | | | {
 | | | | | | {
-| | | | | | | type: LIT
-| | | | | | | type: INT
-| | | | | | | val: 1
+| | | | | | | type: ID
+| | | | | | | isPtr: 0
+| | | | | | | varName: m
 | | | | | | },
 | | | | | },
 | | | | },
@@ -596,71 +707,133 @@ test/3_assign.mc AST:
 | | },
 | | {
 | | | type: VAR
+| | | varName: r
 | | | varType: INT
 | | | isPtr: 0
 | | | isStatic: 0
-| | | varName: p
+| | | isArray: 0
 | | },
 | | {
 | | | type: ASSIGN
-| | | varName: p
+| | | varName:
+| | | {
+| | | | {
+| | | | | type: ID
+| | | | | isPtr: 0
+| | | | | varName: r
+| | | | },
+| | | },
 | | | 
 | | | exprsn:
 | | | {
 | | | | {
+| | | | | type: CALL
+| | | | | funcName: g
+| | | | },
+| | | },
+| | },
+| | {
+| | | type: VAR
+| | | varName: s
+| | | varType: INT
+| | | isPtr: 0
+| | | isStatic: 0
+| | | isArray: 1
+| | | arrayLength:
+| | | {
+| | | | {
+| | | | | type: LIT
+| | | | | type: INT
+| | | | | val: 2
+| | | | },
+| | | },
+| | },
+| | {
+| | | type: VAR
+| | | varName: t
+| | | varType: INT
+| | | isPtr: 0
+| | | isStatic: 0
+| | | isArray: 1
+| | | arrayLength:
+| | | {
+| | | | {
 | | | | | type: BINARY
-| | | | | stub: 0
-| | | | | single: 1
-| | | | | op (id): 
+| | | | | stub: 1
+| | | | | single: 0
+| | | | | op (id): +
 | | | | | 
 | | | | | left:
+| | | | | {
+| | | | | | {
+| | | | | | | type: LIT
+| | | | | | | type: INT
+| | | | | | | val: 2
+| | | | | | },
+| | | | | },
+| | | | | 
+| | | | | right:
+| | | | | {
+| | | | | | {
+| | | | | | | type: LIT
+| | | | | | | type: INT
+| | | | | | | val: 5
+| | | | | | },
+| | | | | },
+| | | | },
+| | | },
+| | },
+| | {
+| | | type: FUNC
+| | | funcType: INT
+| | | isPtr: 0
+| | | isStatic: 0
+| | | funcName: u
+| | | 
+| | | scope:
+| | | {
+| | | | {
+| | | | | type: ASSIGN
+| | | | | varName:
 | | | | | {
 | | | | | | {
 | | | | | | | type: DEREF
 | | | | | | | exprsn:
 | | | | | | | {
 | | | | | | | | {
-| | | | | | | | | type: ID
-| | | | | | | | | isPtr: 0
-| | | | | | | | | varName: m
+| | | | | | | | | type: BINARY
+| | | | | | | | | stub: 1
+| | | | | | | | | single: 0
+| | | | | | | | | op (id): +
+| | | | | | | | | 
+| | | | | | | | | left:
+| | | | | | | | | {
+| | | | | | | | | | {
+| | | | | | | | | | | type: ID
+| | | | | | | | | | | isPtr: 0
+| | | | | | | | | | | varName: t
+| | | | | | | | | | },
+| | | | | | | | | },
+| | | | | | | | | 
+| | | | | | | | | right:
+| | | | | | | | | {
+| | | | | | | | | | {
+| | | | | | | | | | | type: LIT
+| | | | | | | | | | | type: INT
+| | | | | | | | | | | val: 2
+| | | | | | | | | | },
+| | | | | | | | | },
 | | | | | | | | },
 | | | | | | | },
 | | | | | | },
 | | | | | },
-| | | | },
-| | | },
-| | },
-| | {
-| | | type: VAR
-| | | varType: INT
-| | | isPtr: 0
-| | | isStatic: 0
-| | | varName: q
-| | },
-| | {
-| | | type: ASSIGN
-| | | varName: q
-| | | 
-| | | exprsn:
-| | | {
-| | | | {
-| | | | | type: BINARY
-| | | | | stub: 0
-| | | | | single: 1
-| | | | | op (id): 
 | | | | | 
-| | | | | left:
+| | | | | exprsn:
 | | | | | {
 | | | | | | {
-| | | | | | | type: REF
-| | | | | | | ptr:
-| | | | | | | {
-| | | | | | | | {
-| | | | | | | | | type: ID
-| | | | | | | | | isPtr: 0
-| | | | | | | | | varName: m
-| | | | | | | | },
-| | | | | | | },
+| | | | | | | type: LIT
+| | | | | | | type: INT
+| | | | | | | val: 1
 | | | | | | },
 | | | | | },
 | | | | },
