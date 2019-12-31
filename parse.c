@@ -67,7 +67,7 @@ static enum LitType getType ()
 
     for (int i = 0; i < types.noChild; i++)
     {
-        printf("%s %s\n", peek().id, types.children[i].id);
+        printf("t %s %s\n", peek().id, types.children[i].id);
         if (strcmp(peek().id, types.children[i].id) == 0)
             return types.noChild - i;
     }
@@ -472,7 +472,7 @@ static Tree *parseLit ()
     else
     {
         inst->Inst.lit.type = LT_INT;
-        int num = mccStrtod(peek().id);
+        int num = mccstrtod(peek().id);
         /**/
         inst->Inst.lit.val.tInt = num;
     }
@@ -763,13 +763,14 @@ static Tree *crtInst (enum InstType type)
 {
     Tree *inst = malloc(sizeof(Tree)); // declared on heap
     inst->type = type;
+    inst->noChild = 0;
     strcpy(inst->id, peek().id);
     return inst;
 }
 
 
 
-void parse ()
+void parse (Tree *AST)
 {
     Token t = next();
 
@@ -780,13 +781,13 @@ void parse ()
     if (isFunc(true))
     {
         mccLog("func def");
-        readFunc(&AST);
+        readFunc(AST);
     }
     else
     {
         // assume decl
         mccLog("declare");
-        readDecl(&AST);
+        readDecl(AST);
     }
 }
 

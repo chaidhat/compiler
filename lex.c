@@ -263,10 +263,14 @@ bool tTokcmpId (Token tok, char *id)
 
 void resetEOF()
 {
-    tokens[tokenNo - 1].type = T_NULL;
-    tokT = tokens[tokenNo - 1];
+    if (tokenNo > 0)
+    {
+        tokens[tokenNo - 1].type = T_NULL;
+        tokT = tokens[tokenNo - 1];
+    }
     isEOF = false;
 }
+
 Token lex ()
 {
     if (tokenNo < tokenNoActual)

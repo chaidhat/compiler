@@ -5,41 +5,30 @@
 ## About
 This is a personal project of mine of trying to teach myself...
 1. how compilers work
-2. how to write assembly (for an x86_64 Intel architecture)
+2. how to write assembly (for an x86 Intel & CPU architecture)
 3. the C programming language
 4. (teach myself how to use Vim)
 
 it's a fun challenge.\
 \
-I aim to develop a ultra-simple, easy to read, compiler which compiles my variant of C (named MinimalistiC or MinC)
-into x86_64 assembly as a *.o* file in as little confusion as possible (I hope) so others make sense of the source code. 
-
-## Install
-Mac & Windows are OK, tested on Mac\
-Please download the repository and cd into it using command prompt or terminal.\
-Make sure [GNU Make is installed](http://gnuwin32.sourceforge.net/packages/make.htm), do
-```
-make all
-```
-The source code will be compiled by GNU Make into an executable, mcc in the bin file.\
-Compilation tests will be perfomed automatically after successful compilation by Make.\
+I aim to develop a basic compiler which compiles my variant of C (called MinimalistiC or MinC)
+into x86 assembly as a *.s* file in the most simple way so others can learn from the source code. \
 \
-Run the executable with -h flag for instructions. *(Unix terminal)*
-```
-cd bin ; ./mcc -h
-```
-or give it a MinC file, dump parser's AST `-fdast` and verbosely compile `-v` into executable
-```
-./mcc -fdast -v test/file.mc
-```
+**To learn more, please read the sections below on the programming language and its compiler.** \
+**Installation instructions are at the bottom** \
 
 ## MinimalistiC Programming Language
-"*C is too powerful*" - no one ever.\
 MinimalistiC (MinC) is my take on a ultra-simplified, ultra-lightweight, derated version of the C Programming language.\
-Mainly because I don't want to follow C ISOs. \
-It is faithful to C so it does not add anything new, only removals and a few changes.
+MinC's aims to be...
+* **heavily-simplifed** and contains only the bare-minimum of C
+* **simple**, very easy to learn/teach for its lack of niches and straight-forward concepts
+* **lightweight**, requires a smaller compiler and library than C/C++, faster compilation, smaller memory footprint
+* **lower-level**, for finer optimisations and precision in mission-critical tasks
+* **forward compatible** with C, meaning it can be treated as C code and compiled with GCC \
+    !!! change `byte` to `char`, changed to remove ambiguities
+* **Most importantly, a good learning experience for me to see how computers work**
 
-**All Capabilities**
+**All Features**
 * preprocessor directives (`#include`, `#define`, `#ifdef`, `#endif`)
 * preprocessor macros (`__FILE__`, `__LINE___`, `__TIME__`, `__ASM`, etc.)
 * comments (`//`, `/*`, `*/`)
@@ -56,37 +45,91 @@ It is faithful to C so it does not add anything new, only removals and a few cha
 * arithmetic (`+`, `-`, `*`, `/`) with (`(`, `)`) (with bidmas)
 * binary logic (`!`, `&&`, `||`)
 * equality testing (`==`, `!=`, `>`)
-* standard library
+* linked with the C standard library for portability
 
-That's it. 8 keywords, 4 preprocessor directives,\
+That's all. 8 keywords, 4 preprocessor directives,\
 and a charset of `a..z`, `0..9` with 20 symbols `. , ; + - * / = # ! & | " > ( ) [ ] { }`\
-**It's incredibly easy to master compared to C.**
 
 ## MinimalistiC Compiler (MCC)
-Compiles MinC into x86_64 assembly *.o* files then asks linker to link into binaries\
+Compiles MinC into x86 assembly *.o* files then asks linker to link into binaries\
 **What it does**
 1. reads input char by char, being lexed into tokens
    * `file.c` and `io.c` take in the source code as a stream
    * `pp.c` for preprocesses input char stream.
    * `lex.c` tokenise into one of `NULL`, `LITERAL`, `IDENTIFIER`, `KEYWORD`, `SEPARATOR`, `OPERATOR`, or `END OF FILE`
    * `pp.c` parses preprocessor directives `#` and macros
-2. parses token stream in (handwritten!) `parse.c` into an Abstract Syntax Tree using a top-down recursive descent algorithm
-   * `parse.c` parses tokens into abstract instructions recursively
-   * parser is handwritten for better performance than FLEX or BISON - also a *headache* to write
-   * parsing is recursively called, so that is correctly mapped as a syntax tree (AST)
-   * binary expressions rearrange themselves to follow BIDMAS (insanely confusing too)
-   * memory management is absent (declares variables on heap but never frees it) 
-   * `dump.c` prints the instructions in english if `-fdast` (Dump-Abstact-Syntax-Tree) arg
+   * if `-E` flag, `dump.c` prints preprocessed code
+2. parses token stream in (handwritten!) `parse.c` into an Abstract Syntax Tree
+   * `parse.c` parses tokens into abstract instructions
+   * parser is a top-down recursive decent parser, a *headache* to write
+   * parser is hand-written by me specifically for MinC as opposed to FLEX/YACC
+   * if `-fd flag, `dump.c` pretty-prints the AST in readable form
 3. generate an Intermediate Representation based on that AST
-4. assemble code from the IR, as an *.o* file
-5. ask the system's linker (`ld`) to link the file. I ain't writing that.
+   * `gen.c` generates IR based on x86 assembly code
+   * `gen.c` initally generates assembly with an infinite amount of registers
+   * `map.c` remaps infinite registers to 32 bit `eax`-`edx`, or their 8 bit equivilants `ah`-`dh`
+   * `mac.c` allocates memory on stack appropriately
+   * `gen.c` formats IR as actual x86 32-bit code in AT&T formatting
+   * if `-S` flag, `dump.c` outputs the human-readble IR as an `.s`
+4. assembly and linking are done externally
+   * GNU's assembler (`as`) converts the human-readable x86 `.s` to `.o` files
+   * if `-c` flag, `dump.c` outputs the object file as an `.o`
+   * GNU's linker (`ld`) links all `.o` files together and with the C standard library
+   * code is linked with the C standard library for portability across OSes
+
+Notes
+   * MCC is so small it can fit into a 1980s floppy disk (>160KB)
+   * parser rearranges binary expressions to follow BIDMAS (insanely confusing to write)
+   * memory management is absent (declares variables on heap but never frees it) 
+   * generator is non-optimising, so a lot of jumps and inefficient memory usage
+   * semantic analysis and error-checking is limited which may result in un-caught errors
+
+## Install
+The compiler generates x86 32-bit assembly code for Intel CPUs.
+\
+Should work for Unix-like OSes and 32-bit Windows. \
+Tested on Windows 10 and Mac OS X Mojave. \
+Will not work on Catalina as it has no legacy support for 32-bit applications.\
+\
+[MinGW](https://osdn.net/projects/mingw/releases/) is required for assembly and linking.\
+Uses GNU's assembler (GAS) and linker.
+Links with C Standard library for portability across all OSes.
+\
+Please download the repository and cd into it using command prompt or terminal.\
+Make sure [GNU Make is installed](http://gnuwin32.sourceforge.net/packages/make.htm), do
+```
+make all
+```
+The source code will be compiled by GNU Make into an executable, mcc in the bin file.\
+Compilation tests will be perfomed automatically after successful compilation by Make.\
+\
+Run the executable with -h flag for instructions. *(Unix terminal)*
+```
+cd bin ; ./mcc -h
+```
+or give it a MinC file, dump parser's AST `-fd` and verbosely compile `-v` into executable
+```
+./mcc -fd -v test/file.mc
+```
 
 ## Thank you to 
 ### compiler 
+* Introduction to Compilers and Language Designs by Prof. Douglas Thain (book)
 * http://www.cs.man.ac.uk/~pjj/farrell/compmain.html
 * http://lisperator.net/pltut/
+* https://github.com/rui314/8cc for inspiration
+* https://github.com/rui314/9cc for inspiration
+* https://github.com/nlsandler/nqcc for inspiration
 ### parser  
 * http://lisperator.net/pltut/parser/
 * https://stackoverflow.com/questions/2245962
 ### lexer
 * http://www.cse.chalmers.se/edu/year/2015/course/DAT150/lectures/proglang-04.html
+### code generator
+* https://en.wikibooks.org/wiki/X86_Assembly/GAS_Syntax
+* https://www.chocolatesparalucia.com/2010/09/hello-world-c-and-gnu-as/
+### x86
+* https://cs.lmu.edu/~ray/notes/gasexamples/
+* https://www.cs.virginia.edu/~evans/cs216/guides/x86.html
+* https://pages.hep.wisc.edu/~pinghc/x86AssmTutorial.htm
+* https://www.youtube.com/watch?v=wLXIWKUWpSs

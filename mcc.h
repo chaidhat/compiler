@@ -2,7 +2,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-#define DB_SIZE 2048
+
+#define DB_SIZE 65536
+#define log(...) printf("a%s %s\n", __FILE__, __VA_ARGS__)
+#define mccstrs(dest, format, ... ) mccstr(dest, 128, format, __VA_ARGS__);
 
 enum TokType
 {
@@ -53,7 +56,32 @@ enum wCodes
     WC_PARSE_SEM,
     WC_PARSE_SYN,
 };
-
+enum Opcode
+{
+    OP_push,
+    OP_pop,
+    OP_mov,
+    OP_cmp,
+    OP_jmp,
+    OP_call,
+};
+enum OpcodeSzType
+{
+    OST_word,
+    OST_quad,
+};
+enum RegType
+{
+    REG_a,
+    REG_b,
+    REG_c,
+    REG_d,
+    REG_esi,
+    REG_edi,
+    REG_ebp,
+    REG_esp,
+    REG_USE_REGNAME
+};
 typedef union
 {
     void *tVoid;
@@ -157,8 +185,9 @@ typedef struct
 } Unin;
 typedef struct
 {
+    char scopeName[128];
+    struct Tree *decls; // only decl
 } Scope;
-
 
 typedef struct Tree
 {
@@ -182,31 +211,52 @@ typedef struct Tree
         Unin unin;
         Scope scope;
         void *null;
-    } Inst;
+    } Inst; // for AST
     struct Tree *children; // neat self-referential struct
     int noChild;
 } Tree;
 
+typedef struct
+{
+    // LITERALS
+    bool isLit; // is $ ?
+    bool isRoutine; // is it lit without $?
+    char *name; // use ONLY if lit or routine 
 
+    // REGISTERS / ADDR
+    enum RegType type;
+    int regnum; // used for infinite registers
+    int offset; // offset from register e.g. 4 in 4(%eax)
+} Operand;
+
+typedef struct
+{
+    enum Opcode type; // e.g. push, mov
+    enum OpcodeSzType size; // byte, quad
+
+    Operand dest; // left-hand side of operand
+    Operand src; // right-hand side optional, depending on RepType
+} AsmInst;
+
+
+// filepaths
 char startFilepath[128];
 char inFilepath[128];
 char outFilepath[128];
 bool isChangeFilepath;
 
 
+// config
 bool mode;
 bool doBenchmarking;
-bool doRun;
-char doRunArgs[128];
 bool doParsing;
 bool doAssemble;
-bool doLinker;
+bool doLink;
 bool doWarnings;
 bool doWarningsE;
 bool doDumpAst;
-bool doDumpSta;
 
-Tree AST;
+
 
 // file.c
 Pos inpPos;
@@ -267,7 +317,8 @@ void predefineInclude (char *dir);
 
 
 // parse.c
-void parse ();
+void parse (Tree *AST);
+
 
 // vec.c
 void appendChild (Tree *parent, Tree child);
@@ -275,10 +326,16 @@ bool deleteChild (Tree *parent, char id[128]);
 Tree *getTree (Tree *parent, int index);
 void logTree (Tree *t);
 
-int mccStrtod (char *num);
-char *mccDtostr (int in);
+int mccstrtod (char *num);
+char *mccdtostr (int in);
+bool mccstr (char *dest, int destSz, char *format, ... );
 
 
 // dump.c
 void dumpPp ();
-void dumpAst (Tree *tree);
+void dumpAst (Tree *AST);
+
+
+// gen.c
+void genIr (AsmInst **IR, Tree *AST);
+void genS (char *buffer, int bufferSz, AsmInst *IR);

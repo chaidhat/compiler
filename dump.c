@@ -28,8 +28,8 @@ static void print (char* fmt, ... )
             fmt++;
             if (*fmt == 'd') {
                 int i = va_arg(args, int);
-                printf("%s", mccDtostr(i));
-                inpPush(mccDtostr(i));
+                printf("%s", mccdtostr(i));
+                inpPush(mccdtostr(i));
             } else if (*fmt == 's') {
                 char *s = va_arg(args, char *);
                 printf("%s", s);
@@ -137,7 +137,7 @@ static char *LTtostr (enum LitType type)
             break;
         default:
             strcpy(sType, "CUSTOM ");
-            strcat(sType, mccDtostr(type));
+            strcat(sType, mccdtostr(type));
             break;
     }
     return sType;
@@ -330,19 +330,19 @@ static void dumpTree (Tree *tree)
         dumpTree(&tree->children[i]);
 }
 
-void dumpAst (Tree *tree)
+void dumpAst (Tree *AST)
 {
     mccWarn("dumping AST...");
     print("%s AST:", inFilepath);
     up();
-    dumpTree(tree);
+    dumpTree(AST);
     down();
     down();
-    inpWrite(outFilepath, "-dump-ast.txt");
+    inpWrite(outFilepath, ".md");
 }
 
 void dumpPp ()
 {
-    inpWrite(outFilepath, "-pp.mc");
+    inpWrite(outFilepath, ".mi");
     mccExit(0, __LINE__);
 }

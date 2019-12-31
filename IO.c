@@ -2,15 +2,24 @@
 #include "mcc.h"
 
 // http://www.codebind.com/cprogramming/get-current-directory-using-c-program/
-#ifdef WINDOWS
-#include <direct.h>
-#define GetCurrentDir _getcwd
-#define OS "WINDOWS" 
+#ifdef _WIN32
+    #include <direct.h>
+    #define GetCurrentDir _getcwd
+    #define OS "Windows" 
+#elif __APPLE__
+    #include <unistd.h>
+    #define GetCurrentDir getcwd
+    #define OS "Mac OS X" 
 #else
-#include <unistd.h>
-#define GetCurrentDir getcwd
-#define OS "MACOSX/LINUX" 
+    #error MCC DOES NOT SUPPORT THE OS
 #endif
+
+/* windows colour support
+HANDLE hcon = GetStdHandle(STD_OUTPUT_HANDLE);
+SetConsoleTextAttribute(hcon, 12);
+printf("a\n");
+SetConsoleTextAttribute(hcon, 7);
+*/
 
 static void mccPrint (char* suffix, char* format, va_list args )
 {
@@ -103,7 +112,7 @@ void mccExit (int code, int debugLine)
                 mccLog("Terminated calm. Called from line %d", debugLine);
             break;
     }
-    exit(0);
+    exit(code);
 }
 
 void mccDoArgs (int argc, char* argv[])
@@ -117,17 +126,16 @@ void mccDoArgs (int argc, char* argv[])
                 "-V",
                 "-b",
                 "-o",
-                "-r",
-                "-v",
+                "-g",
                 "-w",
+                "-W",
                 "-We",
                 "-I",
                 "-D",
                 "-E",
                 "-S",
                 "-c",
-                "-fdast",
-                "-fdsta",
+                "-fd",
                 "-h",
             };
             int argNo = -1;
@@ -148,7 +156,7 @@ void mccDoArgs (int argc, char* argv[])
                     printf("\033[1;30mMinimalistiC Compiler created by Chaidhat Chaimongkol\033[m\n"
                     "https://github.com/Chai112/MinC-Compiler\n"
                     "Compiled on: %s %s\n"
-                    "Target: x86_64 Intel %s\n"
+                    "Target: x86 Intel (32 bit) %s\n"
                     "Installed with: gcc %s\n"
                     "Installed dir: %s\n"
                     "\n"
@@ -163,17 +171,16 @@ void mccDoArgs (int argc, char* argv[])
                     isChangeFilepath = true;
                     line++;
                     break;
-                case 3: // -r
-                    doRun = true;
-                    strcpy(doRunArgs, argv[line + 1]);
-                    line++;
-                    break;
-                case 4: // -v
+                case 3: // -g
                     mode = 0;
                     break;
-                case 5: // -w
+                case 4: // -w
                     doWarnings = false;
                     break;
+                case 5: // -W
+                    // TODO
+                    line++;
+                    break; 
                 case 6: // -We
                     doWarningsE = true;
                     break;
@@ -188,19 +195,16 @@ void mccDoArgs (int argc, char* argv[])
                 case 9: // -E
                     doParsing = false;
                     break;
-                case 10: // -S
+                case 11: // -S
                     doAssemble = false;
                     break;
-                case 11: // -c
-                    doLinker = false;
+                case 12: // -c
+                    doLink = false;
                     break;
-                case 12: // -fdast
+                case 10: // -fd
                     doDumpAst = true;
                     break;
-                case 13: // -fdsta
-                    doDumpSta = true;
-                    break;
-                case 14: // -h
+                case 13: // -h
                     printf("\033[1;30mMinimalistiC Compiler created by Chaidhat Chaimongkol\n%s %s\n\033[m", __DATE__, __TIME__);
                     printf("https://github.com/Chai112/MinC-Compiler\n\n"
                     "usage: mcc [-h] [-V] [arg1 arg2 ...] <inpath1 inpath2 ...>\n\n" 
@@ -209,11 +213,11 @@ void mccDoArgs (int argc, char* argv[])
                     "   -V                  display version info\n"
                     "   -b                  display compilation benchmarks\n"
                     "   -o <path>           write output to <path>\n"
-                    "   -r <args ...>       run output with <args ...>\n"
                     "\n"
-                    "   -v                  verbose compiler debugger\n"
+                    "   -g                  enable compiler debugger\n"
                     "   -w                  supress all warnings\n"
-                    "   -We                 treat warnings as errors\n"
+                    "   -W <wcode>          supress <wcode> warning\n"
+                    "   -We                 treat all warnings as errors\n"
                     "\n"
                     "   -I <dir>            add include path <dir>\n"
                     "   -D <macro> <val>    set <macro> to <val>\n"
@@ -221,9 +225,7 @@ void mccDoArgs (int argc, char* argv[])
                     "\n"
                     "   -S                  stop before assembly\n"
                     "   -c                  stop before linking\n"
-                    "\n"
-                    "   -fdast              dump AST\n"
-                    "   -fdsta              dump stack-trace\n"
+                    "   -fd                 print AST\n"
                     "\n"
                     "   -h                  display this help\n"
                     "\n"
@@ -239,6 +241,10 @@ void mccDoArgs (int argc, char* argv[])
                         i++;
                     if (argv[line][i + 1] != 'm' || argv[line][i + 2] != 'c') 
                     {
+                        if (argv[line][0] == '-')
+                        {
+                            mccErr("Unknown flag!\n ./mcc -h for help");
+                        }
                         mccErr("Unexpected file type (expected .mc)\n ./mcc -h for help");
                         mccExit(1, __LINE__);
                     }

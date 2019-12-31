@@ -1,4 +1,19 @@
+#include <stdarg.h>
+#include <math.h>
 #include "mcc.h"
+
+
+static bool str (char *buffer, int destSz, int *idest, char *src)
+{
+    int isrc = 0;
+    do
+    {
+        buffer[*idest] = src[isrc];
+        if (++*idest > destSz)
+            return true; // error, buffer overflow
+    } while (src[++isrc] != '\0');
+    return false;
+}
 
 
 void appendChild (Tree *parent, Tree child)
@@ -67,7 +82,7 @@ void logTree (Tree *t)
 }
 
 
-int mccStrtod (char *str)
+int mccstrtod (char *str)
 {
     int num = 0;
     int i = 0;
@@ -121,17 +136,18 @@ int mccStrtod (char *str)
     return num;
 }
 
-char *mccDtostr (int in)
+char *mccdtostr (int in)
 {
-    double sIn = in;
-    char *str = malloc(sizeof(char[128]));
-    if (sIn == 0)
+    printf("aaaa\n");
+    int i = 0;
+    char str[128];
+    char *strout = malloc(sizeof (char[128]));
+    if (in == 0)
         return "0";
-    for (int i = 0; sIn >= 1; i++)
+    do
     {
-        sIn /= 10;
         char n = '0';
-        switch (in)
+        switch (in % 10)
         {
             case 0:
                 n = '0';  
@@ -161,11 +177,58 @@ char *mccDtostr (int in)
                 n = '9';
                 break;
             default:
-                n = 'e';
+                printf("error %d\n", in % 10);
                 break;
         }
-        str[i] = n;
-        str[i + 1] = '\0';
+        str[i++] = n;
+
+        in = floor(in/10);
     }
-    return str;
+    while (in != 0);
+    for (int j = 0; j < i; j++)
+        strout[j] = str[i - j - 1];
+
+    strout[i] = '\0';
+    return strout;
+}
+
+bool mccstr (char *dest, int destSz, char *format, ... )
+{
+    int isrc = 0, idest = 0;
+    char buffer[destSz];
+
+    va_list args;
+    va_start(args, format);
+
+    char *src = format;
+    do
+    {
+        if (src[isrc] == '%')
+        {
+            switch (src[++isrc])
+            {
+                case 'd':
+                    if (str(buffer, destSz, &idest, mccdtostr(va_arg(args, int))))
+                        return true; // error, buffer overflow
+                    break;
+                case 's':
+                    if (str(buffer, destSz, &idest, va_arg(args, char*)))
+                        return true; // error, buffer overflow
+                    break;
+                default:
+                    return true; // error, unsupported type
+                    break;
+            }
+        }
+        else
+        {
+            buffer[idest] = src[isrc];
+            if (++idest > destSz)
+                return 1; // error, buffer overflow
+        }
+    } while (src[isrc++] != '\0');
+    va_end(args);
+    for (int j = 0; j < idest; j++)
+        dest[j] = buffer[j];
+    return 0; // success
 }

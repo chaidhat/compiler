@@ -3,10 +3,9 @@
 # for the initial makefile template - this is my first time!
 
 CC=gcc
-CFLAGS=-Werror
-ECC=$(BDIR)/./mcc
-# TESTCMD= -v -D c 1 -I test/u.mh
-TESTCMD = -v -D c 1 -fdast
+CFLAGS=-Werror -Os
+ECC=$(BDIR)/mcc
+TESTCMD = -g -D c 1
 
 _SRC := $(wildcard *.c)
 _OBJ := $(_SRC:.c=.o) 
@@ -15,21 +14,29 @@ BDIR = bin
 TDIR = test
 
 $(BDIR)/mcc: $(_OBJ)
-	$ mkdir -p bin 
 	$(CC) -o $@ $^
+	$(MAKE) clean
 
 # automatically makes, self-test and clean
 all:
 	$(MAKE) clean
 	$(MAKE) 
 	$(MAKE) clean
-	$(MAKE) test1
+	$(MAKE) test
 
-test1:
-	$(info ***test1***)
-	@for f in $(wildcard $(TDIR)/*.mc); do echo A ; echo A ; echo A ; echo A NEXT FILE $${f} ; echo A ; echo A ; echo A ; $(ECC) $(TESTCMD) $${f} ; done
+run:
+	$(MAKE) clean
+	$(MAKE) 
+	$(MAKE) clean
+	$(foreach file,$(wildcard $(TDIR)/*.mc), \
+		$(info FILE $(file)) \
+		start cmd /K ""$(ECC)" $(TESTCMD) $(file)" \
+	)
+
+test:
+	start cmd /K "cd $(TDIR) && test.bat"
     
 clean:
-	rm -f *.o *~ core $(INCDIR)/*~ 
+	del *.o
 
-.PHONY: all test1 clean
+.PHONY: all run test clean
