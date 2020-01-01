@@ -1,12 +1,14 @@
 # global data  #
-# gcc -o asm_test_1 asm_test_1.s && asm_test_1
+# gcc -o asm_standard asm_standard.s && asm_standard
 
-        .file   "hello_c.c"
-        .def    ___main;        .scl    2;      .type   32;     .endef
-        .text
+.file   "asm_standard.c"
+.data
+MSG: # msg format
+        .asciz "Hello, world %hhd!\12\0" # %hhd for byte (8) and %d for int (32)
+VAR_A: # static byte
+        .byte 0
+.text
 .globl _main
-        .def    _main;  .scl    2;      .type   32;     .endef
-        .def    _printf;        .scl    2;      .type   32;     .endef
 _main:
 	# subroutine prologue
     pushl   %ebp
@@ -38,8 +40,3 @@ print_int:
 	popl 	%ebp
 	ret 	#pop %eax; jmp %eax
 
-	.data
-MSG: # msg format
-        .asciz "Hello, world %hhd!\12\0" # %hhd for byte (8) and %d for int (32)
-VAR_A: # static byte
-	.byte 0

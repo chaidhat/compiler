@@ -31,6 +31,7 @@ void inpOpen (char *filename)
     resetEOF();
 
 }
+
 void inpClose ()
 {
     fclose(fp);
@@ -105,4 +106,28 @@ bool inpCN (char expect)
     if (inpN == expect)
         return true;
     return false;
+}
+
+void inpGetFilename (char *outFilename, int outFilenameSz)
+{
+    int i;
+    for (i = 0; i < outFilenameSz; i++)
+    {
+        if (outFilepath[i] == '\0')
+            break;
+    }
+    while (i > 0)
+    {
+        i--;
+        if (outFilepath[i] == '/' || outFilepath[i] == '\\')
+            break;
+    }
+    i++;
+    for (int j = 0; i < outFilenameSz; j++)
+    {
+        outFilename[j] = outFilepath[i];
+        if (outFilepath[i] == '\0')
+            break;
+        i++;
+    }
 }

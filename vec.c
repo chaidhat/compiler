@@ -18,7 +18,7 @@ static bool str (char *buffer, int destSz, int *idest, char *src)
 
 void appendChild (Tree *parent, Tree child)
 {
-    if (parent->noChild == 0)
+    if (parent->childrenSz == 0)
     {
         parent->children = (Tree *)malloc(sizeof(Tree)); // new children of 1
     }
@@ -26,42 +26,42 @@ void appendChild (Tree *parent, Tree child)
     {
         // for more than one item in array
         // copy items into treeBuffer, allocate a new space on the heap and then on parent->children
-        Tree *treeBuffer = (Tree *)malloc((parent->noChild) * sizeof(Tree));
-        for (int i = 0; i < parent->noChild; i++)
+        Tree *treeBuffer = (Tree *)malloc((parent->childrenSz) * sizeof(Tree));
+        for (int i = 0; i < parent->childrenSz; i++)
             treeBuffer[i] = parent->children[i];
 
 
         free(parent->children);
-        parent->children = (Tree *)malloc((parent->noChild + 1) * sizeof(Tree));
+        parent->children = (Tree *)malloc((parent->childrenSz + 1) * sizeof(Tree));
 
-        for (int i = 0; i < parent->noChild + 1; i++)
+        for (int i = 0; i < parent->childrenSz + 1; i++)
             parent->children[i] = treeBuffer[i];
     }
-    parent->children[parent->noChild] = child;
-    parent->noChild++;
+    parent->children[parent->childrenSz] = child;
+    parent->childrenSz++;
 }
 
 bool deleteChild (Tree *parent, char id[128])
 {
     int i = 0;
-    while (i < parent->noChild && strcmp(parent->children[i].id, id) != 0)
+    while (i < parent->childrenSz && strcmp(parent->children[i].id, id) != 0)
         i++;
 
-    if (i == parent->noChild)
+    if (i == parent->childrenSz)
         return false; // cannot find child
 
-    Tree *treeBuffer = (Tree *)malloc((parent->noChild) * sizeof(Tree));
-    for (int j = 0; j < parent->noChild; j++)
+    Tree *treeBuffer = (Tree *)malloc((parent->childrenSz) * sizeof(Tree));
+    for (int j = 0; j < parent->childrenSz; j++)
         treeBuffer[j] = parent->children[j];
 
 
     free(parent->children);
-    parent->noChild--;
+    parent->childrenSz--;
 
-    parent->children = (Tree *)malloc((parent->noChild) * sizeof(Tree));
+    parent->children = (Tree *)malloc((parent->childrenSz) * sizeof(Tree));
 
     int k = 0;
-    for (int j = 0; j < parent->noChild; j++)
+    for (int j = 0; j < parent->childrenSz; j++)
     {
         if (j == i)
             k++;
@@ -75,8 +75,8 @@ bool deleteChild (Tree *parent, char id[128])
 void logTree (Tree *t)
 {
     mccLog("log of tree  %s", t->id);
-    for (int i = 0; i < t->noChild; i++)
-        mccLog("\t(%d/%d) %s", i, t->noChild, t->children[i].id);
+    for (int i = 0; i < t->childrenSz; i++)
+        mccLog("\t(%d/%d) %s", i, t->childrenSz, t->children[i].id);
 
     mccLog("end log tree %s", t->id);
 }

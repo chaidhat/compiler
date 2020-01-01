@@ -68,7 +68,7 @@ enum Opcode
 enum OpcodeSzType
 {
     OST_word,
-    OST_quad,
+    OST_long,
 };
 enum RegType
 {
@@ -189,10 +189,35 @@ typedef struct
     struct Tree *decls; // only decl
 } Scope;
 
+typedef struct
+{
+    // LITERALS
+    bool isLit; // is $ ?
+    bool isRoutine; // is it lit without $?
+    char *name; // use ONLY if lit or routine 
+
+    // REGISTERS / ADDR
+    enum RegType type;
+    int regnum; // used for infinite registers
+    int offset; // offset from register e.g. 4 in 4(%eax)
+} Operand;
+
+typedef struct
+{
+    enum Opcode type; // e.g. push, mov
+    enum OpcodeSzType size; // byte, long
+
+    Operand dest; // left-hand side of operand
+    Operand src; // right-hand side optional, depending on RepType
+
+    int lifetime; // for optimisation
+} IRInst;
+
 typedef struct Tree
 {
     char id[128];
-    enum InstType type;
+    
+    enum InstType type; // for AST 
     union
     {
         Var var;
@@ -211,42 +236,24 @@ typedef struct Tree
         Unin unin;
         Scope scope;
         void *null;
-    } Inst; // for AST
+    } Inst;
+
+    IRInst *IRInst; // for IR
+    int IRInstSz;
+
     struct Tree *children; // neat self-referential struct
-    int noChild;
+    int childrenSz;
 } Tree;
 
-typedef struct
-{
-    // LITERALS
-    bool isLit; // is $ ?
-    bool isRoutine; // is it lit without $?
-    char *name; // use ONLY if lit or routine 
 
-    // REGISTERS / ADDR
-    enum RegType type;
-    int regnum; // used for infinite registers
-    int offset; // offset from register e.g. 4 in 4(%eax)
-} Operand;
-
-typedef struct
-{
-    enum Opcode type; // e.g. push, mov
-    enum OpcodeSzType size; // byte, quad
-
-    Operand dest; // left-hand side of operand
-    Operand src; // right-hand side optional, depending on RepType
-} AsmInst;
-
-
-// filepaths
+// file vars
 char startFilepath[128];
 char inFilepath[128];
 char outFilepath[128];
 bool isChangeFilepath;
 
 
-// config
+// config vars
 bool mode;
 bool doBenchmarking;
 bool doParsing;
@@ -255,7 +262,6 @@ bool doLink;
 bool doWarnings;
 bool doWarningsE;
 bool doDumpAst;
-
 
 
 // file.c
@@ -273,6 +279,8 @@ void inpWrite (char *toFilename, char *extn); // closes and writes file
 void inpPush (char *inDataBuffer);
 void inpPop ();
 void inpGoto (Pos pos);
+
+void inpGetFilename (char *outFilename, int outFilenameSz);
 
 
 // io.c
@@ -336,6 +344,13 @@ void dumpPp ();
 void dumpAst (Tree *AST);
 
 
-// gen.c
-void genIr (AsmInst **IR, Tree *AST);
-void genS (char *buffer, int bufferSz, AsmInst *IR);
+// gen_ir.c
+void genIr (Tree *IROut, Tree *AST);
+
+
+// map.c
+void map (Tree *IROut, Tree *IRIn);
+
+
+// gen_x86.c
+void genX (char *dest, int destSz, Tree *IR);

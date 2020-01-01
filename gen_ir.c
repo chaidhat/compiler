@@ -1,34 +1,34 @@
 #include "mcc.h"
-#define genfileinserts(str) if( \
-        mccstr(dest, destSz, "%s" str "\n", dest)) \
-        { mccErr("gen insert error\n"); mccExit(1, __LINE__); }
-#define genfileinsertm(str, ... ) if( \
-        mccstr(dest, destSz, "%s" str "\n", dest, __VA_ARGS__)) \
-        { mccErr("gen insert error\n"); mccExit(1, __LINE__); }
 static char datBuf[DB_SIZE];
 
-static void genHeader (char *dest, int destSz);
+static void genRoutine (Tree *parent, Func inst);
+
+static void genIRInst (Tree *treeOut, Tree *treeIn);
+static void genTree (Tree *treeOut, Tree *treeIn);
 
 
-static void genHeader (char *dest, int destSz)
+static void genRoutine (Tree *parent, Func inst)
 {
-    mccstr(dest, destSz, " \n");
-    genfileinserts("# Compiled with Chaidhat Chaimongkol's         ");
-    genfileinserts("# MinimalistiC Compiler                        ");
-    genfileinserts(" ");
-    genfileinsertm("      .file   \"%s%s\"                         ", outFilepath, isChangeFilepath ? " " : ".mc");
-    genfileinserts("      .def    ___main; .scl 2; .type 32; .endef");
-    genfileinserts("      .text                                    ");
-    genfileinserts(" ");
-    genfileinserts("# global function declarations                 ");
-    genfileinserts("      .globl  _main                            ");
-    genfileinserts(" ");
-    genfileinserts("# all function declarations                    ");
-    genfileinserts("      .def    _main;   .scl 2; .type 32; .endef");
+    Tree routine;
+    routine.childrenSz = 0;
+    strcpy(routine.id, inst.funcName);
+
+    appendChild(parent, routine);
 }
 
-static void genInst (Tree *tree)
+static void genIRInst (Tree *treeOut, Tree *treeIn)
 {
+    switch (treeIn->type)
+    {
+        case IT_Var:
+            break;
+        case IT_Func:
+            genRoutine (treeOut, treeIn->Inst.func);
+            printf("%s %d\n", treeOut->children[treeOut->childrenSz - 1].id, treeOut->childrenSz);
+            break;
+        default:
+            break;
+    }
      
     /*print("type: %s", ITtostr(tree->type));
 
@@ -207,21 +207,15 @@ static void genInst (Tree *tree)
     
 }
 
-static void genTree (Tree *tree)
+static void genTree (Tree *treeOut, Tree *treeIn)
 {
-    genInst(tree);
-    for (int i = 0; i < tree->noChild; i++)
-        genTree(&tree->children[i]);
+    genIRInst(treeOut, treeIn);
+    for (int i = 0; i < treeIn->childrenSz; i++)
+        genTree(treeOut, &treeIn->children[i]);
 }
 
 
-void genIr (AsmInst **IR, Tree *AST)
+void genIr (Tree *IROut, Tree *AST)
 {
-    genTree(AST);
-}
-
-void genS (char *dest, int destSz, AsmInst *IR)
-{
-    genHeader(dest, destSz);
-    //genTree(tree);
+    genTree(IROut, AST);
 }

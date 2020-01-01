@@ -1,9 +1,9 @@
  
 # Chaidhat Chaimongkol's #
 # MinimalistiC Compiler  #
-# on 22:44:40 Jan  1 2020 #
+# on 22:54:54 Jan  1 2020 #
  
-.file   "4_scope.mc"
+.file   "file.mc"
  
 # global declarations
 .data
@@ -11,4 +11,8 @@
 # global function declarations
 .text
 .globl  _main
+.globl .globl main
+.globl fizzbuzz
+.globl isMultiple
+.globl mod
  

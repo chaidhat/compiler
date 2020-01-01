@@ -172,21 +172,21 @@ static void dumpInst (Tree *tree)
             print("isPtr: %d", tree->Inst.func.isPtr);
             print("isStatic: %d", tree->Inst.func.isStatic);
             print("funcName: %s", tree->Inst.func.funcName);
-            if (tree->Inst.func.parameters->noChild > 0)
+            if (tree->Inst.func.parameters->childrenSz > 0)
             {
                 print("");
                 print("parameters:");
                 up();
-                    for (int i = 0; i < tree->Inst.func.parameters->noChild; i++)
+                    for (int i = 0; i < tree->Inst.func.parameters->childrenSz; i++)
                         dumpTree(&tree->Inst.func.parameters->children[i]);
                 down();
             }
-            if (tree->Inst.func.scope->noChild > 0)
+            if (tree->Inst.func.scope->childrenSz > 0)
             {
                 print("");
                 print("scope:");
                 up();
-                    for (int i = 0; i < tree->Inst.func.scope->noChild; i++)
+                    for (int i = 0; i < tree->Inst.func.scope->childrenSz; i++)
                         dumpTree(&tree->Inst.func.scope->children[i]);
                 down();
             }
@@ -201,12 +201,12 @@ static void dumpInst (Tree *tree)
         case IT_Id:
             print("isPtr: %d", tree->Inst.id.isPtr);
             print("varName: %s", tree->Inst.id.varName);
-            if (tree->Inst.id.nested->noChild > 0)
+            if (tree->Inst.id.nested->childrenSz > 0)
             {
                 print("");
                 print("nested:");
                 up();
-                    for (int i = 0; i < tree->Inst.id.nested->noChild; i++)
+                    for (int i = 0; i < tree->Inst.id.nested->childrenSz; i++)
                         dumpTree(&tree->Inst.id.nested->children[i]);
                 down();
             }
@@ -219,12 +219,12 @@ static void dumpInst (Tree *tree)
             break;
         case IT_Call:
             print("funcName: %s", tree->Inst.call.funcName);
-            if (tree->Inst.call.args->noChild > 0)
+            if (tree->Inst.call.args->childrenSz > 0)
             {
                 print("");
                 print("args:");
                 up();
-                    for (int i = 0; i < tree->Inst.call.args->noChild; i++)
+                    for (int i = 0; i < tree->Inst.call.args->childrenSz; i++)
                         dumpTree(&tree->Inst.call.args->children[i]);
                 down();
             }
@@ -260,7 +260,7 @@ static void dumpInst (Tree *tree)
             break;
         case IT_Strct:
             print("strctName: %s", tree->Inst.strct.strctName);
-            print("noChild: %d", tree->Inst.strct.decls->noChild);
+            print("childrenSz: %d", tree->Inst.strct.decls->childrenSz);
             print("");
             print("decls:");
             up();
@@ -270,7 +270,7 @@ static void dumpInst (Tree *tree)
             break;
         case IT_Unin:
             print("uninName: %s", tree->Inst.unin.uninName);
-            print("noChild: %d", tree->Inst.unin.decls->noChild);
+            print("childrenSz: %d", tree->Inst.unin.decls->childrenSz);
             print("");
             print("decls:");
             up();
@@ -298,7 +298,7 @@ static void dumpInst (Tree *tree)
             print("");
             print("scope:");
             up();
-                for (int i = 0; i < tree->Inst.cond.scope->noChild; i++)
+                for (int i = 0; i < tree->Inst.cond.scope->childrenSz; i++)
                     dumpTree(&tree->Inst.cond.scope->children[i]);
             down();
             break;
@@ -310,7 +310,7 @@ static void dumpInst (Tree *tree)
             print("");
             print("scope:");
             up();
-                for (int i = 0; i < tree->Inst.ctrl.scope->noChild; i++)
+                for (int i = 0; i < tree->Inst.ctrl.scope->childrenSz; i++)
                     dumpTree(&tree->Inst.ctrl.scope->children[i]);
             down();
             break;
@@ -326,7 +326,7 @@ static void dumpInst (Tree *tree)
 static void dumpTree (Tree *tree)
 {
     dumpInst(tree);
-    for (int i = 0; i < tree->noChild; i++)
+    for (int i = 0; i < tree->childrenSz; i++)
         dumpTree(&tree->children[i]);
 }
 

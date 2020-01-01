@@ -65,11 +65,11 @@ static enum LitType getType ()
     if (!(tokcmpType(T_KEY) || tokcmpType(T_ID))) // is it a keyword or custom type (id)?
         return LT_INVALID; 
 
-    for (int i = 0; i < types.noChild; i++)
+    for (int i = 0; i < types.childrenSz; i++)
     {
         printf("t %s %s\n", peek().id, types.children[i].id);
         if (strcmp(peek().id, types.children[i].id) == 0)
-            return types.noChild - i;
+            return types.childrenSz - i;
     }
 
     return LT_INVALID;
@@ -763,7 +763,7 @@ static Tree *crtInst (enum InstType type)
 {
     Tree *inst = malloc(sizeof(Tree)); // declared on heap
     inst->type = type;
-    inst->noChild = 0;
+    inst->childrenSz = 0;
     strcpy(inst->id, peek().id);
     return inst;
 }

@@ -28,7 +28,7 @@ int main (int argc, char* argv[])
     printf("\n");
 
     Tree AST;
-    AST.noChild = 0;
+    AST.childrenSz = 0;
 
     ppInit();
     do
@@ -43,11 +43,16 @@ int main (int argc, char* argv[])
         if (doDumpAst)
             dumpAst(&AST);
 
-        AsmInst *IR;
-        char sFile[DB_SIZE];
+        Tree IRa;
+        IRa.childrenSz = 0;
+        genIr(&IRa, &AST);
 
-        genIr(&IR, &AST);
-        genS(sFile, sizeof sFile, IR);
+        Tree IRb;
+        IRb.childrenSz = 0;
+        map(&IRb, &IRa);
+
+        char sFile[DB_SIZE];
+        genX(sFile, sizeof sFile, &IRa);
         
         if (!doAssemble)
             mccExit(0, __LINE__);
