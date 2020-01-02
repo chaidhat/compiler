@@ -1,6 +1,0 @@
-test/file.mc AST:
-{
-| {
-| | type: VAR
-| },
-},

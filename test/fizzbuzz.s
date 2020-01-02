@@ -1,18 +1,17 @@
  
 # Chaidhat Chaimongkol's #
 # MinimalistiC Compiler  #
-# on 22:54:54 Jan  1 2020 #
+# on 13:59:26 Jan  2 2020 #
  
-.file   "file.mc"
+.file   "fizzbuzz.mc"
  
 # global declarations
 .data
  
 # global function declarations
 .text
-.globl  _main
-.globl .globl main
-.globl fizzbuzz
-.globl isMultiple
-.globl mod
+.globl _main
+.globl _fizzbuzz
+.globl _isMultiple
+.globl _mod
  

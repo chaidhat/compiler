@@ -56,7 +56,7 @@ enum wCodes
     WC_PARSE_SEM,
     WC_PARSE_SYN,
 };
-enum Opcode
+enum OpcodeInstType
 {
     OP_push,
     OP_pop,
@@ -65,7 +65,7 @@ enum Opcode
     OP_jmp,
     OP_call,
 };
-enum OpcodeSzType
+enum OpcodeMemType
 {
     OST_word,
     OST_long,
@@ -204,20 +204,23 @@ typedef struct
 
 typedef struct
 {
-    enum Opcode type; // e.g. push, mov
-    enum OpcodeSzType size; // byte, long
+    enum OpcodeInstType type; // e.g. push, mov
+    enum OpcodeMemType size; // byte, long
+} Opcode;
+
+typedef struct
+{
+    Opcode op;
 
     Operand dest; // left-hand side of operand
     Operand src; // right-hand side optional, depending on RepType
 
     int lifetime; // for optimisation
-} IRInst;
+} IrInst;
 
-typedef struct Tree
+typedef struct
 {
-    char id[128];
-    
-    enum InstType type; // for AST 
+    enum InstType type;
     union
     {
         Var var;
@@ -236,14 +239,30 @@ typedef struct Tree
         Unin unin;
         Scope scope;
         void *null;
-    } Inst;
+    }; // anonymous union
+} AstInst;
 
-    IRInst *IRInst; // for IR
-    int IRInstSz;
+typedef struct Tree
+{
+    char id[128];
+    
+    union
+    {
+        AstInst ast; // for AST
+        Opcode dag; // for IR as DAG
+    };
 
     struct Tree *children; // neat self-referential struct
     int childrenSz;
 } Tree;
+
+typedef struct
+{
+    char name[128];
+
+    IrInst *irInst;
+    int irInstSz;
+} IrRoutine; // for linear IR
 
 
 // file vars
@@ -345,12 +364,12 @@ void dumpAst (Tree *AST);
 
 
 // gen_ir.c
-void genIr (Tree *IROut, Tree *AST);
+void genIr (Tree *IrDag, Tree *AST);
 
 
 // map.c
-void map (Tree *IROut, Tree *IRIn);
+void map (IrRoutine *IrLinear, Tree *IrDag);
 
 
 // gen_x86.c
-void genX (char *dest, int destSz, Tree *IR);
+void genX (char *dest, int destSz, IrRoutine *IrLinear);

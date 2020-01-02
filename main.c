@@ -27,35 +27,43 @@ int main (int argc, char* argv[])
     inpOpen(inFilepath);
     printf("\n");
 
-    Tree AST;
-    AST.childrenSz = 0;
+    /* front end */
 
     ppInit();
+
+    Tree AST;
+    AST.childrenSz = 0;
     do
-        parse(&AST);
+        parse(&AST); // preprocess, lex, parse the input file
     while (!tokcmpType(T_EOF));
 
-    if (!doParsing)
+    if (!doParsing) // -E
         dumpPp();
     else
     {
         inpPop();
-        if (doDumpAst)
+
+        if (doDumpAst) // -fd
             dumpAst(&AST);
 
-        Tree IRa;
-        IRa.childrenSz = 0;
-        genIr(&IRa, &AST);
+        /* back end */
 
-        Tree IRb;
-        IRb.childrenSz = 0;
-        map(&IRb, &IRa);
+        Tree irDag;
+        irDag.childrenSz = 0;
+        genIr(&irDag, &AST); // generate IR as DAG from AST
+
+        // optimisations, if any, should go here
+
+        IrRoutine *irLinear;
+        map(irLinear, &irDag); // convert DAG to linear IR
 
         char sFile[DB_SIZE];
-        genX(sFile, sizeof sFile, &IRa);
+        genX(sFile, sizeof sFile, irLinear); // generate x86 from linear IR
         
-        if (!doAssemble)
+        if (!doAssemble) // -s
             mccExit(0, __LINE__);
+
+        // send to gcc for assembly/linking
 
         inpClose();
         inpPop();

@@ -18,12 +18,12 @@ static void genRoutine (Tree *parent, Func inst)
 
 static void genIRInst (Tree *treeOut, Tree *treeIn)
 {
-    switch (treeIn->type)
+    switch (treeIn->ast.type)
     {
         case IT_Var:
             break;
         case IT_Func:
-            genRoutine (treeOut, treeIn->Inst.func);
+            genRoutine (treeOut, treeIn->ast.func);
             printf("%s %d\n", treeOut->children[treeOut->childrenSz - 1].id, treeOut->childrenSz);
             break;
         default:
@@ -215,7 +215,7 @@ static void genTree (Tree *treeOut, Tree *treeIn)
 }
 
 
-void genIr (Tree *IROut, Tree *AST)
+void genIr (Tree *IrDag, Tree *AST)
 {
-    genTree(IROut, AST);
+    //genTree(IROut, AST);
 }

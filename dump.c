@@ -147,171 +147,171 @@ static void dumpInst (Tree *tree)
 {
     up();
     //print("id: %s", tree->id);
-    print("type: %s", ITtostr(tree->type));
+    print("type: %s", ITtostr(tree->ast.type));
 
     if (tree->id[0] == '\0') // first item could be blank
         return;
-    switch (tree->type)
+    switch (tree->ast.type)
     {
         case IT_Var:
-            print("varName: %s", tree->Inst.var.varName);
-            print("varType: %s", LTtostr(tree->Inst.var.varType));
-            print("isPtr: %d", tree->Inst.var.isPtr);
-            print("isStatic: %d", tree->Inst.var.isStatic);
-            print("isArray: %d", tree->Inst.var.isArray);
-            if (tree->Inst.var.isArray)
+            print("varName: %s", tree->ast.var.varName);
+            print("varType: %s", LTtostr(tree->ast.var.varType));
+            print("isPtr: %d", tree->ast.var.isPtr);
+            print("isStatic: %d", tree->ast.var.isStatic);
+            print("isArray: %d", tree->ast.var.isArray);
+            if (tree->ast.var.isArray)
             {
                 print("arrayLength:");
                 up();
-                    dumpTree(tree->Inst.var.arrayLength);
+                    dumpTree(tree->ast.var.arrayLength);
                 down();
             }
             break;
         case IT_Func:
-            print("funcType: %s", LTtostr(tree->Inst.func.retType));
-            print("isPtr: %d", tree->Inst.func.isPtr);
-            print("isStatic: %d", tree->Inst.func.isStatic);
-            print("funcName: %s", tree->Inst.func.funcName);
-            if (tree->Inst.func.parameters->childrenSz > 0)
+            print("funcType: %s", LTtostr(tree->ast.func.retType));
+            print("isPtr: %d", tree->ast.func.isPtr);
+            print("isStatic: %d", tree->ast.func.isStatic);
+            print("funcName: %s", tree->ast.func.funcName);
+            if (tree->ast.func.parameters->childrenSz > 0)
             {
                 print("");
                 print("parameters:");
                 up();
-                    for (int i = 0; i < tree->Inst.func.parameters->childrenSz; i++)
-                        dumpTree(&tree->Inst.func.parameters->children[i]);
+                    for (int i = 0; i < tree->ast.func.parameters->childrenSz; i++)
+                        dumpTree(&tree->ast.func.parameters->children[i]);
                 down();
             }
-            if (tree->Inst.func.scope->childrenSz > 0)
+            if (tree->ast.func.scope->childrenSz > 0)
             {
                 print("");
                 print("scope:");
                 up();
-                    for (int i = 0; i < tree->Inst.func.scope->childrenSz; i++)
-                        dumpTree(&tree->Inst.func.scope->children[i]);
+                    for (int i = 0; i < tree->ast.func.scope->childrenSz; i++)
+                        dumpTree(&tree->ast.func.scope->children[i]);
                 down();
             }
             break;
         case IT_Lit:
-            print("type: %s", LTtostr(tree->Inst.lit.type));
-            if (tree->Inst.lit.type == LT_INT)
-                print("val: %d", tree->Inst.lit.val.tInt);
+            print("type: %s", LTtostr(tree->ast.lit.type));
+            if (tree->ast.lit.type == LT_INT)
+                print("val: %d", tree->ast.lit.val.tInt);
             else
                 mccErr("val: CHAR NOT PROG"); // TODO: char
             break;
         case IT_Id:
-            print("isPtr: %d", tree->Inst.id.isPtr);
-            print("varName: %s", tree->Inst.id.varName);
-            if (tree->Inst.id.nested->childrenSz > 0)
+            print("isPtr: %d", tree->ast.id.isPtr);
+            print("varName: %s", tree->ast.id.varName);
+            if (tree->ast.id.nested->childrenSz > 0)
             {
                 print("");
                 print("nested:");
                 up();
-                    for (int i = 0; i < tree->Inst.id.nested->childrenSz; i++)
-                        dumpTree(&tree->Inst.id.nested->children[i]);
+                    for (int i = 0; i < tree->ast.id.nested->childrenSz; i++)
+                        dumpTree(&tree->ast.id.nested->children[i]);
                 down();
             }
             break;
         case IT_Ret:
             print("exprsn:");
             up();
-                dumpTree(tree->Inst.ret.exprsn);
+                dumpTree(tree->ast.ret.exprsn);
             down();
             break;
         case IT_Call:
-            print("funcName: %s", tree->Inst.call.funcName);
-            if (tree->Inst.call.args->childrenSz > 0)
+            print("funcName: %s", tree->ast.call.funcName);
+            if (tree->ast.call.args->childrenSz > 0)
             {
                 print("");
                 print("args:");
                 up();
-                    for (int i = 0; i < tree->Inst.call.args->childrenSz; i++)
-                        dumpTree(&tree->Inst.call.args->children[i]);
+                    for (int i = 0; i < tree->ast.call.args->childrenSz; i++)
+                        dumpTree(&tree->ast.call.args->children[i]);
                 down();
             }
             break;
         case IT_Assign:
             print("varName:");
             up();
-                dumpTree(tree->Inst.assign.varName);
+                dumpTree(tree->ast.assign.varName);
             down();
             print("");
             print("exprsn:");
             up();
-                dumpTree(tree->Inst.assign.exprsn);
+                dumpTree(tree->ast.assign.exprsn);
             down();
             break;
         case IT_Binary:
-            print("stub: %d", tree->Inst.binary.stub);
-            print("single: %d", tree->Inst.binary.single);
-            print("op (id): %s", tree->Inst.binary.op.id);
+            print("stub: %d", tree->ast.binary.stub);
+            print("single: %d", tree->ast.binary.single);
+            print("op (id): %s", tree->ast.binary.op.id);
             print("");
             print("left:");
             up();
-                dumpTree(tree->Inst.binary.left);
+                dumpTree(tree->ast.binary.left);
             down();
-            if (!tree->Inst.binary.single)
+            if (!tree->ast.binary.single)
             {
                 print("");
                 print("right:");
                 up();
-                    dumpTree(tree->Inst.binary.right);
+                    dumpTree(tree->ast.binary.right);
                 down();
             }
             break;
         case IT_Strct:
-            print("strctName: %s", tree->Inst.strct.strctName);
-            print("childrenSz: %d", tree->Inst.strct.decls->childrenSz);
+            print("strctName: %s", tree->ast.strct.strctName);
+            print("childrenSz: %d", tree->ast.strct.decls->childrenSz);
             print("");
             print("decls:");
             up();
-                dumpTree(tree->Inst.strct.decls);
+                dumpTree(tree->ast.strct.decls);
             down();
             down();
             break;
         case IT_Unin:
-            print("uninName: %s", tree->Inst.unin.uninName);
-            print("childrenSz: %d", tree->Inst.unin.decls->childrenSz);
+            print("uninName: %s", tree->ast.unin.uninName);
+            print("childrenSz: %d", tree->ast.unin.decls->childrenSz);
             print("");
             print("decls:");
             up();
-                dumpTree(tree->Inst.unin.decls);
+                dumpTree(tree->ast.unin.decls);
             down();
             down();
             break;
         case IT_Deref:
             print("exprsn:");
             up();
-                dumpTree(tree->Inst.deref.exprsn);
+                dumpTree(tree->ast.deref.exprsn);
             down();
             break;
         case IT_Ref:
             print("ptr:");
             up();
-                dumpTree(tree->Inst.ref.ptr);
+                dumpTree(tree->ast.ref.ptr);
             down();
             break;
         case IT_Cond:
             print("exprsn:");
             up();
-                dumpTree(tree->Inst.cond.exprsn);
+                dumpTree(tree->ast.cond.exprsn);
             down();
             print("");
             print("scope:");
             up();
-                for (int i = 0; i < tree->Inst.cond.scope->childrenSz; i++)
-                    dumpTree(&tree->Inst.cond.scope->children[i]);
+                for (int i = 0; i < tree->ast.cond.scope->childrenSz; i++)
+                    dumpTree(&tree->ast.cond.scope->children[i]);
             down();
             break;
         case IT_Ctrl:
             print("exprsn:");
             up();
-                dumpTree(tree->Inst.cond.exprsn);
+                dumpTree(tree->ast.cond.exprsn);
             down();
             print("");
             print("scope:");
             up();
-                for (int i = 0; i < tree->Inst.ctrl.scope->childrenSz; i++)
-                    dumpTree(&tree->Inst.ctrl.scope->children[i]);
+                for (int i = 0; i < tree->ast.ctrl.scope->childrenSz; i++)
+                    dumpTree(&tree->ast.ctrl.scope->children[i]);
             down();
             break;
         case IT_Scope:

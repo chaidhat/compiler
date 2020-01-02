@@ -1,6 +1,6 @@
 #include "mcc.h"
 
-void map (Tree *IROut, Tree *IRIn)
+void map (IrRoutine *IrLinear, Tree *IrDag)
 {
-    IROut = IRIn;
+    //IROut = IRIn;
 }

@@ -8,18 +8,18 @@
         { mccErr("gen insert error\n"); mccExit(1, __LINE__); }
 
 static void genAllFunc (char *dest, int destSz, Tree *IR);
-static void genHeader (char *dest, int destSz, Tree *IR);
 
 
 
 static void genAllFunc (char *dest, int destSz, Tree *IR)
 {
-    genfileinsertm(".globl %s", IR->id);
+    if (IR->id[0] != '\0')
+        genfileinsertm(".globl _%s", IR->id);
     for (int i = 0; i < IR->childrenSz; i++)
         genAllFunc(dest, destSz, &IR->children[i]);
 }
 
-static void genHeader (char *dest, int destSz, Tree *IR)
+void genX (char *dest, int destSz, IrRoutine *Ir)
 {
     char outFilename[128];
     inpGetFilename(outFilename, sizeof outFilename);
@@ -36,12 +36,6 @@ static void genHeader (char *dest, int destSz, Tree *IR)
     genfileinserts(" ");
     genfileinserts("# global function declarations");
     genfileinserts(".text");
-    genfileinserts(".globl  _main");
-    genAllFunc(dest, destSz, IR);
+    //genAllFunc(dest, destSz, Ir);
     genfileinserts(" ");
-}
-
-void genX (char *dest, int destSz, Tree *IR)
-{
-    genHeader(dest, destSz, IR);
 }

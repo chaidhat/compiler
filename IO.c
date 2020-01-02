@@ -195,13 +195,13 @@ void mccDoArgs (int argc, char* argv[])
                 case 9: // -E
                     doParsing = false;
                     break;
-                case 11: // -S
+                case 10: // -S
                     doAssemble = false;
                     break;
-                case 12: // -c
+                case 11: // -c
                     doLink = false;
                     break;
-                case 10: // -fd
+                case 12: // -fd
                     doDumpAst = true;
                     break;
                 case 13: // -h
