@@ -13,9 +13,7 @@ it's a fun challenge.\
 \
 I aim to develop a basic compiler which compiles my variant of C (called MinimalistiC or MinC)
 into x86 assembly as a *.s* file in the most simple way so others can learn from the source code. \
-\
-### To learn more, please read the sections below on the programming language and its compiler.
-### Installation instructions are at the bottom 
+### To learn more, please read the sections below on the programming language and its compiler. Installation instructions are at the bottom 
 
 ## MinimalistiC Programming Language
 MinimalistiC (MinC) is my take on a ultra-simplified, ultra-lightweight, derated version of the C Programming language.\
@@ -24,7 +22,7 @@ MinC's aims to be...
 * **basic**, very easy to learn/teach as it lacks niches and has only basic/essential concepts
 * **lightweight**, requires a smaller library and compiler than C/C++, faster compilation, smaller memory footprint
 * **lower-level**, more finely controlled optimisations such as memory management without relying on assembler
-* **forward compatible** with C - it can be treated as C code and be compiled & optimised with GCC/[TCC](https://bellard.org/tcc/) \
+* **forward compatible** with C - it can be treated as C code and be compiled & optimised with GCC/[TCC](https://bellard.org/tcc/)
 * **Most importantly, a good learning experience for me to learn how compilers/low-level programming works**
 
 **All Features**
