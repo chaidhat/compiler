@@ -14,19 +14,18 @@ it's a fun challenge.\
 I aim to develop a basic compiler which compiles my variant of C (called MinimalistiC or MinC)
 into x86 assembly as a *.s* file in the most simple way so others can learn from the source code. \
 \
-**To learn more, please read the sections below on the programming language and its compiler.** \
-**Installation instructions are at the bottom** \
+### To learn more, please read the sections below on the programming language and its compiler.
+### Installation instructions are at the bottom 
 
 ## MinimalistiC Programming Language
 MinimalistiC (MinC) is my take on a ultra-simplified, ultra-lightweight, derated version of the C Programming language.\
 MinC's aims to be...
 * **heavily-simplifed** and contains only the bare-minimum of C
-* **simple**, very easy to learn/teach for its lack of niches and straight-forward concepts
-* **lightweight**, requires a smaller compiler and library than C/C++, faster compilation, smaller memory footprint
-* **lower-level**, for finer optimisations and precision in mission-critical tasks
-* **forward compatible** with C, meaning it can be treated as C code and compiled with GCC \
-    !!! change `byte` to `char`, changed to remove ambiguities
-* **Most importantly, a good learning experience for me to see how computers work**
+* **basic**, very easy to learn/teach as it lacks niches and has only basic/essential concepts
+* **lightweight**, requires a smaller library and compiler than C/C++, faster compilation, smaller memory footprint
+* **lower-level**, more finely controlled optimisations such as memory management without relying on assembler
+* **forward compatible** with C - it can be treated as C code and be compiled & optimised with GCC/[TCC](https://bellard.org/tcc/) \
+* **Most importantly, a good learning experience for me to learn how compilers/low-level programming works**
 
 **All Features**
 * preprocessor directives (`#include`, `#define`, `#ifdef`, `#endif`)
@@ -63,15 +62,15 @@ Compiles MinC into x86 assembly *.o* files then asks linker to link into binarie
    * `parse.c` parses tokens into abstract instructions
    * parser is a top-down recursive decent parser, a *headache* to write
    * parser is hand-written by me specifically for MinC as opposed to FLEX/YACC
-   * if `-fd flag, `dump.c` pretty-prints the AST in readable form
+   * if `-fd` flag, `dump.c` pretty-prints the AST in readable form
 3. generate an Intermediate Representation based on that AST
-   * `gen.c` generates IR based on x86 assembly code
-   * `gen.c` initally generates assembly with an infinite amount of registers
-   * `map.c` remaps infinite registers to 32 bit `eax`-`edx`, or their 8 bit equivilants `ah`-`dh`
-   * `mac.c` allocates memory on stack appropriately
-   * `gen.c` formats IR as actual x86 32-bit code in AT&T formatting
+   * `gen_ir.c` generates IR as a Directed Acyclic Graph based on AST
+   * `gen_ir.c` initally uses an infinite amount of registers
+   * `map.c` converts DAG to linear IR based on x86 assembly
+   * `mac.c` allocates physical registers from infinite registers
+   * `gen_x86.c` formats linear IR as actual x86 32-bit code in AT&T formatting
    * if `-S` flag, `dump.c` outputs the human-readble IR as an `.s`
-4. assembly and linking are done externally
+5. assembly and linking are done externally
    * GNU's assembler (`as`) converts the human-readable x86 `.s` to `.o` files
    * if `-c` flag, `dump.c` outputs the object file as an `.o`
    * GNU's linker (`ld`) links all `.o` files together and with the C standard library

@@ -49,7 +49,7 @@ MinC's aims to be...
 * preprocessor macros (`__FILE__`, `__LINE___`, `__TIME__`, `__ASM`, etc.)
 * comments (`//`, `/*`, `*/`)
 * data types (`byte`, `int (4 bytes)`)
-* hex, octal, binary representations
+* hex, octal representations
 * static declarations (`static`) 
 * pointers (`*`, `&`)
 * *very* limited use of arrays (a lá ptr math, declare with `[`, `]`)
@@ -60,13 +60,13 @@ MinC's aims to be...
 * conditionals (`if`)
 * control flow (`while` loops)
 * unary operations (`+`, `-`, `*`, `/`) with (`(`, `)`) (with bidmas/precedence)
-* bitwise operations (`~`, `&`, `<<`, `>>`)
+* bitwise operations (`~`, `&`, `<<`)
 * binary logic (`!`, `&&`)
-* equality testing (`==`, `!=`, `<`, `>`)
+* equality testing (`==`, `<`)
 * standard library
 
 That's all. 8 keywords, 4 preprocessor directives,\
-and a charset of `a..z`, `0..9` with 21 symbols `. , ; + - * / = # ! & ~ " < > ( ) [ ] { }`\
+and a charset of `a..z`, `0..9` with 21 symbols `. , ; + - * / = # ! & ~ " < ( ) [ ] { }`\
 
 ## MinimalistiC Compiler (MCC)
 Compiles MinC into x86_64 assembly *.o* files then asks linker to link into binaries\
