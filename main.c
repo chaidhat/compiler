@@ -1,7 +1,7 @@
 #include "mcc.h"
 #include <windows.h>
 
-static void initConfig ()
+static void configInit ()
 {
     strcpy(inFilepath, "$");
     strcpy(outFilepath, "$");
@@ -18,16 +18,15 @@ static void initConfig ()
 
 int main (int argc, char* argv[])
 {
-    initConfig();
+    configInit();
     mccDoArgs(argc, argv);
-    mccLog("Chaidhat Chaimongkol on %s %s", __DATE__, __TIME__);
+    inpOpen(inFilepath);
+
+    mccLog("made by Chaidhat Chaimongkol on %s %s", __DATE__, __TIME__);
     mccLog("reading from %s", inFilepath);
     mccLog("compiler debugger enabled");
-    strcpy(startFilepath, inFilepath);
-    inpOpen(inFilepath);
-    printf("\n");
 
-    /* front end */
+    /* compilation front end */
 
     ppInit();
 
@@ -46,7 +45,7 @@ int main (int argc, char* argv[])
         if (doDumpAst) // -fd
             dumpAst(&AST);
 
-        /* back end */
+        /* compilation back end */
 
         Tree irDag;
         irDag.childrenSz = 0;
@@ -61,7 +60,7 @@ int main (int argc, char* argv[])
         genX(sFile, sizeof sFile, irLinear); // generate x86 from linear IR
         
         if (!doAssemble) // -s
-            mccExit(0, __LINE__);
+            mccExit(0);
 
         // send to gcc for assembly/linking
 
@@ -70,7 +69,7 @@ int main (int argc, char* argv[])
         inpPush(sFile);
         inpWrite(outFilepath, ".s");
     }
-    mccExit(0, __LINE__);
+    mccExit(0);
 }
 
 

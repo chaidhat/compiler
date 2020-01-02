@@ -229,7 +229,7 @@ test/fizzbuzz.mc AST:
 | | | | | | {
 | | | | | | | {
 | | | | | | | | type: ID
-| | | | | | | | isPtr: 0
+| | | | | | | | isPtr: 200
 | | | | | | | | varName: fbm
 | | | | | | | },
 | | | | | | },
@@ -351,7 +351,7 @@ test/fizzbuzz.mc AST:
 | | | | | | | {
 | | | | | | | | type: LIT
 | | | | | | | | type: INT
-| | | | | | | | val: 0000
+| | | | | | | | val: 1111
 | | | | | | | },
 | | | | | | },
 | | | | | },
@@ -517,7 +517,7 @@ test/fizzbuzz.mc AST:
 | | | | | | | {
 | | | | | | | | type: LIT
 | | | | | | | | type: INT
-| | | | | | | | val: 0000
+| | | | | | | | val: 1111
 | | | | | | | },
 | | | | | | },
 | | | | | },
@@ -1076,7 +1076,7 @@ test/fizzbuzz.mc AST:
 | | | | {
 | | | | | {
 | | | | | | type: ID
-| | | | | | isPtr: 0
+| | | | | | isPtr: 2
 | | | | | | varName: count
 | | | | | },
 | | | | },

@@ -138,7 +138,6 @@ int mccstrtod (char *str)
 
 char *mccdtostr (int in)
 {
-    printf("aaaa\n");
     int i = 0;
     char str[128];
     char *strout = malloc(sizeof (char[128]));
@@ -147,7 +146,7 @@ char *mccdtostr (int in)
     do
     {
         char n = '0';
-        switch (in % 10)
+        switch (abs(in) % 10)
         {
             case 0:
                 n = '0';  
@@ -170,6 +169,9 @@ char *mccdtostr (int in)
             case 6:
                 n = '6';
                 break;
+            case 7:
+                n = '7';
+                break;
             case 8:
                 n = '8';
                 break;
@@ -177,7 +179,8 @@ char *mccdtostr (int in)
                 n = '9';
                 break;
             default:
-                printf("error %d\n", in % 10);
+                mccErr("mccdtostr error %d\n", in % 10);
+                mccExit(1);
                 break;
         }
         str[i++] = n;

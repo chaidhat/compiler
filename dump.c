@@ -13,7 +13,7 @@ static char *ITtostr (enum InstType type);
 static void print (char* fmt, ... )
 {
     char buf[256];
-    printf("mcc fdast: ");
+    printf("mcc fd: ");
     for (int i = 0; i < scope; i++)
     {
         printf("| ");
@@ -344,5 +344,5 @@ void dumpAst (Tree *AST)
 void dumpPp ()
 {
     inpWrite(outFilepath, ".mi");
-    mccExit(0, __LINE__);
+    mccExit(0);
 }

@@ -2,10 +2,10 @@
 
 #define genfileinserts(str) if( \
         mccstr(dest, destSz, "%s" str "\n", dest)) \
-        { mccErr("gen insert error\n"); mccExit(1, __LINE__); }
+        { mccErr("gen insert error\n"); mccExit(1); }
 #define genfileinsertm(str, ... ) if( \
         mccstr(dest, destSz, "%s" str "\n", dest, __VA_ARGS__)) \
-        { mccErr("gen insert error\n"); mccExit(1, __LINE__); }
+        { mccErr("gen insert error\n"); mccExit(1); }
 
 static void genAllFunc (char *dest, int destSz, Tree *IR);
 

@@ -11,15 +11,15 @@ void inpOpen (char *filename)
 {
     if (strcmp(filename, "$") == 0)
     {
-        mccErr("no input arguments.\n ./mcc -h for help");
-        mccExit(2, __LINE__);
+        mccErr("no input file.\n ./mcc -h for help");
+        mccExit(2);
     }
     fp = fopen(filename, "r"); // read mode
 
     if (fp == NULL)
     {
         mccErr("Read error while opening the file %s", filename);
-        mccExit(1, __LINE__);
+        mccExit(1);
     }
 
     if (strcmp(inFilepath, filename) != 0)
@@ -54,7 +54,7 @@ void inpWrite (char *toFilename, char *extn)
     if(fp == NULL)
     {
         mccErr("Write error while opening the file %s", filename);
-        mccExit(1, __LINE__);
+        mccExit(1);
     }
 
     fprintf(fp,"%s",datBuf);

@@ -67,7 +67,7 @@ static enum LitType getType ()
 
     for (int i = 0; i < types.childrenSz; i++)
     {
-        printf("t %s %s\n", peek().id, types.children[i].id);
+        mccLog("type <%s> <%s>", peek().id, types.children[i].id);
         if (strcmp(peek().id, types.children[i].id) == 0)
             return types.childrenSz - i;
     }
@@ -278,7 +278,7 @@ static void readScope (Tree *parent)
     next(); // expect next expression
     while (!isSep("}"))
     {
-        printf("f %s f\n", peek().id);
+        mccLog("scope \"%s\"", peek().id);
 
         ignoreEnd = true;
         if (isKw("if"))
@@ -505,7 +505,7 @@ static Tree *parseBinary ()
     inst->ast.binary.stub = false;
     //inst->ast.binary.single = true;
 
-    mccLog("l %s", peek().id);
+    mccLog("binary \"%s\"", peek().id);
     if (isFunc(false))
         inst->ast.binary.left = parseCall();
     else if (isLit())
@@ -527,14 +527,14 @@ static Tree *parseBinary ()
     if (tokcmpType(T_OP)) // is there an operator?
     {
         //inst->ast.binary.single = false;
-        mccLog("op %s", peek().id);
+        mccLog("op \"%s\"", peek().id);
         inst->ast.binary.op = peek();
 
         if (isNextExprsn() == -1) // is it the last operator?
         {
             inst->ast.binary.stub = true;
             next(); // expect right side 
-            mccLog(" %s", peek().id);
+            mccLog("op r \"%s\"", peek().id);
             if (isFunc(false))
                 inst->ast.binary.right = parseCall();
             else if (isLit())
@@ -556,13 +556,12 @@ static Tree *parseBinary ()
         { 
             // e.g. 1 * 2 + 5 should be (1 * 2) + 5
             // e.g. 1 / 2 * 3 + 4 should be ((1 / 2) * 3) + 4 
-            mccLog("con %s", peek().id);
+            mccLog("op p \"%s\"", peek().id);
             Tree *ptrInst = parseBinary();
             Tree *finalLeft = ptrInst;
-            mccLog("f %s", ptrInst->ast.binary.op.id);
+            mccLog("op p2 \"%s\"", ptrInst->ast.binary.op.id);
             while (!finalLeft->ast.binary.stub) // find the leftmost tree
             {
-                mccLog("f");
                 finalLeft = finalLeft->ast.binary.left;
             }
             // start off (1 * NULL), (2 + 5)
@@ -580,13 +579,13 @@ static Tree *parseBinary ()
         {
             // e.g. 1 + 2 * 5 should be 1 + (2 * 5)
             // OR 1 + 2 + 3 should be  1 + (2 + 3)
-            mccLog("c con %s", peek().id);
+            mccLog("op pp \"%s\"", peek().id);
             inst->ast.binary.right = parseBinary();
-            mccLog("f %s", inst->ast.binary.right->id);
+            mccLog("op pp2 \"%s\"", inst->ast.binary.right->id);
             prev();
         }
         next(); // expect ";" or next expression
-        mccLog("yyy %s", peek().id);
+        mccLog("binary \"%s\"", peek().id);
     }
     else
         return inst->ast.binary.left;
@@ -690,7 +689,7 @@ static void parseStruct (Tree *parent)
     inStrctUnin = true;
     while (!isSep("}"))
     {
-        mccLog("struct parse lex %d %s", peek().type, peek().id);
+        mccLog("struct parse lex <%d> \"%s\"", peek().type, peek().id);
 
         // assume decl
         mccLog("declare");
@@ -718,7 +717,7 @@ static void parseUnion (Tree *parent)
     inStrctUnin = true;
     while (!isSep("}"))
     {
-        mccLog("union parse lex %d %s", peek().type, peek().id);
+        mccLog("union parse lex <%d> \"%s\"", peek().type, peek().id);
 
         // assume decl
         mccLog("declare");
@@ -744,7 +743,7 @@ static Token next ()
         if (tTokcmpType(token, T_NULL) || tTokcmpType(token, T_EOF))
             strcpy(token.id, " ");
         else
-            printf("b%sb\n", token.id);
+            mccLog("next token \"%s\"", token.id);
     }
 
     if (tTokcmpType(token, T_NULL)) // is it an EOF that has a lower dir?
@@ -776,7 +775,7 @@ void parse (Tree *AST)
 
     if (tokcmpType(T_EOF))
         return;
-    mccLog("parse lex %d %s", t.type, t.id);
+    mccLog("parse lex <%d> \"%s\"", t.type, t.id);
 
     if (isFunc(true))
     {

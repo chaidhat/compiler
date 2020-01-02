@@ -1,4 +1,6 @@
 #include <stdarg.h>
+#include <windows.h>
+#include <conio.h>
 #include "mcc.h"
 
 // http://www.codebind.com/cprogramming/get-current-directory-using-c-program/
@@ -14,17 +16,38 @@
     #error MCC DOES NOT SUPPORT THE OS
 #endif
 
-/* windows colour support
-HANDLE hcon = GetStdHandle(STD_OUTPUT_HANDLE);
-SetConsoleTextAttribute(hcon, 12);
-printf("a\n");
-SetConsoleTextAttribute(hcon, 7);
-*/
 
-static void mccPrint (char* suffix, char* format, va_list args )
+enum MsgType
 {
+    Log,
+    Warn,
+    Err,
+};
+
+static void colourPrint (int colour, char *msg)
+{
+    HANDLE hcon = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(hcon, colour);
+    printf("%s", msg);
+    SetConsoleTextAttribute(hcon, 7);
+}
+
+static void mccPrint (enum MsgType msgType, char* prefix, char* suffix, char* format, va_list args )
+{
+    printf("mcc: ");
+    switch (msgType)
+    {
+        case Log:
+            break;
+        case Warn:
+            colourPrint(12, "warning: ");
+            break;
+        case Err:
+            colourPrint(12, "error: ");
+            break;
+    };
     char buf[256];
-    snprintf(buf, sizeof buf, "mcc: %s %s\n", suffix, format);
+    snprintf(buf, sizeof buf, "%s\t%d\t%s %s\n", prefix, inpPos.line, format, suffix);
   vprintf (buf, args);
 }
 
@@ -35,46 +58,50 @@ static void mccPrintE (char* suffix, char* format, va_list args)
     vprintf (buf, args);
 }
 
-void mccLog (char* format, ... )
+void debugLog (char *filename, int line, char* format, ... )
 {
+    char prefix[128];
+    strcpy(prefix, filename);
+    strcat(prefix, ",");
+    strcat(prefix, mccdtostr(line));
+    strcat(prefix, ":");
     va_list args;
     va_start (args, format);
     if (mode == 0)
-        mccPrint("", format, args);
+        mccPrint(Log, prefix, "", format, args);
     va_end (args);
 }
-void mccWarn (char* format, ... )
+void debugWarn (char *filename, int line, char* format, ... )
 {
+    char prefix[128];
+    strcpy(prefix, "");
+    if (mode == 0)
+    {
+        strcpy(prefix, filename);
+        strcat(prefix, ",");
+        strcat(prefix, mccdtostr(line));
+        strcat(prefix, ":");
+    }
     va_list args;
     va_start (args, format);
-    if (doWarnings)
-        mccPrint("\033[1;33mwarning:\033[m", format, args);
+    mccPrint(Warn, prefix, "", format, args);
     va_end (args);
 }
-void mccErr (char* format, ... )
+void debugErr (char *filename, int line, char* format, ... )
 {
+    char prefix[128];
+    strcpy(prefix, "");
+    if (mode == 0)
+    {
+        strcpy(prefix, filename);
+        strcat(prefix, ",");
+        strcat(prefix, mccdtostr(line));
+        strcat(prefix, ":");
+    }
     va_list args;
     va_start (args, format);
-    mccPrint("\033[1;31merror:\033[m", format, args);
+    mccPrint(Err, prefix, "", format, args);
     va_end (args);
-}
-void mccErrC (enum eCodes eCode, char* format, ... )
-{
-    va_list args;
-    va_start (args, format);
-    char eMsg[128];
-    for (int i = 0; i < 128; i++)
-        eMsg[i] = '\0';
-    strcat(eMsg, "\033[1;31m");
-    if (eCode == EC_FATAL)               { strcat (eMsg, "*** INTERNAL FATAL ERROR ***"); }
-    if (eCode == EC_LEX) { strcat (eMsg, "lex error");  }
-    if (eCode == EC_PP) { strcat (eMsg, "preprocess error");  }
-    if (eCode == EC_PARSE_SEM) { strcat (eMsg, "semantic error");  }
-    if (eCode == EC_PARSE_SYN) { strcat (eMsg, "syntax error");  }
-    strcat(eMsg, ":\033[m\033[1;38m");
-    mccPrintE (eMsg, format, args);
-    va_end (args);
-    mccExit(1,-1);
 }
 
 void mccWarnC (enum wCodes wCode, char* format, ... )
@@ -91,25 +118,44 @@ void mccWarnC (enum wCodes wCode, char* format, ... )
     if (doWarnings)
     mccPrintE (wMsg, format, args);
     if (doWarningsE)
-        mccExit(1, -2);
+        mccExit(1);
     va_end (args);
 }
 
-void mccExit (int code, int debugLine)
+void mccErrC (enum eCodes eCode, char* format, ... )
+{
+    va_list args;
+    va_start (args, format);
+    char eMsg[128];
+    for (int i = 0; i < 128; i++)
+        eMsg[i] = '\0';
+    strcat(eMsg, "\033[1;31m");
+    if (eCode == EC_FATAL)               { strcat (eMsg, "*** INTERNAL FATAL ERROR ***"); }
+    if (eCode == EC_LEX) { strcat (eMsg, "lex error");  }
+    if (eCode == EC_PP) { strcat (eMsg, "preprocess error");  }
+    if (eCode == EC_PARSE_SEM) { strcat (eMsg, "semantic error");  }
+    if (eCode == EC_PARSE_SYN) { strcat (eMsg, "syntax error");  }
+    strcat(eMsg, ":\033[m\033[1;38m");
+    mccPrintE (eMsg, format, args);
+    va_end (args);
+    mccExit(1);
+}
+
+void debugExit (char *filename, int line, int code)
 {
     switch (code)
     {
         case 0:
-            mccLog("Terminated sucessfully.");
+            printf("mcc: Terminated sucessfully.");
             break;
         case 1:
-            mccLog("Terminated UNsucessfully.");
+            mccErr("Terminated UNsucessfully.");
             if (mode == 0)
-                mccLog("Called from line %d", debugLine);
+                mccLog("Called from %s %d", filename, line);
             break;
         case 2:
             if (mode == 0)
-                mccLog("Terminated calm. Called from line %d", debugLine);
+                mccLog("Terminated calmly. Called from %s %d", filename, line);
             break;
     }
     exit(code);
@@ -161,7 +207,7 @@ void mccDoArgs (int argc, char* argv[])
                     "Installed dir: %s\n"
                     "\n"
                     , __DATE__, __TIME__, OS, __VERSION__, homedir);
-                    mccExit(2, __LINE__);
+                    mccExit(2);
                     break;
                 case 1: // -b
                     doBenchmarking = true; 
@@ -230,7 +276,7 @@ void mccDoArgs (int argc, char* argv[])
                     "   -h                  display this help\n"
                     "\n"
                     );
-                    mccExit(2, __LINE__);
+                    mccExit(2);
                     break;
                 default:
                     strcpy(inFilepath, argv[line]);
@@ -244,9 +290,10 @@ void mccDoArgs (int argc, char* argv[])
                         if (argv[line][0] == '-')
                         {
                             mccErr("Unknown flag!\n ./mcc -h for help");
+                            mccExit(1);
                         }
                         mccErr("Unexpected file type (expected .mc)\n ./mcc -h for help");
-                        mccExit(1, __LINE__);
+                        mccExit(1);
                     }
                     while (i > 0)
                     {
@@ -266,4 +313,5 @@ void mccDoArgs (int argc, char* argv[])
             }
         }
     }
+    strcpy(startFilepath, inFilepath);
 }

@@ -4,8 +4,12 @@
 #include <stdbool.h>
 
 #define DB_SIZE 65536
-#define log(...) printf("a%s %s\n", __FILE__, __VA_ARGS__)
-#define mccstrs(dest, format, ... ) mccstr(dest, 128, format, __VA_ARGS__);
+#define mccLog( ... ) debugLog(__FILE__, __LINE__, __VA_ARGS__) 
+#define mccWarn( ... ) debugWarn(__FILE__, __LINE__, __VA_ARGS__) 
+#define mccErr( ... ) debugErr(__FILE__, __LINE__, __VA_ARGS__) 
+#define mccExit(code) debugExit(__FILE__, __LINE__, code) 
+#define mccBr() debugLog(__FILE__, __LINE__, "breakpoint\n")
+#define mccstrs(dest, format, ... ) mccstr(dest, 128, format, __VA_ARGS__)
 
 enum TokType
 {
@@ -302,15 +306,15 @@ void inpGoto (Pos pos);
 void inpGetFilename (char *outFilename, int outFilenameSz);
 
 
-// io.c
-void mccLog (char* format, ... );
-void mccWarn (char* format, ... );
+// debug.c
+void debugLog (char *filename, int line, char* format, ... );
+void debugWarn (char *filename, int line, char* format, ... );
+void debugErr (char *filename, int line, char* format, ... );
 void mccErrC (enum eCodes eCode, char* format, ... );
 void mccWarnC (enum wCodes wCode, char* format, ... );
-void mccErr (char* format, ... );
 void mccDoArgs (int argc, char *argv[]);
 
-void mccExit (int code, int debugLine);
+void debugExit (char *filename, int line, int code);
 
 
 // lex.c
