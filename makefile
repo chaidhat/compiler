@@ -5,7 +5,7 @@
 CC=gcc
 CFLAGS=-Werror -Os
 ECC=$(BDIR)/mcc
-TESTCMD = -g -D c 1
+TESTCMD = -g -fd -D c 1
 
 _SRC := $(wildcard *.c)
 _OBJ := $(_SRC:.c=.o) 
@@ -30,7 +30,7 @@ run:
 	$(MAKE) clean
 	$(foreach file,$(wildcard $(TDIR)/*.mc), \
 		$(info FILE $(file)) \
-		start cmd /K ""$(ECC)" $(TESTCMD) $(file)" \
+		start cmd /k ""$(ECC)" $(TESTCMD) $(file)" \
 	)
 
 test:

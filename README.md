@@ -3,11 +3,11 @@
 ![MinimalistiC Programming Language & Compiler](https://github.com/Chai112/MinC-Compiler/blob/master/doc/thumb.png)
 
 ## About
-This is a personal project of mine of trying to teach myself...
-1. how compilers work
-2. how to write assembly (for an x86 Intel & CPU architecture)
-3. the C programming language
-4. (teach myself how to use Vim)
+This is a personal project of mine to...
+1. learn how compilers work, writing low level languages, CPU architecture.
+2. offer this as a learning experience by publically sharing my ideas and documented src code
+3. create a super-simple C-like programming language as a good starting step for LL programming
+4. (learn to use VIm)
 
 it's a fun challenge.\
 \
@@ -19,11 +19,11 @@ into x86 assembly as a *.s* file in the most simple way so others can learn from
 MinimalistiC (MinC) is my take on a ultra-simplified, ultra-lightweight, derated version of the C Programming language.\
 MinC's aims to be...
 * **heavily-simplifed** and contains only the bare-minimum of C
-* **basic**, very easy to learn/teach as it lacks niches and has only basic/essential concepts
+* **basic**, very easy to teach/learn as it lacks niches and contains only basic/essential concepts
 * **lightweight**, requires a smaller library and compiler than C/C++, faster compilation, smaller memory footprint
 * **lower-level**, more finely controlled optimisations such as memory management without relying on assembler
-* **forward compatible** with C - it can be treated as C code and be compiled & optimised with GCC/[TCC](https://bellard.org/tcc/)
-* **Most importantly, a good learning experience for me to learn how compilers/low-level programming works**
+* **forward compatible** with C - it can be (almost) be treated as C code and be compiled & optimised with GCC/[TCC](https://bellard.org/tcc/)
+* **Most importantly, a good learning experience for me and a very good starting step for low-level programmers**
 
 **All Features**
 * preprocessor directives (`#include`, `#define`, `#ifdef`, `#endif`)

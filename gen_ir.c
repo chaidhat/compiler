@@ -1,30 +1,107 @@
 #include "mcc.h"
 static char datBuf[DB_SIZE];
 
-static void genRoutine (Tree *parent, Func inst);
+static DagInst crtInst (enum DagType type);
+static void bindInst (Tree *parent, DagInst inst);
+
+static void genInstOp (Tree *parent, Operand op);
+static void genInstStr (Tree *parent, enum DagType type, char str[128]);
+static void genInstNum (Tree *parent, int num);
 
 static void genIRInst (Tree *treeOut, Tree *treeIn);
 static void genTree (Tree *treeOut, Tree *treeIn);
 
-
-static void genRoutine (Tree *parent, Func inst)
+static DagInst crtInst (enum DagType type)
 {
-    Tree routine;
-    routine.childrenSz = 0;
-    strcpy(routine.id, inst.funcName);
+    DagInst inst;
+    inst.type = type;
 
-    appendChild(parent, routine);
+    return inst;
 }
 
+static void bindInst (Tree *parent, DagInst inst)
+{
+    Tree tree;
+    tree.childrenSz = 0;
+    tree.dag = inst;
+
+    appendChild(parent, tree);
+}
+
+static void genInstOp (Tree *parent, Operand op)
+{
+    DagInst inst;
+    inst = crtInst(DT_operand);
+    inst.operand = op;
+    bindInst(parent, inst);
+}
+
+static void genInstStr (Tree *parent, enum DagType type, char str[128])
+{
+    DagInst inst;
+    inst = crtInst(type);
+    strcpy(inst.str, str);
+    bindInst(parent, inst);
+}
+
+static void genInstNum (Tree *parent, int num)
+{
+    DagInst inst;
+    inst = crtInst(DT_num);
+    inst.num = num;
+    bindInst(parent, inst);
+}
 static void genIRInst (Tree *treeOut, Tree *treeIn)
 {
     switch (treeIn->ast.type)
     {
         case IT_Var:
+            mccLog("var");
             break;
         case IT_Func:
-            genRoutine (treeOut, treeIn->ast.func);
-            printf("%s %d\n", treeOut->children[treeOut->childrenSz - 1].id, treeOut->childrenSz);
+            genInstStr(treeOut, DT_func, treeIn->ast.func.funcName);
+            mccLog("%s %d", treeOut->children[treeOut->childrenSz - 1].dag.str, treeOut->childrenSz);
+
+            // scope
+            for (int i = 0; i < treeIn->ast.func.scope->childrenSz; i++)
+                genTree(treeIn, &treeIn->ast.func.scope->children[i]);
+
+            break;
+        case IT_Lit:
+            genInstNum(treeOut, treeIn->ast.lit.val.tInt);
+            mccLog("lit %d", treeOut->children[treeOut->childrenSz - 1].dag.num);
+            /*
+            print("type: %s", LTtostr(tree->Inst.lit.type));
+            if (tree->Inst.lit.type == LT_INT)
+                print("val: %d", tree->Inst.lit.val.tInt);
+            else
+                mccErr("val: CHAR NOT PROG"); // TODO: char
+            */
+            break;
+        case IT_Id:
+            /*
+            print("isPtr: %d", tree->Inst.id.isPtr);
+            print("varName: %s", tree->Inst.id.varName);
+            if (tree->Inst.id.nested->noChild > 0)
+            {
+                print("");
+                print("nested:");
+                 
+                    for (int i = 0; i < tree->Inst.id.nested->noChild; i++)
+                        genTree(&tree->Inst.id.nested->children[i]);
+                
+            }
+            */
+            break;
+        case IT_Assign:
+            mccLog("assign");
+             
+                // varname
+                genTree(treeIn, treeIn->ast.assign.varName);
+            
+                // exprsn
+                genTree(treeIn, treeIn->ast.assign.exprsn);
+            
             break;
         default:
             break;
@@ -217,5 +294,5 @@ static void genTree (Tree *treeOut, Tree *treeIn)
 
 void genIr (Tree *IrDag, Tree *AST)
 {
-    //genTree(IROut, AST);
+    genTree(IrDag, AST);
 }

@@ -1,9 +1,9 @@
  
 # Chaidhat Chaimongkol's #
 # MinimalistiC Compiler  #
-# on 19:44:10 Jan 12 2020 #
+# on 22:18:15 Jan 12 2020 #
  
-.file   "fizzbuzz.mc"
+.file   "dag_test.mc"
  
 # global declarations
 .data

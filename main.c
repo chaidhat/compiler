@@ -22,9 +22,8 @@ int main (int argc, char* argv[])
     mccDoArgs(argc, argv);
     inpOpen(inFilepath);
 
-    mccLog("made by Chaidhat Chaimongkol on %s %s", __DATE__, __TIME__);
-    mccLog("reading from %s", inFilepath);
-    mccLog("compiler debugger enabled");
+    mccLog("Written by Chaidhat Chaimongkol. Compiled on %s %s", __DATE__, __TIME__); // -g
+    mccLog("-g: Compiler debugger enabled");
 
     /* compilation front end */
 
@@ -50,6 +49,7 @@ int main (int argc, char* argv[])
         Tree irDag;
         irDag.childrenSz = 0;
         genIr(&irDag, &AST); // generate IR as DAG from AST
+        logTree(&irDag);
 
         // optimisations, if any, should go here
 
@@ -69,7 +69,5 @@ int main (int argc, char* argv[])
         inpPush(sFile);
         inpWrite(outFilepath, ".s");
     }
-    mccExit(0);
+    mccExit(0); // successful exit
 }
-
-

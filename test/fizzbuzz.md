@@ -229,7 +229,7 @@ test/fizzbuzz.mc AST:
 | | | | | | {
 | | | | | | | {
 | | | | | | | | type: ID
-| | | | | | | | isPtr: 200
+| | | | | | | | isPtr: 0
 | | | | | | | | varName: fbm
 | | | | | | | },
 | | | | | | },
@@ -1076,7 +1076,7 @@ test/fizzbuzz.mc AST:
 | | | | {
 | | | | | {
 | | | | | | type: ID
-| | | | | | isPtr: 2
+| | | | | | isPtr: 0
 | | | | | | varName: count
 | | | | | },
 | | | | },

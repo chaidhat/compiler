@@ -13,7 +13,7 @@
     #define GetCurrentDir getcwd
     #define OS "Mac OS X" 
 #else
-    #error MCC DOES NOT SUPPORT THE OS
+    #error MCC Does not support/recognise this OS
 #endif
 
 
@@ -199,7 +199,7 @@ void mccDoArgs (int argc, char* argv[])
             switch (argNo)
             {
                 case 0: // -V
-                    printf("\033[1;30mMinimalistiC Compiler created by Chaidhat Chaimongkol\033[m\n"
+                    printf("MinimalistiC Compiler created by Chaidhat Chaimongkol\n"
                     "https://github.com/Chai112/MinC-Compiler\n"
                     "Compiled on: %s %s\n"
                     "Target: x86 Intel (32 bit) %s\n"
@@ -251,7 +251,7 @@ void mccDoArgs (int argc, char* argv[])
                     doDumpAst = true;
                     break;
                 case 13: // -h
-                    printf("\033[1;30mMinimalistiC Compiler created by Chaidhat Chaimongkol\n%s %s\n\033[m", __DATE__, __TIME__);
+                    printf("MinimalistiC Compiler created by Chaidhat Chaimongkol\n%s %s\n", __DATE__, __TIME__);
                     printf("https://github.com/Chai112/MinC-Compiler\n\n"
                     "usage: mcc [-h] [-V] [arg1 arg2 ...] <inpath1 inpath2 ...>\n\n" 
                     "mcc only accepts .mc as inpath, dir and include accepts any types\n"

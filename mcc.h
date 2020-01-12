@@ -47,6 +47,13 @@ enum InstType
     IT_Unin,
     IT_Scope,
 };
+enum DagType
+{
+    DT_func,
+    DT_operand,
+    DT_str,
+    DT_num,
+};
 enum eCodes
 {
     EC_FATAL,
@@ -214,16 +221,6 @@ typedef struct
 
 typedef struct
 {
-    Opcode op;
-
-    Operand dest; // left-hand side of operand
-    Operand src; // right-hand side optional, depending on RepType
-
-    int lifetime; // for optimisation
-} IrInst;
-
-typedef struct
-{
     enum InstType type;
     union
     {
@@ -246,6 +243,27 @@ typedef struct
     }; // anonymous union
 } AstInst;
 
+typedef struct
+{
+    enum DagType type;
+    union
+    {
+        Operand operand;
+        char str[128];
+        int num;
+    };
+} DagInst; // DAG IR
+
+typedef struct
+{
+    Opcode op;
+
+    Operand dest; // left-hand side of operand
+    Operand src; // right-hand side optional, depending on RepType
+
+    //int lifetime; // for optimisation
+} IrInst; // linear IR
+
 typedef struct Tree
 {
     char id[128];
@@ -253,11 +271,11 @@ typedef struct Tree
     union
     {
         AstInst ast; // for AST
-        Opcode dag; // for IR as DAG
+        DagInst dag; // for IR as DAG
     };
 
     struct Tree *children; // neat self-referential struct
-    int childrenSz;
+    int childrenSz; // if IR as DAG, it is assumed at 2 as a bin tree
 } Tree;
 
 typedef struct
