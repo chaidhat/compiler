@@ -50,6 +50,7 @@ enum InstType
 enum DagType
 {
     DT_func,
+    DT_var,
     DT_operand,
     DT_str,
     DT_num,

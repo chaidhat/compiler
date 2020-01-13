@@ -1,7 +1,7 @@
  
 # Chaidhat Chaimongkol's #
 # MinimalistiC Compiler  #
-# on 22:18:15 Jan 12 2020 #
+# on 22:14:33 Jan 13 2020 #
  
 .file   "dag_test.mc"
  

@@ -49,6 +49,7 @@ int main (int argc, char* argv[])
         Tree irDag;
         irDag.childrenSz = 0;
         genIr(&irDag, &AST); // generate IR as DAG from AST
+
         logTree(&irDag);
 
         // optimisations, if any, should go here

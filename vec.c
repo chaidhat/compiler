@@ -184,7 +184,6 @@ char *mccdtostr (int in)
                 break;
         }
         str[i++] = n;
-
         in = floor(in/10);
     }
     while (in != 0);
