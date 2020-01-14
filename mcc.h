@@ -387,7 +387,7 @@ void genIr (IrRoutine *ir, Tree *ast);
 
 
 // regalloc.c
-void regalloc (IrRoutine *ir);
+IrRoutine regalloc (IrRoutine *ir);
 
 
 // gen_x86.c

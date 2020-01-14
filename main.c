@@ -46,15 +46,15 @@ int main (int argc, char* argv[])
 
         /* compilation back end */
 
-        IrRoutine ir = createRoutine("");
-        genIr(&ir, &ast); // generate IR from AST
+        IrRoutine *ir = createRoutine("");
+        genIr(ir, &ast); // generate IR from AST
 
         // optimisations, if any, should go here
 
-        regalloc(&ir); // assign registers to IR
+        *ir = regalloc(ir); // assign registers to IR
 
         char sFile[DB_SIZE];
-        genX(sFile, sizeof sFile, &ir); // generate x86 from IR
+        genX(sFile, sizeof sFile, ir); // generate x86 from IR
         
         if (!doAssemble) // -s
             mccExit(0);

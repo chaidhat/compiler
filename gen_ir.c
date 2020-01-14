@@ -63,6 +63,8 @@ static void appendInst (IrInst *dest, IrInst *src)
 static void genIRInst (IrRoutine *ir, Tree *treeIn)
 {
     Tree *thisTree;
+    Operand opL;
+    Operand opR;
     switch (treeIn->ast.type)
     {
         case IT_Var:
@@ -83,8 +85,8 @@ static void genIRInst (IrRoutine *ir, Tree *treeIn)
 
             break;
         case IT_Lit:
-            Operand opL = ope(OT_str_lit);
-            Operand opR = ope(OT_str_lit);
+            opL = ope(OT_str_lit);
+            opR = ope(OT_str_lit);
             strcpy(opL.str, "a");
             strcpy(opR.str, "b");
             appendInst(ir->inst, createInst(opc(OIT_push, OMT_long), opL, opR));

@@ -1,5 +1,5 @@
 #include "mcc.h"
 
-void regalloc (IrRoutine *ir)
+IrRoutine regalloc (IrRoutine *ir)
 {
 }
