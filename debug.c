@@ -40,7 +40,7 @@ static void mccPrint (enum MsgType msgType, char* prefix, char* suffix, char* fo
         case Log:
             break;
         case Warn:
-            colourPrint(12, "warning: ");
+            colourPrint(14, "warning: ");
             break;
         case Err:
             colourPrint(12, "error: ");

@@ -29,10 +29,10 @@ int main (int argc, char* argv[])
 
     ppInit();
 
-    Tree AST;
-    AST.childrenSz = 0;
+    Tree ast;
+    ast.childrenSz = 0;
     do
-        parse(&AST); // preprocess, lex, parse the input file
+        parse(&ast); // preprocess, lex, parse the input file
     while (!tokcmpType(T_EOF));
 
     if (!doParsing) // -E
@@ -42,23 +42,19 @@ int main (int argc, char* argv[])
         inpPop();
 
         if (doDumpAst) // -fd
-            dumpAst(&AST);
+            dumpAst(&ast);
 
         /* compilation back end */
 
-        Tree irDag;
-        irDag.childrenSz = 0;
-        genIr(&irDag, &AST); // generate IR as DAG from AST
-
-        logTree(&irDag);
+        IrRoutine ir = createRoutine("");
+        genIr(&ir, &ast); // generate IR from AST
 
         // optimisations, if any, should go here
 
-        IrRoutine *irLinear;
-        map(irLinear, &irDag); // convert DAG to linear IR
+        regalloc(&ir); // assign registers to IR
 
         char sFile[DB_SIZE];
-        genX(sFile, sizeof sFile, irLinear); // generate x86 from linear IR
+        genX(sFile, sizeof sFile, &ir); // generate x86 from IR
         
         if (!doAssemble) // -s
             mccExit(0);

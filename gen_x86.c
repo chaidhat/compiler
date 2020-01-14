@@ -19,7 +19,7 @@ static void genAllFunc (char *dest, int destSz, Tree *IR)
         genAllFunc(dest, destSz, &IR->children[i]);
 }
 
-void genX (char *dest, int destSz, IrRoutine *Ir)
+void genX (char *dest, int destSz, IrRoutine *ir)
 {
     char outFilename[128];
     inpGetFilename(outFilename, sizeof outFilename);

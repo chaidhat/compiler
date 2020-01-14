@@ -18,12 +18,12 @@ into x86 assembly as a *.s* file in the most simple way so others can learn from
 ## MinimalistiC Programming Language
 MinimalistiC (MinC) is my take on a ultra-simplified, ultra-lightweight, derated version of the C Programming language.\
 MinC's aims to be...
-* **heavily-simplifed** and contains only the bare-minimum of C
-* **basic**, very easy to teach/learn as it lacks niches and contains only basic/essential concepts
-* **lightweight**, requires a smaller library and compiler than C/C++, faster compilation, smaller memory footprint
-* **lower-level**, more finely controlled optimisations such as memory management without relying on assembler
+* **minimalised**, very easy to teach/learn as it lacks niches and only offers essential programming concepts
+* **consistent**, pragmatic use of syntax to easily understand & adapt
 * **forward compatible** with C - it can be (almost) be treated as C code and be compiled & optimised with GCC/[TCC](https://bellard.org/tcc/)
-* **Most importantly, a good learning experience for me and a very good starting step for low-level programmers**
+* **lightweight**, requires a smaller library and compiler than C/C++, faster compilation, smaller memory footprint
+* **lower-level**, more finely controlled optimisations such as memory management without relying on an assembler
+**Most importantly, it aims to serve as a good starting step for begginner programmers & learning experience for me**\
 
 **All Features**
 * preprocessor directives (`#include`, `#define`, `#ifdef`, `#endif`)
@@ -48,7 +48,7 @@ That's all. 8 keywords, 4 preprocessor directives,\
 and a charset of `a..z`, `0..9` with 20 symbols `. , ; + - * / = # ! & | " > ( ) [ ] { }`\
 
 ## MinimalistiC Compiler (MCC)
-Compiles MinC into x86 assembly *.o* files then asks linker to link into binaries\
+Compiles MinC into 32-bit x86 assembly *.s* files then asks linker to link into binaries\
 **What it does**
 1. reads input char by char, being lexed into tokens
    * `file.c` and `io.c` take in the source code as a stream
@@ -56,16 +56,16 @@ Compiles MinC into x86 assembly *.o* files then asks linker to link into binarie
    * `lex.c` tokenise into one of `NULL`, `LITERAL`, `IDENTIFIER`, `KEYWORD`, `SEPARATOR`, `OPERATOR`, or `END OF FILE`
    * `pp.c` parses preprocessor directives `#` and macros
    * if `-E` flag, `dump.c` prints preprocessed code
-2. parses token stream in (handwritten!) `parse.c` into an Abstract Syntax Tree
+2. parses token stream in `parse.c` (handwritten parser!) into an Abstract Syntax Tree
    * `parse.c` parses tokens into abstract instructions
    * parser is a top-down recursive decent parser, a *headache* to write
    * parser is hand-written by me specifically for MinC as opposed to FLEX/YACC
    * if `-fd` flag, `dump.c` pretty-prints the AST in readable form
 3. generate an Intermediate Representation based on that AST
-   * `gen_ir.c` generates IR as a Directed Acyclic Graph based on AST
-   * `gen_ir.c` initally uses an infinite amount of registers
-   * `map.c` converts DAG to linear IR based on x86 assembly
-   * `mac.c` allocates physical registers from infinite registers
+   * `gen_ir.c` generates linear IR with infinite registers from AST
+   * `gen_ir.c` preforms a postal-order traversal of the AST
+   * SSA or DAG optimisation is not used, to keep it simple 
+   * `regalloc.c` allocates 32-bit registers for IR
    * `gen_x86.c` formats linear IR as actual x86 32-bit code in AT&T formatting
    * if `-S` flag, `dump.c` outputs the human-readble IR as an `.s`
 5. assembly and linking are done externally
@@ -76,15 +76,16 @@ Compiles MinC into x86 assembly *.o* files then asks linker to link into binarie
 
 Notes
    * MCC is so small it can fit into a 1980s floppy disk (>160KB)
-   * parser rearranges binary expressions to follow BIDMAS (insanely confusing to write)
+   * parser rearranges binary expressions to respect precedence such as BIDMAS (insanely confusing to write)
+   * generator is non-optimising to keep it simple and easy to understand
    * memory management is absent (declares variables on heap but never frees it) 
-   * generator is non-optimising, so a lot of jumps and inefficient memory usage
-   * semantic analysis and error-checking is limited which may result in un-caught errors
+   * semantic analysis is non-existent and allows implicit type casting (odd quirk)
+   * error-checking is minimal too, so errors may be uncaught
 
 ## Install
 The compiler generates x86 32-bit assembly code for Intel CPUs.
 \
-Should work for Unix-like OSes and 32-bit Windows. \
+Should work for 32-bit Unix-like OSes and 32-bit Windows. \
 Tested on Windows 10 and Mac OS X Mojave. \
 Will not work on Catalina as it has no legacy support for 32-bit applications.\
 \

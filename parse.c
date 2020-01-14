@@ -769,7 +769,7 @@ static Tree *crtInst (enum InstType type)
 
 
 
-void parse (Tree *AST)
+void parse (Tree *ast)
 {
     Token t = next();
 
@@ -780,13 +780,13 @@ void parse (Tree *AST)
     if (isFunc(true))
     {
         mccLog("func def");
-        readFunc(AST);
+        readFunc(ast);
     }
     else
     {
         // assume decl
         mccLog("declare");
-        readDecl(AST);
+        readDecl(ast);
     }
 }
 

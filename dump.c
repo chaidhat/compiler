@@ -330,12 +330,12 @@ static void dumpTree (Tree *tree)
         dumpTree(&tree->children[i]);
 }
 
-void dumpAst (Tree *AST)
+void dumpAst (Tree *ast)
 {
     mccWarn("dumping AST...");
     print("%s AST:", inFilepath);
     up();
-    dumpTree(AST);
+    dumpTree(ast);
     down();
     down();
     inpWrite(outFilepath, ".md");

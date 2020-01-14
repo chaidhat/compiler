@@ -47,13 +47,13 @@ enum InstType
     IT_Unin,
     IT_Scope,
 };
-enum DagType
+enum OperandType
 {
-    DT_func,
-    DT_var,
-    DT_operand,
-    DT_str,
-    DT_num,
+    OT_register,
+    OT_str_routine,
+    OT_str_id,
+    OT_str_lit,
+    OT_num_lit,
 };
 enum eCodes
 {
@@ -70,17 +70,17 @@ enum wCodes
 };
 enum OpcodeInstType
 {
-    OP_push,
-    OP_pop,
-    OP_mov,
-    OP_cmp,
-    OP_jmp,
-    OP_call,
+    OIT_push,
+    OIT_pop,
+    OIT_mov,
+    OIT_cmp,
+    OIT_jmp,
+    OIT_call,
 };
 enum OpcodeMemType
 {
-    OST_word,
-    OST_long,
+    OMT_word,
+    OMT_long,
 };
 enum RegType
 {
@@ -92,7 +92,6 @@ enum RegType
     REG_edi,
     REG_ebp,
     REG_esp,
-    REG_USE_REGNAME
 };
 typedef union
 {
@@ -203,22 +202,29 @@ typedef struct
 
 typedef struct
 {
-    // LITERALS
-    bool isLit; // is $ ?
-    bool isRoutine; // is it lit without $?
-    char *name; // use ONLY if lit or routine 
-
-    // REGISTERS / ADDR
-    enum RegType type;
-    int regnum; // used for infinite registers
-    int offset; // offset from register e.g. 4 in 4(%eax)
-} Operand;
-
-typedef struct
-{
     enum OpcodeInstType type; // e.g. push, mov
     enum OpcodeMemType size; // byte, long
 } Opcode;
+
+typedef struct
+{
+    int regnum; // used for infinite registers
+
+    enum RegType type;
+    int offset; // offset from register e.g. 4 in 4(%eax)
+} Register;
+
+typedef struct
+{
+    enum OperandType type;
+    union
+    {
+        Register reg;
+        char str[128];
+        int num;
+    };
+    //int lifetime; // for optimisation
+} Operand;
 
 typedef struct
 {
@@ -244,48 +250,36 @@ typedef struct
     }; // anonymous union
 } AstInst;
 
-typedef struct
-{
-    enum DagType type;
-    union
-    {
-        Operand operand;
-        char str[128];
-        int num;
-    };
-} DagInst; // DAG IR
-
-typedef struct
+typedef struct IrInst
 {
     Opcode op;
 
     Operand dest; // left-hand side of operand
     Operand src; // right-hand side optional, depending on RepType
 
-    //int lifetime; // for optimisation
-} IrInst; // linear IR
+    struct IrInst* next; // linked list
+    bool end;
+} IrInst;
 
 typedef struct Tree
 {
     char id[128];
-    
-    union
-    {
-        AstInst ast; // for AST
-        DagInst dag; // for IR as DAG
-    };
+
+    AstInst ast; // for AST
 
     struct Tree *children; // neat self-referential struct
     int childrenSz; // if IR as DAG, it is assumed at 2 as a bin tree
 } Tree;
 
-typedef struct
+typedef struct IrRoutine
 {
     char name[128];
 
-    IrInst *irInst;
-    int irInstSz;
-} IrRoutine; // for linear IR
+    IrInst *inst;
+
+    struct IrRoutine* next; // linked list
+    bool end;
+} IrRoutine;
 
 
 // file vars
@@ -367,7 +361,7 @@ void predefineInclude (char *dir);
 
 
 // parse.c
-void parse (Tree *AST);
+void parse (Tree *ast);
 
 
 // vec.c
@@ -383,16 +377,18 @@ bool mccstr (char *dest, int destSz, char *format, ... );
 
 // dump.c
 void dumpPp ();
-void dumpAst (Tree *AST);
+void dumpAst (Tree *ast);
 
 
 // gen_ir.c
-void genIr (Tree *IrDag, Tree *AST);
+IrRoutine *createRoutine (char *name);
+
+void genIr (IrRoutine *ir, Tree *ast);
 
 
-// map.c
-void map (IrRoutine *IrLinear, Tree *IrDag);
+// regalloc.c
+void regalloc (IrRoutine *ir);
 
 
 // gen_x86.c
-void genX (char *dest, int destSz, IrRoutine *IrLinear);
+void genX (char *dest, int destSz, IrRoutine *ir);
