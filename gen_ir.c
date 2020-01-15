@@ -10,7 +10,7 @@ IrRoutine *createRoutine (char *name)
     IrInst *inst = (IrInst *)malloc(sizeof(IrInst));
 
     strcpy(routine->name, name);
-    routine->inst = inst;
+    routine->inst = inst; // first inst is an inaccessible stub
     return routine;
 }
 
@@ -48,16 +48,16 @@ static Operand ope (enum OperandType type)
 
 static void appendRoutine (IrRoutine *dest, IrRoutine *src)
 {
-    dest->next = src;
     dest->end = false;
     src->end = true; // assumes src is the last element
+    dest->next = src;
 }
 
 static void appendInst (IrInst *dest, IrInst *src)
 {
-    dest->next = src;
     dest->end = false;
     src->end = true; // assumes src is the last element
+    dest->next = src;
 }
 
 static void genIRInst (IrRoutine *ir, Tree *treeIn)
@@ -73,21 +73,21 @@ static void genIRInst (IrRoutine *ir, Tree *treeIn)
             break;
         case IT_Func:
             //genFunc(treeOut, treeIn->ast.func.funcName);
-            //mccLog("func %s %d", treeOut->children[treeOut->childrenSz - 1].dag.str, treeOut->childrenSz);
+            mccLog("func");
 
             //thisTree = &treeOut->children[treeOut->childrenSz - 1];
 
             // scope
             //bindScope(thisTree);
-            //for (int i = 0; i < treeIn->ast.func.scope->childrenSz; i++)
-            //    genTree(&thisTree->children[0], &treeIn->ast.func.scope->children[i]);
+            for (int i = 0; i < treeIn->ast.func.scope->childrenSz; i++)
+                genTree(ir, &treeIn->ast.func.scope->children[i]);
             //logTree(&thisTree->children[0]);
 
             break;
         case IT_Lit:
             opL = ope(OT_str_lit);
             opR = ope(OT_str_lit);
-            strcpy(opL.str, "a");
+            strcpy(opL.str, "alternating current");
             strcpy(opR.str, "b");
             appendInst(ir->inst, createInst(opc(OIT_push, OMT_long), opL, opR));
             //genInstNum(treeOut, treeIn->ast.lit.val.tInt);
@@ -123,11 +123,11 @@ static void genIRInst (IrRoutine *ir, Tree *treeIn)
             //thisTree = &treeOut->children[treeOut->childrenSz - 1];
             // varname
             //bindScope(thisTree);
-            //genTree(&thisTree->children[0], treeIn->ast.assign.varName);
+            genTree(ir, treeIn->ast.assign.varName);
             
             // exprsn
             //bindScope(thisTree);
-            //genTree(&thisTree->children[1], treeIn->ast.assign.exprsn);
+            genTree(ir, treeIn->ast.assign.exprsn);
             
             break;
         default:

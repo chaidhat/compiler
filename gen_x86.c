@@ -6,17 +6,40 @@
 #define genfileinsertm(str, ... ) if( \
         mccstr(dest, destSz, "%s" str "\n", dest, __VA_ARGS__)) \
         { mccErr("gen insert error\n"); mccExit(1); }
+#define gfis(str) if( \
+        mccstr(dest, destSz, "%s" str , dest)) \
+        { mccErr("gen insert error\n"); mccExit(1); }
+#define gfim(str, ... ) if( \
+        mccstr(dest, destSz, "%s" str "", dest, __VA_ARGS__)) \
+        { mccErr("gen insert error\n"); mccExit(1); }
 
-static void genAllFunc (char *dest, int destSz, Tree *IR);
+static void genRoutine (char *dest, int destSz, IrRoutine *ir);
+static void genInst (char *dest, int destSz, IrInst inst);
 
 
-
-static void genAllFunc (char *dest, int destSz, Tree *IR)
+static void genRoutine (char *dest, int destSz, IrRoutine *ir)
 {
-    if (IR->id[0] != '\0')
-        genfileinsertm(".globl _%s", IR->id);
-    for (int i = 0; i < IR->childrenSz; i++)
-        genAllFunc(dest, destSz, &IR->children[i]);
+    IrInst inst;
+    inst = *ir->inst; // first inst is stub
+    while (!inst.end)
+    {
+        inst = *inst.next; // first inst is stub
+        genInst(dest, destSz, inst);
+    }
+}
+
+static void genInst (char *dest, int destSz, IrInst inst)
+{
+    mccLog("inst");
+    if (inst.op.type == OIT_push)
+        gfis("push");
+    if (inst.op.size == OMT_long)
+        gfis("l ");
+    if (inst.dest.type == OT_str_lit)
+        gfim("%s", inst.dest.str);
+    gfis(" ");
+    if (inst.src.type == OT_str_lit)
+        gfim("%s", inst.src.str);
 }
 
 void genX (char *dest, int destSz, IrRoutine *ir)
@@ -36,6 +59,13 @@ void genX (char *dest, int destSz, IrRoutine *ir)
     genfileinserts(" ");
     genfileinserts("# global function declarations");
     genfileinserts(".text");
-    //genAllFunc(dest, destSz, Ir);
+
+    genRoutine(dest, destSz, ir);
+    while (!ir->end)
+    {
+        ir = ir->next;
+        genRoutine(dest, destSz, ir);
+    }
+
     genfileinserts(" ");
 }
