@@ -4,6 +4,8 @@ static char datBuf[DB_SIZE];
 static void genIRInst (IrRoutine *ir, Tree *treeIn);
 static void genTree (IrRoutine *ir, Tree *treeIn);
 
+static Operand opNULL;
+
 IrRoutine *createRoutine (char *name)
 {
     IrRoutine *routine = (IrRoutine *)malloc(sizeof(IrRoutine));
@@ -11,6 +13,7 @@ IrRoutine *createRoutine (char *name)
 
     strcpy(routine->name, name);
     routine->inst = inst; // first inst is an inaccessible stub
+    routine->end = true;
     return routine;
 }
 
@@ -33,7 +36,7 @@ static Opcode opc (enum OpcodeInstType type, enum OpcodeMemType size)
     return opcode;
 }
 
-static Register regn (int regnum) // for infinite registers
+static Register reg (int regnum) // for infinite registers
 {
     Register reg;
     reg.regnum = regnum;
@@ -53,8 +56,12 @@ static void appendRoutine (IrRoutine *dest, IrRoutine *src)
     dest->next = src;
 }
 
-static void appendInst (IrInst *dest, IrInst *src)
+static void appendInst (IrRoutine *routine, IrInst *src)
 {
+    IrInst *dest;
+    dest = routine->inst; // first inst is stub
+    while (!dest->end)
+        dest = dest->next; // first inst is stub
     dest->end = false;
     src->end = true; // assumes src is the last element
     dest->next = src;
@@ -68,8 +75,11 @@ static void genIRInst (IrRoutine *ir, Tree *treeIn)
     switch (treeIn->ast.type)
     {
         case IT_Var:
+            mccLog("var");
+            opL = ope(OT_num_lit);
+            opL.num = 64;
+            appendInst(ir, createInst(opc(OIT_push, OMT_long), opL, opNULL));
             //genVar(treeOut, treeIn->ast.var.varName);
-            //mccLog("var %s", treeOut->children[treeOut->childrenSz - 1].dag.str);
             break;
         case IT_Func:
             //genFunc(treeOut, treeIn->ast.func.funcName);
@@ -89,7 +99,7 @@ static void genIRInst (IrRoutine *ir, Tree *treeIn)
             opR = ope(OT_str_lit);
             strcpy(opL.str, "alternating current");
             strcpy(opR.str, "b");
-            appendInst(ir->inst, createInst(opc(OIT_push, OMT_long), opL, opR));
+            appendInst(ir, createInst(opc(OIT_push, OMT_long), opL, opR));
             //genInstNum(treeOut, treeIn->ast.lit.val.tInt);
             //mccLog("lit %d", treeOut->children[treeOut->childrenSz - 1].dag.num);
             /*

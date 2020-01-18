@@ -221,7 +221,7 @@ typedef struct
     {
         Register reg;
         char str[128];
-        int num;
+        int num; // TODO: using type int is inefficient
     };
     //int lifetime; // for optimisation
 } Operand;

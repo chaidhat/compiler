@@ -394,6 +394,7 @@ static void parseAssign (Tree *parent)
     if (isOp("*")) // must be dereference
     {
         inst.ast.assign.varName = parseDeref();
+        strcpy(inst.id, "deref assign");
     }
     else
     {

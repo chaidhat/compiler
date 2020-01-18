@@ -13,12 +13,19 @@ _main:
 	# subroutine prologue
     pushl   %ebp
     movl    %esp, %ebp
+    
+    # declare var at -4 ebp
+    pushl   $8
 
 	# use of Byte instead of Long to test 8 bit 
     movb    $64, %al
     movb    %al, VAR_A
 
 	pushl	VAR_A
+	call print_int
+
+    # use prev declared var at -4 ebp
+	pushl	-4(%ebp)
 	call print_int
 
 	# exit

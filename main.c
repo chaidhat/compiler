@@ -49,22 +49,23 @@ int main (int argc, char* argv[])
         IrRoutine *ir = createRoutine("");
         genIr(ir, &ast); // generate IR from AST
 
-        // optimisations, if any, should go here
-
         ir = regalloc(ir); // assign registers to IR
 
-        char sFile[DB_SIZE];
-        genX(sFile, sizeof sFile, ir); // generate x86 from IR
+        char outFile[DB_SIZE];
+        genX(outFile, sizeof outFile, ir); // generate x86 from IR
         
-        if (!doAssemble) // -s
-            mccExit(0);
+        if (!doAssemble) // -S
+        {
+            inpClose();
+            inpPop();
+            inpPush(outFile);
+            inpWrite(outFilepath, ".s");
+        }
+        else
+        {
+            // send to gcc for assembly/linking
+        }
 
-        // send to gcc for assembly/linking
-
-        inpClose();
-        inpPop();
-        inpPush(sFile);
-        inpWrite(outFilepath, ".s");
     }
     mccExit(0); // successful exit
 }

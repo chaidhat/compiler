@@ -32,14 +32,24 @@ static void genInst (char *dest, int destSz, IrInst inst)
 {
     mccLog("inst");
     if (inst.op.type == OIT_push)
+    {
+        mccLog("inst push");
         gfis("push");
-    if (inst.op.size == OMT_long)
-        gfis("l ");
-    if (inst.dest.type == OT_str_lit)
-        gfim("%s", inst.dest.str);
+        if (inst.op.size == OMT_long)
+            gfis("l ");
+        if (inst.dest.type == OT_str_lit)
+            gfim("%s", inst.dest.str);
+        if (inst.dest.type == OT_num_lit)
+            gfim("%d", inst.dest.num);
+        gfis("\n");
+    }
+    /*
     gfis(" ");
     if (inst.src.type == OT_str_lit)
         gfim("%s", inst.src.str);
+    if (inst.src.type == OT_num_lit)
+        gfim("%d", inst.src.num);
+        */
 }
 
 void genX (char *dest, int destSz, IrRoutine *ir)
@@ -66,6 +76,7 @@ void genX (char *dest, int destSz, IrRoutine *ir)
         ir = ir->next;
         genRoutine(dest, destSz, ir);
     }
+        mccLog("ndinst");
 
     genfileinserts(" ");
 }

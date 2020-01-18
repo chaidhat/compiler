@@ -1,7 +1,7 @@
  
 # Chaidhat Chaimongkol's #
 # MinimalistiC Compiler  #
-# on 21:04:13 Jan 15 2020 #
+# on 23:07:44 Jan 18 2020 #
  
 .file   "dag_test.mc"
  
@@ -10,4 +10,7 @@
  
 # global function declarations
 .text
-pushl alternating current b 
+pushl 64
+pushl 64
+pushl alternating current
+ 
