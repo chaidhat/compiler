@@ -3,8 +3,7 @@
 echo. 
 echo. 
 echo. 
-echo TEST RESULTS:
-if %errorlevel%==0 (echo OK) else (echo FAIL)
 echo %errorlevel%
+if %errorlevel%==0 (echo TEST OK) else (echo TEST FAIL)
 pause
 exit

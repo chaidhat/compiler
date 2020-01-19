@@ -38,9 +38,9 @@ static void genInst (char *dest, int destSz, IrInst inst)
         if (inst.op.size == OMT_long)
             gfis("l ");
         if (inst.dest.type == OT_str_lit)
-            gfim("%s", inst.dest.str);
+            gfim("$%s", inst.dest.str);
         if (inst.dest.type == OT_num_lit)
-            gfim("%d", inst.dest.num);
+            gfim("$%d", inst.dest.num);
         gfis("\n");
     }
     /*
