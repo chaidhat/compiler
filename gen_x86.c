@@ -16,6 +16,37 @@
 static void genRoutine (char *dest, int destSz, IrRoutine *ir);
 static void genInst (char *dest, int destSz, IrInst inst);
 
+static char *omt (enum OpcodeMemType omt)
+{
+    switch (omt)
+    {
+        case OMT_word:
+            return "w";
+        case OMT_long:
+            return "l";
+    }
+}
+
+static void genOp (char *dest, int destSz, Operand op)
+{
+    switch (op.type)
+    {
+        case OT_str_lit:
+            gfim("$%s", op.str);
+            break;
+        case OT_num_lit:
+            gfim("$%d", op.num);
+            break;
+        case OT_reg:
+            if (op.reg.type == RT_stat)
+                gfim("%s", op.reg.stat);
+            if (op.reg.type == RT_rel)
+                gfim("%d(\%ebp)", op.reg.rel);
+            break;
+        default:
+            break;
+    }
+}
 
 static void genRoutine (char *dest, int destSz, IrRoutine *ir)
 {
@@ -31,18 +62,33 @@ static void genRoutine (char *dest, int destSz, IrRoutine *ir)
 static void genInst (char *dest, int destSz, IrInst inst)
 {
     mccLog("inst");
-    if (inst.op.type == OIT_push)
+    gfis("    ");
+    switch (inst.op.type)
     {
-        mccLog("inst push");
-        gfis("push");
-        if (inst.op.size == OMT_long)
-            gfis("l ");
-        if (inst.dest.type == OT_str_lit)
-            gfim("$%s", inst.dest.str);
-        if (inst.dest.type == OT_num_lit)
-            gfim("$%d", inst.dest.num);
-        gfis("\n");
+        case OIT_push:
+            gfis("push");
+            gfim("%s", omt(inst.op.size));
+
+            gfis("   ");
+            genOp(dest, destSz, inst.dest);
+
+            break;
+
+        case OIT_mov:
+            gfis("mov");
+            gfim("%s", omt(inst.op.size));
+
+            gfis("    ");
+            genOp(dest, destSz, inst.dest);
+            gfis(", ");
+            genOp(dest, destSz, inst.src);
+
+            break;
+
+        default:
+            break;
     }
+    gfis("\n");
     /*
     gfis(" ");
     if (inst.src.type == OT_str_lit)

@@ -30,7 +30,7 @@ run:
 	$(MAKE) clean
 	$(foreach file,$(wildcard $(TDIR)/*.mc), \
 		$(info FILE $(file)) \
-		start flute run""$(ECC)" $(TESTCMD) $(file) ; type "$(basename $(file)).s" ; pause"\
+		start powershell -command ""$(ECC)" $(TESTCMD) $(file) ; type "$(basename $(file)).s" ; pause"\
 	)
 
 test:

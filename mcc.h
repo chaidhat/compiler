@@ -49,7 +49,7 @@ enum InstType
 };
 enum OperandType
 {
-    OT_register,
+    OT_reg,
     OT_str_routine,
     OT_str_id,
     OT_str_lit,
@@ -84,14 +84,20 @@ enum OpcodeMemType
 };
 enum RegType
 {
-    REG_a,
-    REG_b,
-    REG_c,
-    REG_d,
-    REG_esi,
-    REG_edi,
-    REG_ebp,
-    REG_esp,
+    RT_stat,
+    RT_act,
+    RT_rel,
+    RT_abs,
+};
+enum RegActType
+{
+    RAT_a,
+    RAT_b,
+    RAT_c,
+    RAT_d,
+    RAT_esi,
+    RAT_edi,
+    RAT_esp,
 };
 typedef union
 {
@@ -208,10 +214,14 @@ typedef struct
 
 typedef struct
 {
-    int regnum; // used for infinite registers
-
     enum RegType type;
-    int offset; // offset from register e.g. 4 in 4(%eax)
+    union
+    {
+        char stat[128];
+        enum RegActType act;
+        int rel;
+        int abs;
+    };
 } Register;
 
 typedef struct

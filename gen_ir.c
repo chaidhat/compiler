@@ -36,10 +36,18 @@ static Opcode opc (enum OpcodeInstType type, enum OpcodeMemType size)
     return opcode;
 }
 
-static Register reg (int regnum) // for infinite registers
+static Register regn (char stat[128]) // for infinite registers
 {
     Register reg;
-    reg.regnum = regnum;
+    strcpy(reg.stat, stat);
+    return reg;
+}
+
+static Register rego (int offset) // for infinite registers
+{
+    Register reg;
+    reg.abs = offset;
+    return reg;
 }
 
 static Operand ope (enum OperandType type)
@@ -67,17 +75,17 @@ static void appendInst (IrRoutine *routine, IrInst *src)
     dest->next = src;
 }
 
-static void genIRInst (IrRoutine *ir, Tree *treeIn)
+static void genIRInst (IrRoutine *ir, Tree *tree)
 {
     Tree *thisTree;
     Operand opL;
     Operand opR;
-    switch (treeIn->ast.type)
+    switch (tree->ast.type)
     {
         case IT_Var:
             mccLog("var");
             opL = ope(OT_num_lit);
-            opL.num = 64;
+            opL.num = 0;
             appendInst(ir, createInst(opc(OIT_push, OMT_long), opL, opNULL));
             //genVar(treeOut, treeIn->ast.var.varName);
             break;
@@ -89,17 +97,20 @@ static void genIRInst (IrRoutine *ir, Tree *treeIn)
 
             // scope
             //bindScope(thisTree);
-            for (int i = 0; i < treeIn->ast.func.scope->childrenSz; i++)
-                genTree(ir, &treeIn->ast.func.scope->children[i]);
+            for (int i = 0; i < tree->ast.func.scope->childrenSz; i++)
+                genTree(ir, &tree->ast.func.scope->children[i]);
             //logTree(&thisTree->children[0]);
 
             break;
         case IT_Lit:
-            opL = ope(OT_str_lit);
-            opR = ope(OT_str_lit);
-            strcpy(opL.str, "alternating current");
-            strcpy(opR.str, "b");
-            appendInst(ir, createInst(opc(OIT_push, OMT_long), opL, opR));
+            if (tree->ast.lit.type == LT_INT)
+            {
+                opL = ope(OT_num_lit);
+                opL.num = tree->ast.lit.val.tInt;
+            }
+            opR = ope(OT_reg);
+            opR.reg = regn("a");
+            appendInst(ir, createInst(opc(OIT_mov, OMT_long), opL, opR));
             //genInstNum(treeOut, treeIn->ast.lit.val.tInt);
             //mccLog("lit %d", treeOut->children[treeOut->childrenSz - 1].dag.num);
             /*
@@ -133,11 +144,11 @@ static void genIRInst (IrRoutine *ir, Tree *treeIn)
             //thisTree = &treeOut->children[treeOut->childrenSz - 1];
             // varname
             //bindScope(thisTree);
-            genTree(ir, treeIn->ast.assign.varName);
+            genTree(ir, tree->ast.assign.varName);
             
             // exprsn
             //bindScope(thisTree);
-            genTree(ir, treeIn->ast.assign.exprsn);
+            genTree(ir, tree->ast.assign.exprsn);
             
             break;
         default:
