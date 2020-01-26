@@ -12,7 +12,14 @@ This is a personal project of mine to...
 it's a fun challenge.\
 \
 I aim to develop a basic compiler which compiles my variant of C (called MinimalistiC or MinC)
-into x86 assembly as a *.s* file in the most simple way so others can learn from the source code. \
+into x86 assembly as a *.s* file in the most simple way so others can learn from the source code.
+
+## Table of Contents
+[MinimalistiC Programming Language](#minimalistiC-programming-language)
+[MinimalistiC Compiler (MCC)](#minimalistic-compiler-(mcc))
+[Installation](#installation)
+[Thanks & Bibliography](#thank-you-to)
+
 ### To learn more, please read the sections below on the programming language and its compiler. Installation instructions are at the bottom 
 
 ## MinimalistiC Programming Language
@@ -65,7 +72,7 @@ Compiles MinC into 32-bit x86 assembly *.s* files then asks linker to link into 
    * `gen_ir.c` generates linear IR with infinite registers from AST
    * `gen_ir.c` preforms a postal-order traversal of the AST
    * SSA or DAG optimisation is not used, to keep it simple 
-   * `regalloc.c` allocates 32-bit registers for IR
+   * `memalloc.c` allocates space on stack from infinite registers
    * `gen_x86.c` formats linear IR as actual x86 32-bit code in AT&T formatting
    * if `-S` flag, `dump.c` outputs the human-readble IR as an `.s`
 5. assembly and linking are done externally
@@ -78,6 +85,7 @@ Notes
    * MCC is so small it can fit into a 1980s floppy disk (>160KB)
    * parser rearranges binary expressions to respect precedence such as BIDMAS (insanely confusing to write)
    * generator is non-optimising to keep it simple and easy to understand
+   * since mingw has no r10-16 registers, memalloc pushes and pops the stack instead.
    * memory management is absent (declares variables on heap but never frees it) 
    * semantic analysis is non-existent and allows implicit type casting (odd quirk)
    * error-checking is minimal too, so errors may be uncaught

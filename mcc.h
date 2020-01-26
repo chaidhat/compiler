@@ -79,25 +79,25 @@ enum OpcodeInstType
 };
 enum OpcodeMemType
 {
-    OMT_word,
+    OMT_byte,
     OMT_long,
 };
 enum RegType
 {
     RT_stat,
-    RT_act,
+    RT_phy,
     RT_rel,
     RT_abs,
 };
-enum RegActType
+enum RegPhyType
 {
     RAT_a,
     RAT_b,
     RAT_c,
     RAT_d,
-    RAT_esi,
-    RAT_edi,
-    RAT_esp,
+    //RAT_esi,
+    //RAT_edi,
+    //RAT_esp,
 };
 typedef union
 {
@@ -217,10 +217,10 @@ typedef struct
     enum RegType type;
     union
     {
-        char stat[128];
-        enum RegActType act;
-        int rel;
-        int abs;
+        char stat[128]; // static
+        enum RegPhyType phy; // physical
+        int rel; // relative
+        int abs; // absolute (before regalloc)
     };
 } Register;
 
@@ -396,8 +396,8 @@ IrRoutine *createRoutine (char *name);
 void genIr (IrRoutine *ir, Tree *ast);
 
 
-// regalloc.c
-IrRoutine *regalloc (IrRoutine *ir);
+// memalloc.c
+IrRoutine *memalloc (IrRoutine *ir);
 
 
 // gen_x86.c

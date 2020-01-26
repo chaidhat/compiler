@@ -49,7 +49,7 @@ int main (int argc, char* argv[])
         IrRoutine *ir = createRoutine("");
         genIr(ir, &ast); // generate IR from AST
 
-        ir = regalloc(ir); // assign registers to IR
+        ir = memalloc(ir); // assign registers to IR
 
         char outFile[DB_SIZE];
         genX(outFile, sizeof outFile, ir); // generate x86 from IR

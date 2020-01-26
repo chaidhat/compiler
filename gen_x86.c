@@ -20,7 +20,7 @@ static char *omt (enum OpcodeMemType omt)
 {
     switch (omt)
     {
-        case OMT_word:
+        case OMT_byte:
             return "w";
         case OMT_long:
             return "l";
@@ -40,8 +40,22 @@ static void genOp (char *dest, int destSz, Operand op)
         case OT_reg:
             if (op.reg.type == RT_stat)
                 gfim("%s", op.reg.stat);
+            if (op.reg.type == RT_phy)
+            {
+                if (op.reg.phy == RAT_a)
+                    gfim("\%eax", op.reg.phy);
+                if (op.reg.phy == RAT_b)
+                    gfim("\%ebx", op.reg.phy);
+                if (op.reg.phy == RAT_c)
+                    gfim("\%ecx", op.reg.phy);
+                if (op.reg.phy == RAT_d)
+                    gfim("\%edx", op.reg.phy);
+            }
             if (op.reg.type == RT_rel)
                 gfim("%d(\%ebp)", op.reg.rel);
+
+            // no RT_abs, it has been dealt with in memalloc.c
+
             break;
         default:
             break;

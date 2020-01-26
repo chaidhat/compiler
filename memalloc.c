@@ -1,6 +1,6 @@
 #include "mcc.h"
 
-IrRoutine *regalloc (IrRoutine *ir)
+IrRoutine *memalloc (IrRoutine *ir)
 {
     return ir;
 }
