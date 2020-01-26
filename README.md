@@ -15,7 +15,7 @@ I aim to develop a basic compiler which compiles my variant of C (called Minimal
 into x86 assembly as a *.s* file in the most simple way so others can learn from the source code.
 
 ## Table of Contents
-[MinimalistiC Programming Language](##MinimalistiC-Programming-Language)
+[MinimalistiC Programming Language](#minimalistiC-programming-language)
 * MinimalistiC Compiler (MCC)
 * Installation
 * Thanks & Bibliography
