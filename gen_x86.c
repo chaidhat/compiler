@@ -43,20 +43,26 @@ static void genOp (char *dest, int destSz, Operand op)
             if (op.reg.type == RT_phy)
             {
                 if (op.reg.phy == RAT_a)
-                    gfim("\%eax", op.reg.phy);
+                    gfis("%%eax");
                 if (op.reg.phy == RAT_b)
-                    gfim("\%ebx", op.reg.phy);
+                    gfis("%%ebx");
                 if (op.reg.phy == RAT_c)
-                    gfim("\%ecx", op.reg.phy);
+                    gfis("%%ecx");
                 if (op.reg.phy == RAT_d)
-                    gfim("\%edx", op.reg.phy);
+                    gfis("%%edx");
+                if (op.reg.phy == RAT_esp)
+                    gfis("%%esp");
+                if (op.reg.phy == RAT_ebp)
+                    gfis("%%ebp");
             }
             if (op.reg.type == RT_rel)
                 gfim("%d(\%ebp)", op.reg.rel);
-
             // no RT_abs, it has been dealt with in memalloc.c
-
             break;
+        case OT_comment:
+            gfim("# %s", op.str);
+            break;
+
         default:
             break;
     }
@@ -64,13 +70,19 @@ static void genOp (char *dest, int destSz, Operand op)
 
 static void genRoutine (char *dest, int destSz, IrRoutine *ir)
 {
+    mccLog("routine %s", ir->name);
     IrInst inst;
+    genfileinsertm(".globl _%s", ir->name);
+    genfileinsertm("_%s:", ir->name);
     inst = *ir->inst; // first inst is stub
     while (!inst.end)
     {
         inst = *inst.next; // first inst is stub
         genInst(dest, destSz, inst);
     }
+    //gfim("    movl    \%ebp, \%esp", "");
+    //gfim("    popl    \%ebp", "");
+    genfileinserts("    ret");
 }
 
 static void genInst (char *dest, int destSz, IrInst inst)
@@ -96,6 +108,20 @@ static void genInst (char *dest, int destSz, IrInst inst)
             genOp(dest, destSz, inst.dest);
             gfis(", ");
             genOp(dest, destSz, inst.src);
+
+            break;
+
+        case OIT_pop:
+            gfis("pop");
+            gfim("%s", omt(inst.op.size));
+
+            gfis("    ");
+            genOp(dest, destSz, inst.dest);
+
+            break;
+
+        case OIT_comment:
+            genOp(dest, destSz, inst.dest);
 
             break;
 
@@ -130,7 +156,6 @@ void genX (char *dest, int destSz, IrRoutine *ir)
     genfileinserts("# global function declarations");
     genfileinserts(".text");
 
-    genRoutine(dest, destSz, ir);
     while (!ir->end)
     {
         ir = ir->next;

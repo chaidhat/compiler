@@ -49,6 +49,7 @@ enum InstType
 };
 enum OperandType
 {
+    OT_comment,
     OT_reg,
     OT_str_routine,
     OT_str_id,
@@ -56,7 +57,7 @@ enum OperandType
     OT_num_lit,
 };
 enum eCodes
-{
+{ 
     EC_FATAL,
     EC_LEX,
     EC_PP,
@@ -70,6 +71,7 @@ enum wCodes
 };
 enum OpcodeInstType
 {
+    OIT_comment,
     OIT_push,
     OIT_pop,
     OIT_mov,
@@ -97,7 +99,8 @@ enum RegPhyType
     RAT_d,
     //RAT_esi,
     //RAT_edi,
-    //RAT_esp,
+    RAT_esp,
+    RAT_ebp,
 };
 typedef union
 {
@@ -391,7 +394,7 @@ void dumpAst (Tree *ast);
 
 
 // gen_ir.c
-IrRoutine *createRoutine (char *name);
+IrRoutine *crtRoutine (char *name);
 
 void genIr (IrRoutine *ir, Tree *ast);
 

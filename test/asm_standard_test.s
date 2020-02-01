@@ -1,18 +1,23 @@
  
 # Chaidhat Chaimongkol's #
 # MinimalistiC Compiler  #
-# on 20:15:52 Jan 28 2020 #
+# on 11:49:50 Feb  1 2020 #
  
-.file   "dag_test.mc"
+.file   "asm_standard_test.mc"
  
 # global declarations
 .data
  
 # global function declarations
 .text
-_a
+.globl _main
+_main:
+    # subroutine prologue
+    pushl   %ebp
+    movl    %esp, %ebp
+    # subroutine main
     pushl   $0
-    movl    $2, a
+    movl    $0, %eax
     # subroutine epilogue
     movl    %ebp, %esp
     popl    %ebp

@@ -180,7 +180,6 @@ static bool logChar (char inChar)
     return true;
 }
 
-
 static Token crtToken (enum TokType type)
 {
     Token t = TOKEN_NULL;

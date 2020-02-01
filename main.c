@@ -3,8 +3,8 @@
 
 static void configInit ()
 {
-    strcpy(inFilepath, "$");
-    strcpy(outFilepath, "$");
+    mccstr(inFilepath, 128, "$");
+    mccstr(outFilepath, 128, "$");
     isChangeFilepath = false;
     mode = 1; // default mode (compiler debug)s
     doBenchmarking = false;
@@ -46,7 +46,7 @@ int main (int argc, char* argv[])
 
         /* compilation back end */
 
-        IrRoutine *ir = createRoutine("");
+        IrRoutine *ir = crtRoutine("");
         genIr(ir, &ast); // generate IR from AST
 
         ir = memalloc(ir); // assign registers to IR

@@ -1,67 +1,64 @@
 test/dag_test.mc AST:
 {
 | {
-| | type: VAR
+| | type: FUNC
+| | funcType: INT
+| | isPtr: 0
+| | isStatic: 0
+| | funcName: a
+| | 
+| | scope:
 | | {
-| | | type: FUNC
-| | | funcType: INT
-| | | isPtr: 0
-| | | isStatic: 0
-| | | funcName: a
-| | | 
-| | | scope:
 | | | {
+| | | | type: VAR
+| | | | varName: b
+| | | | varType: INT
+| | | | isPtr: 0
+| | | | isStatic: 0
+| | | | isArray: 0
+| | | },
+| | | {
+| | | | type: ASSIGN
+| | | | varName:
 | | | | {
-| | | | | type: VAR
-| | | | | varName: b
-| | | | | varType: INT
-| | | | | isPtr: 0
-| | | | | isStatic: 0
-| | | | | isArray: 0
-| | | | },
-| | | | {
-| | | | | type: ASSIGN
-| | | | | varName:
 | | | | | {
+| | | | | | type: DEREF
+| | | | | | exprsn:
 | | | | | | {
-| | | | | | | type: DEREF
-| | | | | | | exprsn:
 | | | | | | | {
+| | | | | | | | type: BINARY
+| | | | | | | | stub: 1
+| | | | | | | | single: 0
+| | | | | | | | op (id): +
+| | | | | | | | 
+| | | | | | | | left:
 | | | | | | | | {
-| | | | | | | | | type: BINARY
-| | | | | | | | | stub: 1
-| | | | | | | | | single: 0
-| | | | | | | | | op (id): +
-| | | | | | | | | 
-| | | | | | | | | left:
 | | | | | | | | | {
-| | | | | | | | | | {
-| | | | | | | | | | | type: ID
-| | | | | | | | | | | isPtr: 0
-| | | | | | | | | | | varName: a
-| | | | | | | | | | },
+| | | | | | | | | | type: ID
+| | | | | | | | | | isPtr: 0
+| | | | | | | | | | varName: a
 | | | | | | | | | },
-| | | | | | | | | 
-| | | | | | | | | right:
+| | | | | | | | },
+| | | | | | | | 
+| | | | | | | | right:
+| | | | | | | | {
 | | | | | | | | | {
-| | | | | | | | | | {
-| | | | | | | | | | | type: LIT
-| | | | | | | | | | | type: INT
-| | | | | | | | | | | val: 2
-| | | | | | | | | | },
+| | | | | | | | | | type: LIT
+| | | | | | | | | | type: INT
+| | | | | | | | | | val: 2
 | | | | | | | | | },
 | | | | | | | | },
 | | | | | | | },
 | | | | | | },
 | | | | | },
-| | | | | 
-| | | | | exprsn:
+| | | | },
+| | | | 
+| | | | exprsn:
+| | | | {
 | | | | | {
-| | | | | | {
-| | | | | | | type: LIT
-| | | | | | | type: INT
-| | | | | | | val: 2
-| | | | | | },
+| | | | | | type: LIT
+| | | | | | type: INT
+| | | | | | val: 2
 | | | | | },
 | | | | },
 | | | },

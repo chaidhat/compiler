@@ -1,5 +1,5 @@
 # global data  #
-# gcc -o asm_standard asm_standard.s && asm_standard
+# gcc -o asm_standard asm_standard.s ; ./asm_standard
 
 .file   "asm_standard.c"
 .data
@@ -17,10 +17,14 @@ _main:
     movl    %esp, %ebp
     
     # declare var at -4 ebp
-    pushl   $8
+    pushl   $0
+    # assign it to 8
+    movl    $8, -4(%ebp)
 
     # declare var at -8 ebp
-    pushl   $9
+    pushl   $0
+    # assign it to 9
+    movl    $9, -8(%ebp)
 
 	# use of Byte instead of Long to test 8 bit 
     movb    $64, %al
@@ -31,14 +35,18 @@ _main:
 
     # use prev declared var at -4 ebp
     movl    -4(%ebp), %ebx
-    movl    %ebx, VAR_B
+	pushl	%ebx
+	call print_int
 
-	pushl	VAR_B
+    # use prev declared var at -8 ebp
+    movl    -8(%ebp), %ebx
+	pushl	%ebx
 	call print_int
 
 	# exit
     movl    $0, %eax
-    leave
+	movl 	%ebp, %esp
+	popl 	%ebp
 	ret
 
 print_int:
@@ -48,7 +56,7 @@ print_int:
 
 	pushl	8(%ebp)	# parameters are 8 bytes (esp and ebp are in the middle)
 	pushl 	$MSG
-        call    _printf
+    call    _printf
 
 	# subroutine epilogue
 	movl 	%ebp, %esp

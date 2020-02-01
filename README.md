@@ -1,6 +1,15 @@
  # MinimalistiC by Chaidhat Chaimongkol
-### Programming Language & Compiler started 27.08.19
+### Programming Language & Compiler started 27.08.19, +75 manhours
 ![MinimalistiC Programming Language & Compiler](https://github.com/Chai112/MinC-Compiler/blob/master/doc/thumb.png)
+
+## Table of Contents
+* [About](#about)
+* [MinimalistiC Programming Language](#minimalistiC-programming-language)\
+* [MinimalistiC Compiler](#minimalistic-compiler))\
+* [Installation](#install)\
+* [Thanks & Bibliography](#thank-you-to)
+
+### To learn more, please read the sections below on the programming language and its compiler. Installation instructions are at the bottom
 
 ## About
 This is a personal project of mine to...
@@ -14,16 +23,10 @@ it's a fun challenge.\
 I aim to develop a basic compiler which compiles my variant of C (called MinimalistiC or MinC)
 into x86 assembly as a *.s* file in the most simple way so others can learn from the source code.
 
-## Table of Contents
-[MinimalistiC Programming Language](#minimalistiC-programming-language)\
-[MinimalistiC Compiler (MCC)](#minimalistic-compiler-(mcc))\
-[Installation](#installation)\
-[Thanks & Bibliography](#thank-you-to)
-
-### To learn more, please read the sections below on the programming language and its compiler. Installation instructions are at the bottom 
-
 ## MinimalistiC Programming Language
 MinimalistiC (MinC) is my take on a ultra-simplified, ultra-lightweight, derated version of the C Programming language.\
+\
+### Aims
 MinC's aims to be...
 * **minimalised**, very easy to teach/learn as it lacks niches and only offers essential programming concepts
 * **consistent**, pragmatic use of syntax to easily understand & adapt
@@ -32,7 +35,7 @@ MinC's aims to be...
 * **lower-level**, more finely controlled optimisations such as memory management without relying on an assembler
 **Most importantly, it aims to serve as a good starting step for begginner programmers & learning experience for me**\
 
-**All Features**
+### All Features
 * preprocessor directives (`#include`, `#define`, `#ifdef`, `#endif`)
 * preprocessor macros (`__FILE__`, `__LINE___`, `__TIME__`, `__ASM`, etc.)
 * comments (`//`, `/*`, `*/`)
@@ -54,9 +57,10 @@ MinC's aims to be...
 That's all. 8 keywords, 4 preprocessor directives,\
 and a charset of `a..z`, `0..9` with 20 symbols `. , ; + - * / = # ! & | " > ( ) [ ] { }`\
 
-## MinimalistiC Compiler (MCC)
+## MinimalistiC Compiler
 Compiles MinC into 32-bit x86 assembly *.s* files then asks linker to link into binaries\
-**What it does**
+\
+### Summary of Function
 1. reads input char by char, being lexed into tokens
    * `file.c` and `io.c` take in the source code as a stream
    * `pp.c` for preprocesses input char stream.
@@ -72,7 +76,7 @@ Compiles MinC into 32-bit x86 assembly *.s* files then asks linker to link into 
    * `gen_ir.c` generates linear IR with infinite registers from AST
    * `gen_ir.c` preforms a postal-order traversal of the AST
    * SSA or DAG optimisation is not used, to keep it simple 
-   * `memalloc.c` allocates space on stack from infinite registers
+   * `memalloc.c` manipulates memory on stack from infinite registers
    * `gen_x86.c` formats linear IR as actual x86 32-bit code in AT&T formatting
    * if `-S` flag, `dump.c` outputs the human-readble IR as an `.s`
 5. assembly and linking are done externally
@@ -81,11 +85,12 @@ Compiles MinC into 32-bit x86 assembly *.s* files then asks linker to link into 
    * GNU's linker (`ld`) links all `.o` files together and with the C standard library
    * code is linked with the C standard library for portability across OSes
 
-Notes
+### Notes
    * MCC is so small it can fit into a 1980s floppy disk (>160KB)
    * parser rearranges binary expressions to respect precedence such as BIDMAS (insanely confusing to write)
    * generator is non-optimising to keep it simple and easy to understand
-   * since mingw has no r10-16 registers, memalloc pushes and pops the stack instead.
+   * mingw is 32-bit normally, so asm is also 32 bits
+   * since gas -m32 has no r10-16 registers, memalloc pushes and pops the stack instead.
    * memory management is absent (declares variables on heap but never frees it) 
    * semantic analysis is non-existent and allows implicit type casting (odd quirk)
    * error-checking is minimal too, so errors may be uncaught
@@ -119,6 +124,7 @@ or give it a MinC file, dump parser's AST `-fd` and verbosely compile `-v` into 
 ```
 
 ## Thank you to 
+Thank you to these sources for information, almost all significant code is cited here.
 ### compiler 
 * Introduction to Compilers and Language Designs by Prof. Douglas Thain (book)
 * http://www.cs.man.ac.uk/~pjj/farrell/compmain.html

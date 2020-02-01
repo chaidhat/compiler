@@ -335,8 +335,8 @@ void dumpAst (Tree *ast)
     mccWarn("dumping AST...");
     print("%s AST:", inFilepath);
     up();
-    dumpTree(ast);
-    down();
+    for (int i = 0; i < ast->childrenSz; i++)
+        dumpTree(&ast->children[i]);
     down();
     inpWrite(outFilepath, ".md");
 }

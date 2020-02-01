@@ -217,6 +217,9 @@ bool mccstr (char *dest, int destSz, char *format, ... )
                     if (str(buffer, destSz, &idest, va_arg(args, char*)))
                         return true; // error, buffer overflow
                     break;
+                case '%':
+                    str(buffer, destSz, &idest, "%");
+                    break;
                 default:
                     return true; // error, unsupported type
                     break;

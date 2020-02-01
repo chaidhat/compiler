@@ -6,18 +6,19 @@ static void genTree (IrRoutine *ir, Tree *treeIn);
 
 static Operand opNULL;
 
-IrRoutine *createRoutine (char *name)
+IrRoutine *crtRoutine (char *name)
 {
     IrRoutine *routine = (IrRoutine *)malloc(sizeof(IrRoutine));
     IrInst *inst = (IrInst *)malloc(sizeof(IrInst));
 
     strcpy(routine->name, name);
     routine->inst = inst; // first inst is an inaccessible stub
+    routine->inst->end = true;
     routine->end = true;
     return routine;
 }
 
-static IrInst *createInst (Opcode op, Operand dest, Operand src)
+static IrInst *crtInst (Opcode op, Operand dest, Operand src)
 {
     IrInst *inst = (IrInst *)malloc(sizeof(IrInst));
 
@@ -36,20 +37,6 @@ static Opcode opc (enum OpcodeInstType type, enum OpcodeMemType size)
     return opcode;
 }
 
-static Register regn (char stat[128]) // for infinite registers
-{
-    Register reg;
-    strcpy(reg.stat, stat);
-    return reg;
-}
-
-static Register rego (int offset) // for infinite registers
-{
-    Register reg;
-    reg.abs = offset;
-    return reg;
-}
-
 static Operand ope (enum OperandType type)
 {
     Operand operand;
@@ -57,8 +44,34 @@ static Operand ope (enum OperandType type)
     return operand;
 }
 
+static Register regn (char stat[128]) // for infinite registers
+{
+    Register reg;
+    reg.type = RT_stat;
+    strcpy(reg.stat, stat);
+    return reg;
+}
+
+static Register rego (int offset) // for infinite registers
+{
+    Register reg;
+    reg.type = RT_abs;
+    reg.abs = offset;
+    return reg;
+}
+
+static Register regp (enum RegPhyType phy) // for infinite registers
+{
+    Register reg;
+    reg.type = RT_phy;
+    reg.phy = phy;
+    return reg;
+}
+
 static void appendRoutine (IrRoutine *dest, IrRoutine *src)
 {
+    while (!dest->end)
+        dest = dest->next; // first inst is stub
     dest->end = false;
     src->end = true; // assumes src is the last element
     dest->next = src;
@@ -78,6 +91,7 @@ static void appendInst (IrRoutine *routine, IrInst *src)
 static void genIRInst (IrRoutine *ir, Tree *tree)
 {
     Tree *thisTree;
+    IrRoutine *irChild;
     Operand opL;
     Operand opR;
     switch (tree->ast.type)
@@ -86,20 +100,54 @@ static void genIRInst (IrRoutine *ir, Tree *tree)
             mccLog("var");
             opL = ope(OT_num_lit);
             opL.num = 0;
-            appendInst(ir, createInst(opc(OIT_push, OMT_long), opL, opNULL));
+            appendInst(ir, crtInst(opc(OIT_push, OMT_long), opL, opNULL));
             //genVar(treeOut, treeIn->ast.var.varName);
             break;
         case IT_Func:
-            //genFunc(treeOut, treeIn->ast.func.funcName);
-            mccLog("func");
+            mccLog("func %s",tree->ast.func.funcName);
 
-            //thisTree = &treeOut->children[treeOut->childrenSz - 1];
+            irChild = crtRoutine(tree->ast.func.funcName);
+            appendRoutine(ir, irChild);
 
-            // scope
-            //bindScope(thisTree);
+            // subroutine prologue
+            opL = ope(OT_comment);
+            strcpy(opL.str, "subroutine prologue");
+            appendInst(irChild, crtInst(opc(OIT_comment, OMT_long), opL, opNULL));
+
+            opL = ope(OT_reg);
+            opL.reg = regp(RAT_ebp);
+            appendInst(irChild, crtInst(opc(OIT_push, OMT_long), opL, opNULL));
+
+            opL = ope(OT_reg);
+            opL.reg = regp(RAT_esp);
+            opR = ope(OT_reg);
+            opR.reg = regp(RAT_ebp);
+            appendInst(irChild, crtInst(opc(OIT_mov, OMT_long), opL, opR));
+
+            // main
+            opL = ope(OT_comment);
+            strcpy(opL.str, "subroutine main");
+            appendInst(irChild, crtInst(opc(OIT_comment, OMT_long), opL, opNULL));
+
             for (int i = 0; i < tree->ast.func.scope->childrenSz; i++)
-                genTree(ir, &tree->ast.func.scope->children[i]);
-            //logTree(&thisTree->children[0]);
+            {
+                genTree(irChild, &tree->ast.func.scope->children[i]);
+            }
+            
+            // subroutine epilogue
+            opL = ope(OT_comment);
+            strcpy(opL.str, "subroutine epilogue");
+            appendInst(irChild, crtInst(opc(OIT_comment, OMT_long), opL, opNULL));
+
+            opL = ope(OT_reg);
+            opL.reg = regp(RAT_ebp);
+            opR = ope(OT_reg);
+            opR.reg = regp(RAT_esp);
+            appendInst(irChild, crtInst(opc(OIT_mov, OMT_long), opL, opR));
+
+            opL = ope(OT_reg);
+            opL.reg = regp(RAT_ebp);
+            appendInst(irChild, crtInst(opc(OIT_pop, OMT_long), opL, opNULL));
 
             break;
         case IT_Lit:
@@ -109,8 +157,9 @@ static void genIRInst (IrRoutine *ir, Tree *tree)
                 opL.num = tree->ast.lit.val.tInt;
             }
             opR = ope(OT_reg);
-            opR.reg = regn("a");
-            appendInst(ir, createInst(opc(OIT_mov, OMT_long), opL, opR));
+            opR.reg = regp(RAT_a);
+            //opR.reg = regn("a");
+            appendInst(ir, crtInst(opc(OIT_mov, OMT_long), opL, opR));
             //genInstNum(treeOut, treeIn->ast.lit.val.tInt);
             //mccLog("lit %d", treeOut->children[treeOut->childrenSz - 1].dag.num);
             /*
@@ -166,5 +215,6 @@ static void genTree (IrRoutine *ir, Tree *treeIn)
 
 void genIr (IrRoutine *ir, Tree *ast)
 {
-    genTree(ir, ast);
+    for (int i = 0; i < ast->childrenSz; i++)
+        genTree(ir, &ast->children[i]);
 }
