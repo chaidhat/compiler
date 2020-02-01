@@ -111,7 +111,7 @@ static void genIRInst (IrRoutine *ir, Tree *tree)
 
             // subroutine prologue
             opL = ope(OT_comment);
-            strcpy(opL.str, "subroutine prologue");
+            mccstr(opL.str, 128, "subroutine prologue");
             appendInst(irChild, crtInst(opc(OIT_comment, OMT_long), opL, opNULL));
 
             opL = ope(OT_reg);
@@ -126,7 +126,7 @@ static void genIRInst (IrRoutine *ir, Tree *tree)
 
             // main
             opL = ope(OT_comment);
-            strcpy(opL.str, "subroutine main");
+            mccstr(opL.str, 128, "subroutine main");
             appendInst(irChild, crtInst(opc(OIT_comment, OMT_long), opL, opNULL));
 
             for (int i = 0; i < tree->ast.func.scope->childrenSz; i++)
@@ -136,7 +136,7 @@ static void genIRInst (IrRoutine *ir, Tree *tree)
             
             // subroutine epilogue
             opL = ope(OT_comment);
-            strcpy(opL.str, "subroutine epilogue");
+            mccstr(opL.str, 128, "subroutine epilogue");
             appendInst(irChild, crtInst(opc(OIT_comment, OMT_long), opL, opNULL));
 
             opL = ope(OT_reg);

@@ -1,7 +1,7 @@
  
 # Chaidhat Chaimongkol's #
 # MinimalistiC Compiler  #
-# on 11:49:50 Feb  1 2020 #
+# on 16:10:35 Feb  1 2020 #
  
 .file   "asm_standard_test.mc"
  

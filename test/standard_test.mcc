@@ -1,0 +1,51 @@
+/* MinimalistiC Programming Language by Chaidhat Chaimongkol
+ * 
+ * Standard tests.mc
+ * Demonstrates all features of MinC
+ */
+#include "standard.h"
+
+int a; // external declaration
+int func_a (byte a); // function declaration
+
+// main function definition
+int main ()
+{
+    int b; // declaration
+    b = 0; // assignment
+    static byte c = 1 + b; // static, byte type & unary arithmetic, casting
+    byte *d = &c; // indirection
+    byte e[3]; // array declaration
+    e[0] = *d; // array assignment
+    byte f[6] = "hello"; // assignment of string literals
+    byte g = func_a(c); // assignment from function call
+    // conditionals and equality testing
+    if (g == 0 && e[0] == 1)
+    {
+        g = 2 >> 1; // bitwise operations
+    }
+    // while loop
+    while (g > 0)
+    {
+        g = g - 2 + 1; // binary precedence with BIDMAS
+    }
+    printf("%s world %d\n", f, g); // standard library call
+    return 0; // return
+}
+// struct definition
+struct struct_a 
+{
+    // union definition
+    union
+    {
+        int val_a = 0; // static assignment
+        byte val_b;
+    };
+};
+int func_a (byte a)
+{
+    struct_a s; // struct declaration
+    s.val_a = 0; // struct member assignment
+    s.val_b = a; // union member overwrite
+    return s.val_b;
+}

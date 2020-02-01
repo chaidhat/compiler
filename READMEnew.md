@@ -52,7 +52,7 @@ MinC's aims to be...
 * hex, octal representations
 * static declarations (`static`) 
 * pointers (`*`, `&`)
-* *very* limited use of arrays (a lá ptr math, declare with `[`, `]`)
+* *very* limited use of arrays (`[`, `]`)
 * string literals (`"`)
 * code structures & scope (`{`, `}`, `.`)
 * basic data structures (`struct`, `union`, `.`, `,`, `;`)
@@ -60,9 +60,9 @@ MinC's aims to be...
 * conditionals (`if`)
 * control flow (`while` loops)
 * unary operations (`+`, `-`, `*`, `/`) with (`(`, `)`) (with bidmas/precedence)
-* bitwise operations (`~`, `&`, `<<`)
+* bitwise operations (`~`, `&`, `>>`)
 * binary logic (`!`, `&&`)
-* equality testing (`==`, `<`)
+* equality testing (`==`, `>`)
 * standard library
 
 That's all. 8 keywords, 4 preprocessor directives,\
