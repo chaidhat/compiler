@@ -24,7 +24,7 @@ This is a personal project of mine to...
 ### Mission
 I aim to develop a programming language for beginners to learn basic programming concepts & conventions.\
 \
-MinC has very limited set of features and consistent syntax for the leaner to keep focused on *a) learning new techniques* and *b) practicing learned techniques* without getting distracted on calling external libaries (such as in Java/Python) or unituitive semantics (C++). Find out more: [Learning/Teaching Guide](#learning-guide).\
+MinC has very limited set of features and consistent syntax for the leaner to keep focused on *a) learning new techniques* and *b) practicing learned techniques* without getting distracted on calling external libaries (such as in Java/Python) or unituitive semantics (C++). It performs extremely well as it is a compiled language (unlike JS or Java) and can do just as much as C can. Find out more: [Learning/Teaching Guide](#learning-guide).\
 \
 In this repository is a basic compiler which compiles my variant of C (called MinimalistiC or MinC)
 into x86 assembly as a *.s* file in the most simple way so others can learn from the source code.
@@ -206,9 +206,15 @@ hello world 0
 **Development started 27.08.19 and over 75 manhours across 5 months were dedicated for this project**\
 **All commits and changes can be viewed [here](https://github.com/Chai112/MinC-Compiler/commits/master)**\
 There are all the weekly learning experience documented to show my progress of learning and developing a compiler and language - hopefully this will show problems which I faced and how I overcame themand will serve as a good reference for anyone who starts a project similar (or not) to this.
-### Week 0 - Research & Inspirations
-Inspired by [Nora Sandler's article](https://norasandler.com/2017/11/29/Write-a-Compiler.html) and [Rui Ueyama's](maaaasarepository and started working on my own compiler for my own programming language, at first it was called BitC and was drastically different to C. By this point, I was very familiar with C++ from my [OpenGL ESC engine](https://github.com/Chai112/ESC) and Facial Identification [AIFRED Project](https://github.com/Chai112/AIFRED) but relatively unaware of how featureless C was compared to C++. I chose C to write my compiler in, seeing that it was a popular choice for most compiler development examples online, and knew that C/C++ dealt very closely with 
-
+### Research & Inspirations
+Inspired by [Nora Sandler's](https://norasandler.com/2017/11/29/Write-a-Compiler.html), [Rui Ueyama's](https://www.sigbus.info/how-i-wrote-a-self-hosting-c-compiler-in-40-days) and [this](https://www.freecodecamp.org/news/the-programming-language-pipeline-91d3f449c919/) article to make a C compiler, I started to write a compiler. I didn't really want to write a C compiler though, I could just copy code from the hundreds of repositories there are online, so I decided to write my own language where all my ideas could be original and not a replication of others. It was initially named BitC and was drastically different to C. It would be cool though if I wrote a MinC compiler which compiled itself so I could see how inefficient it got over the iterations of self-compilation.\
+\
+By this point, I was very familiar with C++ from my [OpenGL ESC engine](https://github.com/Chai112/ESC) and Facial Identification [AIFRED](https://github.com/Chai112/AIFRED) projects but relatively unaware of how featureless C was compared to C++.
+I chose to write my compiler in C, seeing that it was a popular choice for most compiler development examples online, and knew that C/C++ dealt very closely with lower-level aspects such as controlling memory allocation on both the stack and heap memory and lacked complicated library callings (`printf` instead of `System.out.println`). C, as a compiled language unlike Java or JS, runs more efficiently and therefore faster - so if I were to write the compiler in C, compile-times of MinC projects will be relatively short - this only matters in large projects and I'm not very sure why someone would write large projects in MinC. 
+### Week 1 - Initial Development
+Basically, a compiler is a text converter. It is fed text as input (for example, a `.c` file) and outputs text as a `.s` assembly or an `.exe` executable. I am familiar with GNU's Compiler Collection (GCC) - it runs on terminal or command prompt or whatever text-based shell - sans GUI - so MinC will be done pretty much the same way. A compiler doesn't require dealing with fancy I/O, rendering or any other external libraries or APIs or SDKs - it is a very clean and lightweight project and saves time on learning APIs and debugging them. For example, I had experienced horrible memory leaking with [libPNG](http://www.libpng.org/pub/png/libpng.html) when implementing texture loading for my OpenGL renderer which tooks days to debug.\
+\
+Day one was configuring the only I/O I needed, which was to read a file and write one, and begin writing a preprocessor for my C code.
 
 ## Install
 The compiler generates x86 32-bit assembly code for Intel CPUs.
