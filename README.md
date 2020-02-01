@@ -3,13 +3,13 @@
 ![MinimalistiC Programming Language & Compiler](https://github.com/Chai112/MinC-Compiler/blob/master/doc/thumb.png)
 
 ## Table of Contents
-* [About](#about)
+* [**About**](#about)
 * [MinimalistiC Programming Language](#minimalistic-programming-language)
 * [MinimalistiC Compiler](#minimalistic-compiler)
 * [Usage Guide](#usage-guide)
-* [Learning Guide](#learning-guide)
+* [**Learning/Teaching Guide**](#learning-guide)
 * [Example](#example)
-* [**Development Process**](#devlog)
+* [**Development Process & Log**](#devlog)
 * [Install](#install)
 * [Bibliography](#thank-you-to)
 
@@ -21,11 +21,10 @@ This is a personal project of mine to...
 2. offer this as a learning experience by publically sharing my ideas and documented src code
 3. create a super-simple C-like programming language as a good starting step for LL programming
 4. (learn to use VIm)
-\
 ### Mission
 I aim to develop a programming language for beginners to learn basic programming concepts & conventions.\
 \
-MinC has very limited set of features and consistent syntax for the leaner to keep focused on *a) learning new techniques* and *b) practicing learned techniques* without getting distracted on calling external libaries (such as in Java/Python) or unituitive semantics (C++). Find out more: [Learning MinC](#learn).\
+MinC has very limited set of features and consistent syntax for the leaner to keep focused on *a) learning new techniques* and *b) practicing learned techniques* without getting distracted on calling external libaries (such as in Java/Python) or unituitive semantics (C++). Find out more: [Learning/Teaching Guide](#learning-guide).\
 \
 In this repository is a basic compiler which compiles my variant of C (called MinimalistiC or MinC)
 into x86 assembly as a *.s* file in the most simple way so others can learn from the source code.
@@ -34,12 +33,12 @@ into x86 assembly as a *.s* file in the most simple way so others can learn from
 MinimalistiC (MinC) is my take on a ultra-simplified, ultra-lightweight, derated version of the C Programming language.
 ### Aims
 MinC's aims to be...
-* **minimalised**, very easy to teach/learn as it lacks niches and only offers essential programming concepts
+* **minimal**, very easy to teach/learn as it lacks niches and only offers essential programming concepts
 * **consistent**, pragmatic use of syntax to easily understand & adapt
 * **forward compatible** with C - it can be (almost) be treated as C code and be compiled & optimised with GCC/[TCC](https://bellard.org/tcc/)
 * **lightweight**, requires a smaller library and compiler than C/C++, faster compilation, smaller memory footprint
 * **lower-level**, more finely controlled optimisations such as memory management without relying on an assembler
-**Most importantly, it aims to serve as a good starting step for begginner programmers & learning experience for me**\
+* **Most importantly, it aims to keep learners focused on *a) learning new techniques* and *b) practicing learned techniques***
 
 ### All Features
 * preprocessor directives (`#include`, `#define`, `#ifdef`, `#endif`)
@@ -65,7 +64,7 @@ and a charset of `a..z`, `0..9` with 20 symbols `. , ; + - * / = # ! & | " > ( )
 
 ## MinimalistiC Compiler
 MinC Compiler `mcc` compiles MinC to 32-bit x86 assembly *.s* files.
-### Summary of Function
+### Summary
 1. reads input char by char, being lexed into tokens
    * `file.c` and `io.c` take in the source code as a stream
    * `pp.c` for preprocesses input char stream.
@@ -110,7 +109,7 @@ MinC preprocessed files `.mi`\
 \
 To compile verbosely into x86 (Powershell):
 ```
-./mcc -g -S -o code.s code.mc
+./mcc -g -S code.mc
 ```
 To compile & execute .exe (Powershell):
 ```
@@ -145,6 +144,7 @@ args:
    
 ## Learning Guide
 ### Prerequsites
+The learner must intend to learn
 
 ## Example
 This code demonstrates all features of MinC, excluding preprocessor directives\
@@ -203,7 +203,12 @@ Powershell:
 hello world 0
 ```
 ## Devlog
-### Development started 27.08.19 and over 75 manhours across 5 months were dedicated for this project
+**Development started 27.08.19 and over 75 manhours across 5 months were dedicated for this project**\
+**All commits and changes can be viewed [here](https://github.com/Chai112/MinC-Compiler/commits/master)**\
+There are all the weekly learning experience documented to show my progress of learning and developing a compiler and language - hopefully this will show problems which I faced and how I overcame themand will serve as a good reference for anyone who starts a project similar (or not) to this.
+### Week 0 - Research & Inspirations
+Inspired by [Nora Sandler's article](https://norasandler.com/2017/11/29/Write-a-Compiler.html) and [Rui Ueyama's](maaaasarepository and started working on my own compiler for my own programming language, at first it was called BitC and was drastically different to C. By this point, I was very familiar with C++ from my [OpenGL ESC engine](https://github.com/Chai112/ESC) and Facial Identification [AIFRED Project](https://github.com/Chai112/AIFRED) but relatively unaware of how featureless C was compared to C++. I chose C to write my compiler in, seeing that it was a popular choice for most compiler development examples online, and knew that C/C++ dealt very closely with 
+
 
 ## Install
 The compiler generates x86 32-bit assembly code for Intel CPUs.
