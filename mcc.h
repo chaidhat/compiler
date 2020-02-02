@@ -304,7 +304,6 @@ bool isChangeFilepath;
 
 // config vars
 bool mode;
-bool doBenchmarking;
 bool doParsing;
 bool doAssemble;
 bool doLink;

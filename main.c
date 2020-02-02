@@ -7,7 +7,6 @@ static void configInit ()
     mccstr(outFilepath, 128, "$");
     isChangeFilepath = false;
     mode = 1; // default mode (compiler debug)s
-    doBenchmarking = false;
     doParsing = true;
     doAssemble = true;
     doLink = true;

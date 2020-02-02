@@ -169,19 +169,17 @@ void mccDoArgs (int argc, char* argv[])
         {
             char* args[] =
             {
-                "-V",
-                "-b",
                 "-o",
-                "-g",
-                "-w",
-                "-W",
-                "-We",
-                "-I",
-                "-D",
                 "-E",
+                "-a",
                 "-S",
                 "-c",
-                "-fd",
+                "-I",
+                "-D",
+                "-g",
+                "-w",
+                "-we",
+                "-v",
                 "-h",
             };
             int argNo = -1;
@@ -198,82 +196,78 @@ void mccDoArgs (int argc, char* argv[])
             GetCurrentDir( homedir, FILENAME_MAX );
             switch (argNo)
             {
-                case 0: // -V
-                    printf("MinimalistiC Compiler created by Chaidhat Chaimongkol\n"
-                    "https://github.com/Chai112/MinC-Compiler\n"
-                    "Compiled on: %s %s\n"
-                    "Target: x86 Intel (32 bit) %s\n"
-                    "Installed with: gcc %s\n"
-                    "Installed dir: %s\n"
-                    "\n"
-                    , __DATE__, __TIME__, OS, __VERSION__, homedir);
-                    mccExit(2);
-                    break;
-                case 1: // -b
-                    doBenchmarking = true; 
-                    break; 
-                case 2: // -o
+                case 0: // -o
                     strcpy(outFilepath, argv[line + 1]);
                     isChangeFilepath = true;
                     line++;
                     break;
-                case 3: // -g
-                    mode = 0;
+                case 1: // -E
+                    doParsing = false;
                     break;
-                case 4: // -w
-                    doWarnings = false;
+                case 2: // -a
+                    doDumpAst = true;
                     break;
-                case 5: // -W
-                    // TODO
-                    line++;
-                    break; 
-                case 6: // -We
-                    doWarningsE = true;
+                case 3: // -S
+                    doAssemble = false;
                     break;
-                case 7: // -I
+                case 4: // -c
+                    doLink = false;
+                    break;
+                case 5: // -I
                     predefineInclude(argv[line + 1]);
                     line++;
                     break;
-                case 8: // -D
+                case 6: // -D
                     predefineMacro(argv[line + 1], argv[line + 2]);
                     line += 2;
                     break;
-                case 9: // -E
-                    doParsing = false;
+                case 7: // -g
+                    mode = 0;
                     break;
-                case 10: // -S
-                    doAssemble = false;
+                case 8: // -w
+                    doWarnings = false;
                     break;
-                case 11: // -c
-                    doLink = false;
+                case 9: // -we
+                    doWarningsE = true;
                     break;
-                case 12: // -fd
-                    doDumpAst = true;
+                case 10: // -v
+                    printf("MinimalistiC Compiler created by Chaidhat Chaimongkol\n"
+                    "https://github.com/Chai112/MinC-Compiler\n"
+                    "Compiled on:           %s %s\n"
+                    "Target:                x86 Intel (32 bit) %s\n"
+                    "Installed with:        gcc %s\n"
+                    "Installed dir:         %s\n"
+                    "External assembler:    GNU as\n"
+                    "External linker:       GNU ld\n"
+                    "\n"
+                    , __DATE__, __TIME__, OS, __VERSION__, homedir);
+                    mccExit(2);
                     break;
-                case 13: // -h
+                case 11: // -h
                     printf("MinimalistiC Compiler created by Chaidhat Chaimongkol\n%s %s\n", __DATE__, __TIME__);
                     printf("https://github.com/Chai112/MinC-Compiler\n\n"
-                    "usage: mcc [-h] [-V] [arg1 arg2 ...] <inpath1 inpath2 ...>\n\n" 
+                    "usage: mcc [-v] [-h] [arg1 arg2 ...] <infile1 infile2 ...>\n\n" 
                     "mcc only accepts .mc as inpath, dir and include accepts any types\n"
                     "args:\n"
-                    "   -V                  display version info\n"
-                    "   -b                  display compilation benchmarks\n"
-                    "   -o <path>           write output to <path>\n"
+                    "  output:\n"
+                    "    -o <filename>       write output to <filename>\n"
+                    "    -E           .mi    print preprocessed\n"
+                    "    -a           .md    print AST\n"
+                    "    -S           .s     stop before assembly\n"
+                    "    -c           .o     stop before linking\n"
                     "\n"
-                    "   -g                  enable compiler debugger\n"
-                    "   -w                  supress all warnings\n"
-                    "   -W <wcode>          supress <wcode> warning\n"
-                    "   -We                 treat all warnings as errors\n"
+                    "  preprocessor:\n"
+                    "    -I <dir>            add include path <dir>\n"
+                    "    -D <macro> <val>    set <macro> to <val>\n"
                     "\n"
-                    "   -I <dir>            add include path <dir>\n"
-                    "   -D <macro> <val>    set <macro> to <val>\n"
-                    "   -E                  preprocess only\n"
+                    "  debugger:\n"
+                    "    -g                  verbose compiler debugger\n"
+                    "    -w                  supress all warnings\n"
+                    "    -we                 treat all warnings as errors\n"
                     "\n"
-                    "   -S                  stop before assembly\n"
-                    "   -c                  stop before linking\n"
-                    "   -fd                 print AST\n"
-                    "\n"
-                    "   -h                  display this help\n"
+                    "  info:\n"
+                    "    -v                  display version info\n"
+                    "    -h                  display this help\n"
                     "\n"
                     );
                     mccExit(2);

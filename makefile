@@ -5,7 +5,7 @@
 CC=gcc
 CFLAGS=-Werror -Os
 ECC=$(BDIR)/mcc
-TESTCMD = -g -S -fd -D c 1
+TESTCMD = -g -S -a -D c 1
 
 _SRC := $(wildcard *.c)
 _OBJ := $(_SRC:.c=.o) 
