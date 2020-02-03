@@ -39,4 +39,11 @@ test/asm_standard_test.mc AST:
 | | | },
 | | },
 | },
+| {
+| | type: FUNC
+| | funcType: INT
+| | isPtr: 0
+| | isStatic: 0
+| | funcName: foo
+| },
 },

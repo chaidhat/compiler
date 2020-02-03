@@ -33,6 +33,12 @@ _main:
 	pushl	VAR_A
 	call print_int
 
+	pushl	-12(%esp)
+	call print_int
+
+	pushl	-16(%esp)
+	call print_int
+
     # use prev declared var at -4 ebp
     movl    -4(%ebp), %ebx
 	pushl	%ebx
@@ -54,9 +60,26 @@ print_int:
 	pushl	%ebp
 	movl 	%esp, %ebp
 
-	pushl	8(%ebp)	# parameters are 8 bytes (esp and ebp are in the middle)
+    # reserve return memory
+    pushl   $0
+    pushl   $0
+
+    movl    8(%ebp), %eax
+    # perform calculation
+    pushl   %eax # declare var at -12(%ebp)
+
+    pushl	8(%ebp)	# parameters are 8 bytes (esp and ebp are in the middle)
+	pushl	-12(%ebp)
 	pushl 	$MSG
     call    _printf
+
+    # return
+    movl    %ebp, %esp
+
+    movl    -12(%ebp), %eax
+    addl    $2, %eax
+    pushl   %eax 
+    pushl   $2020
 
 	# subroutine epilogue
 	movl 	%ebp, %esp
