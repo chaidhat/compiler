@@ -68,6 +68,24 @@ static Register regp (enum RegPhyType phy) // for infinite registers
     return reg;
 }
 
+static Operand crtOpeReg(Operand operand, Register reg)
+{
+    operand.reg = reg;
+    return operand;
+}
+
+static Operand crtOpeStr(Operand operand, char str[128])
+{
+    mccstr(operand.str, 128, str);
+    return operand;
+}
+
+static Operand crtOpeNum(Operand operand, int num)
+{
+    operand.num = num;
+    return operand;
+}
+
 static void appendRoutine (IrRoutine *dest, IrRoutine *src)
 {
     while (!dest->end)
@@ -98,9 +116,10 @@ static void genIRInst (IrRoutine *ir, Tree *tree)
     {
         case IT_Var:
             mccLog("var");
-            opL = ope(OT_num_lit);
-            opL.num = 0;
-            appendInst(ir, crtInst(opc(OIT_push, OMT_long), opL, opNULL));
+            appendInst(ir, 
+                    crtInst(opc(OIT_push, OMT_long), 
+                    crtOpeNum(ope(OT_num_lit), 0),
+                    opNULL));
             //genVar(treeOut, treeIn->ast.var.varName);
             break;
         case IT_Func:
@@ -110,24 +129,28 @@ static void genIRInst (IrRoutine *ir, Tree *tree)
             appendRoutine(ir, irChild);
 
             // subroutine prologue
-            opL = ope(OT_comment);
-            mccstr(opL.str, 128, "subroutine prologue");
-            appendInst(irChild, crtInst(opc(OIT_comment, OMT_long), opL, opNULL));
-
-            opL = ope(OT_reg);
-            opL.reg = regp(RAT_ebp);
-            appendInst(irChild, crtInst(opc(OIT_push, OMT_long), opL, opNULL));
-
-            opL = ope(OT_reg);
-            opL.reg = regp(RAT_esp);
-            opR = ope(OT_reg);
-            opR.reg = regp(RAT_ebp);
-            appendInst(irChild, crtInst(opc(OIT_mov, OMT_long), opL, opR));
+            appendInst(irChild, 
+                crtInst(opc(OIT_comment, OMT_long),
+                crtOpeStr(ope(OT_comment), "subroutine prologue"),
+                opNULL
+            ));
+            appendInst(irChild, 
+                crtInst(opc(OIT_push, OMT_long),
+                crtOpeReg(ope(OT_reg), regp(RAT_ebp)),
+                opNULL
+            ));
+            appendInst(irChild, 
+                crtInst(opc(OIT_mov, OMT_long),
+                crtOpeReg(ope(OT_reg), regp(RAT_esp)),
+                crtOpeReg(ope(OT_reg), regp(RAT_ebp))
+            ));
 
             // main
-            opL = ope(OT_comment);
-            mccstr(opL.str, 128, "subroutine main");
-            appendInst(irChild, crtInst(opc(OIT_comment, OMT_long), opL, opNULL));
+            appendInst(irChild, 
+                crtInst(opc(OIT_comment, OMT_long),
+                crtOpeStr(ope(OT_comment), "subroutine main"),
+                opNULL
+            ));
 
             for (int i = 0; i < tree->ast.func.scope->childrenSz; i++)
             {
@@ -135,44 +158,51 @@ static void genIRInst (IrRoutine *ir, Tree *tree)
             }
             
             // subroutine epilogue
-            opL = ope(OT_comment);
-            mccstr(opL.str, 128, "subroutine epilogue");
-            appendInst(irChild, crtInst(opc(OIT_comment, OMT_long), opL, opNULL));
-
-            opL = ope(OT_reg);
-            opL.reg = regp(RAT_ebp);
-            opR = ope(OT_reg);
-            opR.reg = regp(RAT_esp);
-            appendInst(irChild, crtInst(opc(OIT_mov, OMT_long), opL, opR));
-
-            opL = ope(OT_reg);
-            opL.reg = regp(RAT_ebp);
-            appendInst(irChild, crtInst(opc(OIT_pop, OMT_long), opL, opNULL));
+            appendInst(irChild, 
+                crtInst(opc(OIT_comment, OMT_long),
+                crtOpeStr(ope(OT_comment), "subroutine epilogue"),
+                opNULL
+            ));
+            appendInst(irChild, 
+                crtInst(opc(OIT_mov, OMT_long),
+                crtOpeReg(ope(OT_reg), regp(RAT_ebp)),
+                crtOpeReg(ope(OT_reg), regp(RAT_esp))
+            ));
+            appendInst(irChild, 
+                crtInst(opc(OIT_pop, OMT_long),
+                crtOpeReg(ope(OT_reg), regp(RAT_ebp)),
+                opNULL
+            ));
 
             // subroutine return
-            opL = ope(OT_comment);
-            mccstr(opL.str, 128, "subroutine return");
-            appendInst(irChild, crtInst(opc(OIT_comment, OMT_long), opL, opNULL));
-
-            opL = ope(OT_reg);
-            opL.reg = regp(RAT_a);
-            appendInst(irChild, crtInst(opc(OIT_pop, OMT_long), opL, opNULL));
-
-            opL = ope(OT_reg);
-            opL.reg = regp(RAT_a);
-            appendInst(irChild, crtInst(opc(OIT_jmp, OMT_long), opL, opNULL));
+            appendInst(irChild, 
+                crtInst(opc(OIT_comment, OMT_long),
+                crtOpeStr(ope(OT_comment), "subroutine return"),
+                opNULL
+            ));
+            appendInst(irChild, 
+                crtInst(opc(OIT_pop, OMT_long),
+                crtOpeReg(ope(OT_reg), regp(RAT_a)),
+                opNULL
+            ));
+            appendInst(irChild, 
+                crtInst(opc(OIT_jmp, OMT_long),
+                crtOpeReg(ope(OT_reg), regp(RAT_a)),
+                opNULL
+            ));
 
             break;
         case IT_Lit:
+            mccLog("lit");
             if (tree->ast.lit.type == LT_INT)
             {
-                opL = ope(OT_num_lit);
-                opL.num = tree->ast.lit.val.tInt;
+            mccLog("lit");
+                appendInst(ir, 
+                    crtInst(opc(OIT_mov, OMT_long),
+                    crtOpeNum(ope(OT_num_lit), tree->ast.lit.val.tInt),
+                    crtOpeReg(ope(OT_reg), regp(RAT_a))
+                ));
             }
-            opR = ope(OT_reg);
-            opR.reg = regp(RAT_a);
-            //opR.reg = regn("a");
-            appendInst(ir, crtInst(opc(OIT_mov, OMT_long), opL, opR));
             //genInstNum(treeOut, treeIn->ast.lit.val.tInt);
             //mccLog("lit %d", treeOut->children[treeOut->childrenSz - 1].dag.num);
             /*
