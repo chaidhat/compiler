@@ -1,7 +1,7 @@
  
 # Chaidhat Chaimongkol's #
 # MinimalistiC Compiler  #
-# on 20:43:02 Feb  2 2020 #
+# on 16:43:33 Feb  6 2020 #
  
 .file   "asm_standard_test.mc"
  
@@ -21,7 +21,9 @@ _main:
     # subroutine epilogue
     movl    %ebp, %esp
     popl    %ebp
-    ret
+    # subroutine return
+    popl    %eax
+    jmpl    *%eax
 .globl _foo
 _foo:
     # subroutine prologue
@@ -31,5 +33,7 @@ _foo:
     # subroutine epilogue
     movl    %ebp, %esp
     popl    %ebp
-    ret
+    # subroutine return
+    popl    %eax
+    jmpl    *%eax
  

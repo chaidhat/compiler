@@ -53,7 +53,8 @@ _main:
     movl    $0, %eax
 	movl 	%ebp, %esp
 	popl 	%ebp
-	ret
+    popl    %eax
+    jmpl    *%eax
 
 print_int:
 	# subroutine prologue
@@ -61,14 +62,15 @@ print_int:
 	movl 	%esp, %ebp
 
     # reserve return memory
-    pushl   $0
-    pushl   $0
+    call struct_a
 
-    movl    8(%ebp), %eax
     # perform calculation
-    pushl   %eax # declare var at -12(%ebp)
+    movl    8(%ebp), %eax
+    # blah blah blah on %eax reg
+    pushl   %eax # declare var at -12 ebp
 
-    pushl	8(%ebp)	# parameters are 8 bytes (esp and ebp are in the middle)
+    pushl   $2 # declare var at -16 ebp (not used)
+
 	pushl	-12(%ebp)
 	pushl 	$MSG
     call    _printf
@@ -84,5 +86,12 @@ print_int:
 	# subroutine epilogue
 	movl 	%ebp, %esp
 	popl 	%ebp
-	ret 	#pop %eax; jmp %eax
+    popl    %eax
+    jmpl    *%eax
+
+struct_a:
+    popl    %eax
+    pushl   $0
+    pushl   $0
+    jmpl    *%eax
 

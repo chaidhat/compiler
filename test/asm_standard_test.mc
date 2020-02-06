@@ -7,6 +7,11 @@ int main ()
     b = 0;
 }
 
-int foo ()
+struct a
+{
+    byte a;
+};
+
+a foo ()
 {
 }

@@ -80,9 +80,6 @@ static void genRoutine (char *dest, int destSz, IrRoutine *ir)
         inst = *inst.next; // first inst is stub
         genInst(dest, destSz, inst);
     }
-    //gfim("    movl    \%ebp, \%esp", "");
-    //gfim("    popl    \%ebp", "");
-    genfileinserts("    ret");
 }
 
 static void genInst (char *dest, int destSz, IrInst inst)
@@ -118,6 +115,14 @@ static void genInst (char *dest, int destSz, IrInst inst)
             gfis("    ");
             genOp(dest, destSz, inst.dest);
 
+            break;
+
+        case OIT_jmp:
+            gfis("jmp");
+            gfim("%s", omt(inst.op.size));
+
+            gfis("    *");
+            genOp(dest, destSz, inst.dest);
             break;
 
         case OIT_comment:

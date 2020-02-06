@@ -149,6 +149,19 @@ static void genIRInst (IrRoutine *ir, Tree *tree)
             opL.reg = regp(RAT_ebp);
             appendInst(irChild, crtInst(opc(OIT_pop, OMT_long), opL, opNULL));
 
+            // subroutine return
+            opL = ope(OT_comment);
+            mccstr(opL.str, 128, "subroutine return");
+            appendInst(irChild, crtInst(opc(OIT_comment, OMT_long), opL, opNULL));
+
+            opL = ope(OT_reg);
+            opL.reg = regp(RAT_a);
+            appendInst(irChild, crtInst(opc(OIT_pop, OMT_long), opL, opNULL));
+
+            opL = ope(OT_reg);
+            opL.reg = regp(RAT_a);
+            appendInst(irChild, crtInst(opc(OIT_jmp, OMT_long), opL, opNULL));
+
             break;
         case IT_Lit:
             if (tree->ast.lit.type == LT_INT)

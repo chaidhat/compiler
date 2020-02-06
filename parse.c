@@ -67,11 +67,12 @@ static enum LitType getType ()
 
     for (int i = 0; i < types.childrenSz; i++)
     {
-        mccLog("type <%s> <%s>", peek().id, types.children[i].id);
+        mccLog("type <%s> <%s> <%d>", peek().id, types.children[i].id, i + 1);
         if (strcmp(peek().id, types.children[i].id) == 0)
-            return types.childrenSz - i;
+            return i + 1;
     }
 
+    mccLog("type invalid");
     return LT_INVALID;
 }
 
@@ -102,6 +103,8 @@ static void parseType (enum LitType *type, bool *isPtr, bool *isStatic)
         mccErrC(EC_PARSE_SYN, "unexpected declaration type \"%s\"", peek().id);
     else
         *type = getType();
+
+    mccLog("type %d", *type);
 
     next();
 
