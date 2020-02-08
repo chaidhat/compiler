@@ -233,12 +233,12 @@ void mccDoArgs (int argc, char* argv[])
                 case 10: // -v
                     printf("MinimalistiC Compiler created by Chaidhat Chaimongkol\n"
                     "https://github.com/Chai112/MinC-Compiler\n"
-                    "Compiled on:           %s %s\n"
-                    "Target:                x86 Intel (32 bit) %s\n"
-                    "Installed with:        gcc %s\n"
-                    "Installed dir:         %s\n"
-                    "External assembler:    GNU as\n"
-                    "External linker:       GNU ld\n"
+                    "Compiled on:            %s %s\n"
+                    "Target:                 x86 Intel (32 bit) %s\n"
+                    "Installed with:         gcc %s\n"
+                    "Installed dir:          %s\n"
+                    "External assembler:     GNU as (AT&T syntax)\n"
+                    "External linker:        GNU ld\n"
                     "\n"
                     , __DATE__, __TIME__, OS, __VERSION__, homedir);
                     mccExit(2);

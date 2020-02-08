@@ -1,7 +1,7 @@
  
 # Chaidhat Chaimongkol's #
 # MinimalistiC Compiler  #
-# on 17:13:05 Feb  6 2020 #
+# on 10:13:23 Feb  8 2020 #
  
 .file   "asm_standard_test.mc"
  
@@ -17,6 +17,7 @@ _main:
     movl    %esp, %ebp
     # subroutine main
     pushl   $0
+    movl    -4(%ebp), %ebx
     movl    $0, %eax
     # subroutine epilogue
     movl    %ebp, %esp

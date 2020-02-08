@@ -56,7 +56,7 @@ static void genOp (char *dest, int destSz, Operand op)
                     gfis("%%ebp");
             }
             if (op.reg.type == RT_rel)
-                gfim("%d(\%ebp)", op.reg.rel);
+                gfim("%s%d(%%ebp)", op.reg.rel > 0? "+" : "-", op.reg.rel);
             // no RT_abs, it has been dealt with in memalloc.c
             break;
         case OT_comment:

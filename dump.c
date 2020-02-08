@@ -196,7 +196,7 @@ static void dumpInst (Tree *tree)
             if (tree->ast.lit.type == LT_INT)
                 print("val: %d", tree->ast.lit.val.tInt);
             else
-                mccErr("val: CHAR NOT PROG"); // TODO: char
+                mccErr("val: CHAR NOT PROG"); // TODO: support LT_CAHR
             break;
         case IT_Id:
             print("isPtr: %d", tree->ast.id.isPtr);

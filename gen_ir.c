@@ -44,7 +44,7 @@ static Operand ope (enum OperandType type)
     return operand;
 }
 
-static Register regn (char stat[128]) // for infinite registers
+static Register regs (char stat[128])
 {
     Register reg;
     reg.type = RT_stat;
@@ -52,15 +52,15 @@ static Register regn (char stat[128]) // for infinite registers
     return reg;
 }
 
-static Register rego (int offset) // for infinite registers
+static Register regr (int offset)
 {
     Register reg;
-    reg.type = RT_abs;
-    reg.abs = offset;
+    reg.type = RT_rel;
+    reg.rel = offset;
     return reg;
 }
 
-static Register regp (enum RegPhyType phy) // for infinite registers
+static Register regp (enum RegPhyType phy)
 {
     Register reg;
     reg.type = RT_phy;
@@ -98,12 +98,41 @@ static void appendRoutine (IrRoutine *dest, IrRoutine *src)
 static void appendInst (IrRoutine *routine, IrInst *src)
 {
     IrInst *dest;
-    dest = routine->inst; // first inst is stub
+    dest = routine->inst; // first inst is stub:u
     while (!dest->end)
         dest = dest->next; // first inst is stub
     dest->end = false;
     src->end = true; // assumes src is the last element
     dest->next = src;
+}
+
+typedef struct
+{
+    char name[128];
+    int memLoc; // -location(%ebp)
+} IrVar;
+
+static IrVar vars[128];
+static int varSz = 0;
+static int scopeLocation = -4;
+
+static void crtVar (char varName[128])
+{
+    strcpy(vars[varSz].name, varName);
+    vars[varSz].memLoc = scopeLocation;
+
+    varSz++;
+    scopeLocation -= 4; // TODO: change size for datatype
+}
+
+static int getVarMemLoc (char varName[128])
+{
+    for (int i = 0; i < varSz; i++)
+    {
+        if (strcmp(vars[i].name, varName) == 0)
+            return vars[i].memLoc;
+    }
+    return -1;
 }
 
 static void genIRInst (IrRoutine *ir, Tree *tree)
@@ -120,6 +149,7 @@ static void genIRInst (IrRoutine *ir, Tree *tree)
                     crtInst(opc(OIT_push, OMT_long), 
                     crtOpeNum(ope(OT_num_lit), 0),
                     opNULL));
+            crtVar(tree->ast.var.varName);
             //genVar(treeOut, treeIn->ast.var.varName);
             break;
         case IT_Func:
@@ -196,13 +226,13 @@ static void genIRInst (IrRoutine *ir, Tree *tree)
             mccLog("lit");
             if (tree->ast.lit.type == LT_INT)
             {
-            mccLog("lit");
-                appendInst(ir, 
+                appendInst(ir,
                     crtInst(opc(OIT_mov, OMT_long),
                     crtOpeNum(ope(OT_num_lit), tree->ast.lit.val.tInt),
                     crtOpeReg(ope(OT_reg), regp(RAT_a))
                 ));
             }
+            // TODO: support LT_CHAR
             //genInstNum(treeOut, treeIn->ast.lit.val.tInt);
             //mccLog("lit %d", treeOut->children[treeOut->childrenSz - 1].dag.num);
             /*
@@ -214,6 +244,12 @@ static void genIRInst (IrRoutine *ir, Tree *tree)
             */
             break;
         case IT_Id:
+            mccLog("id");
+            appendInst(ir,
+                crtInst(opc(OIT_mov, OMT_long),
+                crtOpeReg(ope(OT_reg), regr(getVarMemLoc(tree->ast.id.varName))),
+                crtOpeReg(ope(OT_reg), regp(RAT_b))
+            ));
             //genInstStr(treeOut, treeIn->ast.id.varName);
             //mccLog("id %s", treeOut->children[treeOut->childrenSz - 1].dag.str);
             /*

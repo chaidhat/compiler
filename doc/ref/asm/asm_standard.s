@@ -78,8 +78,10 @@ print_int:
     # return
     movl    %ebp, %esp
 
-    movl    -12(%ebp), %eax
-    addl    $2, %eax
+    # a * 2 + 2
+    movl    -12(%ebp), %eax # a
+    imul    $2, %eax # * 2
+    addl    $2, %eax # + 2
     pushl   %eax 
     pushl   $2020
 
