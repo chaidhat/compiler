@@ -147,14 +147,17 @@ args:
    
 ## Learning Guide
 ### Mission
+MinimalistiC is a programming language I designed for simplifying the C programming language for beginners\
 [Mission written here](#about) and [here](#minimalistic-programming-language).\
-It keep learners\
+To simplify, it keep learners\
 a) focused on learning new techniques\
 b) practicising learned techniques to get familiarised using them
-### Why to Learn MinC
-MinimalisitiC is a programming language meant for begginers which tries to be as simple as possible whilst remaining faithful to the C programming language. Unlike other langauges where they strive for efficiency or implementing abstract concepts, MinC is designed for beginners to keep learners focused on acquiring basic coding paradigms and prevent them from overwhelming themselves with niche or difficult concepts which could discourage them. There are many ways someone could teach a student how to learn Java or JS or C++ since there are many ways to solve a problem, however some techniques of teaching are better than others and bad techniques can lead the student to be overwhelmed by information, and forget the essentials of programming a language, discouraging them or boring them. MinC limits the ways which problems can be solved by distilling a language to its pure essentials, similar to what Scratch does - which it takes inspiration from; this allows the user to self-teach or discover by themselves because of MinC's very small featureset elimnating the need of remembering loads of symbols or external library commands.\
+### Why Learn MinC
+There are many programming languages which are easy for beginners, especially Python and Java and Javascript. Some of these language have very simple syntax, for beginners to easily pick up and understand - guided by a tutorial. The tutorials then introduce more concepts, sometimes at lighting paces, building onto more and more abstract concepts such as OOP or utilising other external libraries - this is all done at the teacher's discretion, leaving the user vunerable to bad teaching techniques where they could be overwhelmed with concepts to a point where they have no practical purpose to learning new techniques, forgetting old, useful ones as a result.\
 \
-It is as powerful as C, since it derives from C and borrows it standard library. Because of its forward-compatibility with C (it can be treated more or less as C code with minor adjustments), it can be compiled on large compilers to ensure it is optimised and linked with existing C libaries such as cURL or libPNG. C is a goto language for low-level software developers and used for mission critical applications, such as in [NASA's Jet Propulsion Laboratories](http://pixelscommander.com/wp-content/uploads/2014/12/P10.pdf) to develop spacecraft - since MinC can compile as C and theoretically do what C can, it can do just as much.
+The proposed alternative, which is MinC's, is to introduce beginners to a new a language where they are restricted to learn only simple concepts and are encouraged (by the design of the language) to reuse the learned techiqnues, similar to what Scratch does, to achieve an end goal or product. The heavily-simplifed nature of MinC allows begginers to understand the code written by others, as they are limited to a very small featureset (of 8 keywords) and concepts, allowing them to creatively use code to achieve results - inspiring problem solving behaviours similar to what [Whitespace](https://en.wikipedia.org/wiki/Whitespace_(programming_language)) or other low-level languages do. The language avoids confusing syntax for absolute beginners such as in C++ or Pascal and uses consistent and understandable semantics.\
+\
+MinC can be transfered into learning a more powerful and practical language such as C or C++. It is as powerful as C, since it derives from C and borrows it standard library. Because of its forward-compatibility with C (it can be treated more or less as C code with minor adjustments), it can be compiled on large compilers to ensure it is optimised and linked with existing C libaries such as cURL or libPNG. C is a goto language for low-level software developers and used for mission critical applications, such as in [NASA's Jet Propulsion Laboratories](http://pixelscommander.com/wp-content/uploads/2014/12/P10.pdf) to develop spacecraft - since MinC can compile as C and theoretically do what C can, it can do just as much.
 ### Fundementals
 MinC heavily simplifes C, and therefore limits learners to use the most basic concepts of programming,
 1. **data storage,** variables, datatypes, how data is represented and stored
@@ -172,17 +175,13 @@ and many more.
 This code demonstrates all features of MinC, excluding preprocessor directives\
 **helloWorld.mc**
 ```
-#include "standard.h"
-
+#include "standard.h" // preprocessor directives
 int a; // external declaration
 int func_a (byte a); // function declaration
-
-// main function definition
-int main ()
+int main () // main function definition
 {
-    int b; // declaration
-    b = 0; // assignment
-    static byte c = 1 + b; // static, byte type & unary arithmetic, casting
+    int b = 0; // declaration and assignment
+    static byte c = 1 + b; // static, of byte type & unary arithmetic, casting
     byte *d = &c; // indirection
     byte e[3]; // array declaration
     e[0] = *d; // array assignment
