@@ -2,11 +2,7 @@
 ### Programming Language & Compiler started 27.08.19, over 75 manhours across 5 months
 ![MinimalistiC Programming Language & Compiler](https://github.com/Chai112/MinC-Compiler/blob/master/doc/thumb.png)
 
-<object data="http://www.orimi.com/pdf-test.pdf" type="application/pdf" width="700px" height="700px">
-    <embed src="http://www.orimi.com/pdf-test.pdf">
-        <p>This browser does not support PDFs. Please download the PDF to view it: <a href="http://yoursite.com/the.pdf">Download PDF</a>.</p>
-    </embed>
-</object>
+<a><iframe src="http://docs.google.com/gview?url=http://www.orimi.com/pdf-test.pdff&embedded=true" style="width:718px; height:700px;" frameborder="0"></iframe></a>
 
 ## Table of Contents
 * [**About**](#about)
