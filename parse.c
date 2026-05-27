@@ -565,21 +565,28 @@ static Tree *parseBinary ()
             // e.g. 1 / 2 * 3 + 4 should be ((1 / 2) * 3) + 4 
             mccLog("op p \"%s\"", peek().id);
             Tree *ptrInst = parseBinary();
+            Tree *finalLeftParent = NULL;
             Tree *finalLeft = ptrInst;
-            mccLog("op p2 \"%s\"", ptrInst->ast.binary.op.id);
-            while (!finalLeft->ast.binary.stub) // find the leftmost tree
+            while (finalLeft->ast.type == IT_Binary && !finalLeft->ast.binary.stub)
             {
+                finalLeftParent = finalLeft;
                 finalLeft = finalLeft->ast.binary.left;
             }
-            // start off (1 * NULL), (2 + 5)
-            // 1. (1 * 2), (NULL + 5)
-            // 2. NULL, ((1 * 2) + 5)
-            // 3. ((1 * 2) + 5), NULL
-            inst->ast.binary.right = finalLeft->ast.binary.left; // 1. right of inst to leftmost
-            Tree *tempInst;
-            tempInst = inst;
-            finalLeft->ast.binary.left = tempInst; // 2. inst inside the leftmost
-            inst = ptrInst; // 3. claim the entire left as itself, swap
+            if (finalLeft->ast.type == IT_Binary)
+            {
+                inst->ast.binary.right = finalLeft->ast.binary.left;
+                finalLeft->ast.binary.left = inst;
+            }
+            else if (finalLeftParent != NULL)
+            {
+                inst->ast.binary.right = finalLeft;
+                finalLeftParent->ast.binary.left = inst;
+            }
+            else
+            {
+                inst->ast.binary.right = ptrInst;
+            }
+            inst = ptrInst;
             prev();
         }
         else
