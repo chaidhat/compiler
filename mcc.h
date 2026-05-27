@@ -75,9 +75,26 @@ enum OpcodeInstType
     OIT_push,
     OIT_pop,
     OIT_mov,
+    OIT_add,
+    OIT_sub,
+    OIT_mul,
+    OIT_sdiv,
     OIT_cmp,
+    OIT_cset,
     OIT_jmp,
+    OIT_beq,
+    OIT_bne,
+    OIT_bgt,
+    OIT_ble,
     OIT_call,
+    OIT_ret,
+    OIT_label,
+    OIT_ldr,
+    OIT_str,
+    OIT_and,
+    OIT_orr,
+    OIT_lsr,
+    OIT_adr,
 };
 enum OpcodeMemType
 {
@@ -93,20 +110,36 @@ enum RegType
 };
 enum RegPhyType
 {
-    RAT_a,
-    RAT_b,
-    RAT_c,
-    RAT_d,
-    //RAT_esi,
-    //RAT_edi,
-    RAT_esp,
-    RAT_ebp,
+    RAT_x0,
+    RAT_x1,
+    RAT_x2,
+    RAT_x3,
+    RAT_x4,
+    RAT_x5,
+    RAT_x6,
+    RAT_x7,
+    RAT_x9,
+    RAT_x10,
+    RAT_x11,
+    RAT_sp,
+    RAT_fp,
+    RAT_lr,
+};
+enum CondCode
+{
+    CC_EQ,
+    CC_NE,
+    CC_GT,
+    CC_LT,
+    CC_GE,
+    CC_LE,
 };
 typedef union
 {
     void *tVoid;
     int tInt;
     char tChar;
+    char tStr[128];
 } LitVal;
 
 typedef struct
@@ -213,6 +246,7 @@ typedef struct
 {
     enum OpcodeInstType type; // e.g. push, mov
     enum OpcodeMemType size; // byte, long
+    enum CondCode cond; // for OIT_cset
 } Opcode;
 
 typedef struct
@@ -287,6 +321,7 @@ typedef struct Tree
 typedef struct IrRoutine
 {
     char name[128];
+    int frameSize;
 
     IrInst *inst;
 
@@ -394,13 +429,15 @@ void dumpAst (Tree *ast);
 
 // gen_ir.c
 IrRoutine *crtRoutine (char *name);
-
 void genIr (IrRoutine *ir, Tree *ast);
+int getStringLitCount ();
+char *getStringLitLabel (int i);
+char *getStringLitValue (int i);
 
 
 // memalloc.c
 IrRoutine *memalloc (IrRoutine *ir);
 
 
-// gen_x86.c
-void genX (char *dest, int destSz, IrRoutine *ir);
+// gen_arm64.c
+void genArm64 (char *dest, int destSz, IrRoutine *ir);

@@ -469,15 +469,14 @@ static Tree *parseLit ()
     Tree *inst = crtInst(IT_Lit);
     if (peek().id[0] == '"')
     {
-        inst->ast.lit.type = LT_CHAR; // TODO: String handling
-        mccErrC(EC_FATAL, "does not do string handling!");
-        inst->ast.lit.val.tChar = peek().id[0];
+        inst->ast.lit.type = LT_CHAR;
+        strncpy(inst->ast.lit.val.tStr, peek().id, 127);
+        inst->ast.lit.val.tStr[127] = '\0';
     }
     else
     {
         inst->ast.lit.type = LT_INT;
         int num = mccstrtod(peek().id);
-        /**/
         inst->ast.lit.val.tInt = num;
     }
     return inst;
@@ -666,7 +665,7 @@ static void parseCtrl (Tree *parent)
     inst.ast.ctrl.exprsn = parseBinary();
 
     Tree *scope = crtInst(IT_Scope);
-    inst.ast.cond.scope = scope;
+    inst.ast.ctrl.scope = scope;
 
     if (isSep("{"))
     {

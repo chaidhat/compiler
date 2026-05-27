@@ -143,10 +143,12 @@ char *mccdtostr (int in)
     char *strout = malloc(sizeof (char[128]));
     if (in == 0)
         return "0";
+    bool neg = in < 0;
+    int val = neg ? -in : in;
     do
     {
         char n = '0';
-        switch (abs(in) % 10)
+        switch (val % 10)
         {
             case 0:
                 n = '0';  
@@ -184,13 +186,19 @@ char *mccdtostr (int in)
                 break;
         }
         str[i++] = n;
-        in = floor(in/10);
+        val = val / 10;
     }
-    while (in != 0);
+    while (val != 0);
+    int off = 0;
+    if (neg)
+    {
+        strout[0] = '-';
+        off = 1;
+    }
     for (int j = 0; j < i; j++)
-        strout[j] = str[i - j - 1];
+        strout[off + j] = str[i - j - 1];
 
-    strout[i] = '\0';
+    strout[off + i] = '\0';
     return strout;
 }
 

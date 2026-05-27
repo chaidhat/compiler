@@ -1,5 +1,4 @@
 #include "mcc.h"
-#include <windows.h>
 
 static void configInit ()
 {
@@ -51,7 +50,7 @@ int main (int argc, char* argv[])
         ir = memalloc(ir); // assign registers to IR
 
         char outFile[DB_SIZE];
-        genX(outFile, sizeof outFile, ir); // generate x86 from IR
+        genArm64(outFile, sizeof outFile, ir); // generate ARM64 from IR
         
         if (!doAssemble) // -S
         {

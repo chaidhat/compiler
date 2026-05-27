@@ -1,20 +1,14 @@
 #include <stdarg.h>
-#include <windows.h>
-#include <conio.h>
+#include <unistd.h>
 #include "mcc.h"
 
-// http://www.codebind.com/cprogramming/get-current-directory-using-c-program/
-#ifdef _WIN32
-    #include <direct.h>
-    #define GetCurrentDir _getcwd
-    #define OS "Windows" 
-#elif __APPLE__
-    #include <unistd.h>
-    #define GetCurrentDir getcwd
-    #define OS "Mac OS X" 
+#ifdef __APPLE__
+    #define OS "macOS"
 #else
-    #error MCC Does not support/recognise this OS
+    #define OS "Linux"
 #endif
+
+#define GetCurrentDir getcwd
 
 
 enum MsgType
@@ -24,12 +18,9 @@ enum MsgType
     Err,
 };
 
-static void colourPrint (int colour, char *msg)
+static void colourPrint (const char *ansi, char *msg)
 {
-    HANDLE hcon = GetStdHandle(STD_OUTPUT_HANDLE);
-    SetConsoleTextAttribute(hcon, colour);
-    printf("%s", msg);
-    SetConsoleTextAttribute(hcon, 7);
+    printf("%s%s\033[0m", ansi, msg);
 }
 
 static void mccPrint (enum MsgType msgType, char* prefix, char* suffix, char* format, va_list args )
@@ -40,10 +31,10 @@ static void mccPrint (enum MsgType msgType, char* prefix, char* suffix, char* fo
         case Log:
             break;
         case Warn:
-            colourPrint(14, "warning: ");
+            colourPrint("\033[1;33m", "warning: ");
             break;
         case Err:
-            colourPrint(12, "error: ");
+            colourPrint("\033[1;31m", "error: ");
             break;
     };
     char buf[256];
@@ -193,7 +184,8 @@ void mccDoArgs (int argc, char* argv[])
             }
              
             char homedir[FILENAME_MAX];
-            GetCurrentDir( homedir, FILENAME_MAX );
+            if (!GetCurrentDir( homedir, FILENAME_MAX ))
+                strcpy(homedir, ".");
             switch (argNo)
             {
                 case 0: // -o
@@ -234,11 +226,11 @@ void mccDoArgs (int argc, char* argv[])
                     printf("MinimalistiC Compiler created by Chaidhat Chaimongkol\n"
                     "https://github.com/Chai112/MinC-Compiler\n"
                     "Compiled on:            %s %s\n"
-                    "Target:                 x86 Intel (32 bit) %s\n"
+                    "Target:                 ARM64 (Apple Silicon) %s\n"
                     "Installed with:         gcc %s\n"
                     "Installed dir:          %s\n"
-                    "External assembler:     GNU as (AT&T syntax)\n"
-                    "External linker:        GNU ld\n"
+                    "External assembler:     clang (integrated)\n"
+                    "External linker:        clang (integrated)\n"
                     "\n"
                     , __DATE__, __TIME__, OS, __VERSION__, homedir);
                     mccExit(2);

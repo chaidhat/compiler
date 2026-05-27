@@ -1,42 +1,34 @@
-# thank you to  http://nuclear.mutantstargoat.com/articles/make
-#               https://www.gnu.org/software/make/manual/make.html#Using-Implicit
-# for the initial makefile template - this is my first time!
+# MinimalistiC Compiler - Makefile
+# Target: ARM64 (Apple Silicon)
 
 CC=gcc
-CFLAGS=-Werror -Os
-ECC=$(BDIR)/mcc
-TESTCMD = -g -S -a -D c 1
+CFLAGS=-Werror -Os -fcommon
+BDIR=bin
+TDIR=test
 
-_SRC := $(wildcard *.c)
-_OBJ := $(_SRC:.c=.o) 
+_SRC := $(filter-out gen_x86.c, $(wildcard *.c))
+_OBJ := $(_SRC:.c=.o)
 
-BDIR = bin
-TDIR = test
+$(BDIR)/mcc: $(_OBJ) | $(BDIR)
+	$(CC) -o $@ $^ -lm
 
-$(BDIR)/mcc: $(_OBJ)
-	$(CC) -o $@ $^
-	$(MAKE) clean
+$(BDIR):
+	mkdir -p $(BDIR)
 
-# automatically makes, self-test and clean
-all:
-	$(MAKE) clean
-	$(MAKE) 
-	$(MAKE) clean
-	$(MAKE) test
+all: clean $(BDIR)/mcc
 
-run:
-	$(MAKE) clean
-	$(MAKE) 
-	$(MAKE) clean
-	$(foreach file,$(wildcard $(TDIR)/*.mc), \
-		$(info FILE $(file)) \
-		start powershell -command ""$(ECC)" $(TESTCMD) $(file) ; type "$(basename $(file)).s" ; pause"\
-	)
+run: $(BDIR)/mcc
+	@for f in $(TDIR)/*.mc $(TDIR)/*.mcc; do \
+		if [ -f "$$f" ]; then \
+			echo "=== $$f ==="; \
+			$(BDIR)/mcc -g -S -a "$$f" || true; \
+		fi; \
+	done
 
-test:
-	start cmd /K "cd $(TDIR) && test.bat"
-    
+test: $(BDIR)/mcc
+	$(BDIR)/mcc -g -S -a $(TDIR)/4_scope.mcc
+
 clean:
-	del *.o
+	rm -f *.o
 
 .PHONY: all run test clean

@@ -305,7 +305,7 @@ static void dumpInst (Tree *tree)
         case IT_Ctrl:
             print("exprsn:");
             up();
-                dumpTree(tree->ast.cond.exprsn);
+                dumpTree(tree->ast.ctrl.exprsn);
             down();
             print("");
             print("scope:");
