@@ -13,6 +13,7 @@
         mccstr(dest, destSz, "%s" str "", dest, __VA_ARGS__)) \
         { mccErr("gen insert error\n"); mccExit(1); }
 
+static char currentEpilogueLabel[256];
 static void genRoutine (char *dest, int destSz, IrRoutine *ir);
 static void genInst (char *dest, int destSz, IrInst inst);
 
@@ -87,6 +88,7 @@ static void genRoutine (char *dest, int destSz, IrRoutine *ir)
     mccLog("routine %s (frame %d)", ir->name, ir->frameSize);
     IrInst inst;
     int totalFrame = ir->frameSize;
+    sprintf(currentEpilogueLabel, ".L_%s_epilogue", ir->name);
 
     genfileinsertm(".globl _%s", ir->name);
     genfileinserts(".p2align 2");
@@ -105,6 +107,7 @@ static void genRoutine (char *dest, int destSz, IrRoutine *ir)
     }
 
     /* epilogue */
+    genfileinsertm("%s:", currentEpilogueLabel);
     genfileinsertm("    ldp x29, x30, [sp], #%d", totalFrame);
     genfileinserts("    ret");
 }
@@ -267,7 +270,8 @@ static void genInst (char *dest, int destSz, IrInst inst)
             break;
 
         case OIT_ret:
-            /* handled by routine epilogue */
+            gfim("    b %s", currentEpilogueLabel);
+            gfis("\n");
             break;
 
         case OIT_jmp:

@@ -1,6 +1,6 @@
  
 // Chaidhat Chaimongkol's MinimalistiC Compiler
-// ARM64 output - 16:01:50 May 27 2026
+// ARM64 output - 16:03:52 May 27 2026
  
 .section __TEXT,__text
 .p2align 2
@@ -50,6 +50,8 @@ _a:
     ldr x9, [sp], #16
     add x9, x9, x10
     mov x0, x9
+    b .L_a_epilogue
+.L_a_epilogue:
     ldp x29, x30, [sp], #32
     ret
 .globl _e
@@ -117,6 +119,7 @@ _e:
     ldr x0, [sp], #16
     bl _d
     mov x9, x0
+.L_e_epilogue:
     ldp x29, x30, [sp], #32
     ret
  
