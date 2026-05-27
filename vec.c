@@ -34,8 +34,9 @@ void appendChild (Tree *parent, Tree child)
         free(parent->children);
         parent->children = (Tree *)malloc((parent->childrenSz + 1) * sizeof(Tree));
 
-        for (int i = 0; i < parent->childrenSz + 1; i++)
+        for (int i = 0; i < parent->childrenSz; i++)
             parent->children[i] = treeBuffer[i];
+        free(treeBuffer);
     }
     parent->children[parent->childrenSz] = child;
     parent->childrenSz++;

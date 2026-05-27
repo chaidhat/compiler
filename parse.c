@@ -51,16 +51,19 @@ static Tree *crtInst (enum InstType type);
 
 
 
-static enum LitType getType ()
+static void initTypes ()
 {
-    if (!hasInitTypes) // has init?
+    if (!hasInitTypes)
     {
-        // init primitives
         appendChild(&types, primitiveByte);
         appendChild(&types, primitiveInt);
-
         hasInitTypes = true;
     }
+}
+
+static enum LitType getType ()
+{
+    initTypes();
 
     if (!(tokcmpType(T_KEY) || tokcmpType(T_ID))) // is it a keyword or custom type (id)?
         return LT_INVALID; 
@@ -78,6 +81,7 @@ static enum LitType getType ()
 
 static void crtType (char *typeName)
 {
+    initTypes();
     static Tree type;
     if (checkDecl(&types, typeName))
     {
@@ -689,16 +693,14 @@ static void parseStruct (Tree *parent)
     crtType(peek().id);
     next(); // expect {
     next();
+    Tree *decls = crtInst(IT_Scope);
+    inst->ast.strct.decls = decls;
     inStrctUnin = true;
     while (!isSep("}"))
     {
         mccLog("struct parse lex <%d> \"%s\"", peek().type, peek().id);
-
-        // assume decl
         mccLog("declare");
-        Tree *decls = crtInst(IT_Scope);
-        inst->ast.strct.decls = decls;
-        readDecl(inst->ast.strct.decls);
+        readDecl(decls);
         next();
     }
     next();
@@ -717,16 +719,14 @@ static void parseUnion (Tree *parent)
     crtType(peek().id);
     next(); // expect {
     next();
+    Tree *decls = crtInst(IT_Scope);
+    inst->ast.unin.decls = decls;
     inStrctUnin = true;
     while (!isSep("}"))
     {
         mccLog("union parse lex <%d> \"%s\"", peek().type, peek().id);
-
-        // assume decl
         mccLog("declare");
-        Tree *decls = crtInst(IT_Scope);
-        inst->ast.unin.decls = decls;
-        readDecl(inst->ast.unin.decls);
+        readDecl(decls);
         next();
     }
     next();

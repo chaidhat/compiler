@@ -10,9 +10,9 @@ _main:
     stp x29, x30, [sp, #-48]!
     mov x29, sp
     // function body
-    mov x9, #5
+    mov x9, #10
     str x9, [x29, #16]
-    mov x9, #3
+    mov x9, #20
     str x9, [x29, #24]
     ldr x9, [x29, #16]
     str x9, [sp, #-16]!

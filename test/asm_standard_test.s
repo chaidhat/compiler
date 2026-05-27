@@ -1,40 +1,18 @@
  
-# Chaidhat Chaimongkol's #
-# MinimalistiC Compiler  #
-# on 10:13:23 Feb  8 2020 #
+// Chaidhat Chaimongkol's MinimalistiC Compiler
+// ARM64 output - 16:05:00 May 27 2026
  
-.file   "asm_standard_test.mc"
- 
-# global declarations
-.data
- 
-# global function declarations
-.text
+.section __TEXT,__text
+.p2align 2
 .globl _main
+.p2align 2
 _main:
-    # subroutine prologue
-    pushl   %ebp
-    movl    %esp, %ebp
-    # subroutine main
-    pushl   $0
-    movl    -4(%ebp), %ebx
-    movl    $0, %eax
-    # subroutine epilogue
-    movl    %ebp, %esp
-    popl    %ebp
-    # subroutine return
-    popl    %eax
-    jmpl    *%eax
-.globl _foo
-_foo:
-    # subroutine prologue
-    pushl   %ebp
-    movl    %esp, %ebp
-    # subroutine main
-    # subroutine epilogue
-    movl    %ebp, %esp
-    popl    %ebp
-    # subroutine return
-    popl    %eax
-    jmpl    *%eax
+    stp x29, x30, [sp, #-32]!
+    mov x29, sp
+    // function body
+    mov x9, #0
+    str x9, [x29, #16]
+.L_main_epilogue:
+    ldp x29, x30, [sp], #32
+    ret
  
